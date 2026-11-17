@@ -39,6 +39,13 @@
       secItems: '품목', addItem: '항목 추가', itemDesc: '품명', qty: '수량', price: '단가', amount: '금액',
       secTotals: '정산', discount: '할인액', vatMode: '부가세', vatNone: '없음', vatExclusive: '별도', vatInclusive: '포함',
       taxRate: '세율 (%)', payment: '결제 조건', memo: '메모',
+      withholdMode: '원천징수', withholdNone: '없음', withhold33: '3.3% (개인)', withholdCustom: '직접 입력',
+      withholdRateLabel: '원천징수율 (%)',
+      stampTitle: '공급자 직인', stampPick: '도장 이미지 넣기', stampChange: '바꾸기', stampRemove: '빼기',
+      stampHint: '배경이 투명한 PNG를 권합니다. 이미지는 이 브라우저에만 저장되고 서버로 전송되지 않습니다.',
+      stampNote: '인쇄·PDF에도 그대로 나갑니다.', stampErrSize: '이미지가 너무 큽니다. 1MB 이하 파일을 골라 주세요.',
+      stampErrType: 'PNG·JPG·WEBP 이미지 파일만 넣을 수 있습니다.', stampErrRead: '이미지를 읽지 못했습니다. 다시 시도해 주세요.',
+      stampDone: '직인을 넣었습니다.', stampGone: '직인을 뺐습니다.',
       memoPh: '입금 계좌: 하나은행 000-000000-00000',
       secSave: '보관함', save: '저장', library: '불러오기', newDoc: '새 문서',
       saveHint: '모든 자료는 이 기기 브라우저에만 저장됩니다. 서버로 전송되지 않습니다.',
@@ -61,7 +68,8 @@
       },
       colNo: 'No', colItem: '품목', colQty: '수량', colPrice: '단가', colAmount: '금액',
       toLabel: '수신', issued: '발행일',
-      subtotal: '공급가액', discountLabel: '할인', vatLabel: '부가세', vatIncluded: '부가세 (포함)', totalLabel: '합계',
+      subtotal: '공급가액', lineTotal: '소계', discountLabel: '할인', vatLabel: '부가세', vatIncluded: '부가세 (포함)', totalLabel: '합계',
+      withholdLabel: '원천징수', netPayLabel: '실지급액',
       memoLabel: '메모', signLabel: '발행자', stamp: '영수',
       ownerShort: '대표', bizNoShort: '사업자번호',
       emptyItems: '품목을 입력하면 여기에 표시됩니다.',
@@ -93,6 +101,13 @@
       secItems: 'Line items', addItem: 'Add item', itemDesc: 'Description', qty: 'Qty', price: 'Unit price', amount: 'Amount',
       secTotals: 'Totals & tax', discount: 'Discount', vatMode: 'Tax', vatNone: 'None', vatExclusive: 'Added', vatInclusive: 'Included',
       taxRate: 'Rate (%)', payment: 'Payment terms', memo: 'Notes',
+      withholdMode: 'Withholding', withholdNone: 'None', withhold33: '3.3% (individual)', withholdCustom: 'Custom',
+      withholdRateLabel: 'Withholding (%)',
+      stampTitle: 'Seller stamp', stampPick: 'Add stamp image', stampChange: 'Change', stampRemove: 'Remove',
+      stampHint: 'A PNG with a transparent background works best. The image stays in this browser only.',
+      stampNote: 'It appears on printouts and PDFs too.', stampErrSize: 'That image is too large — please pick a file under 1MB.',
+      stampErrType: 'Only PNG, JPG or WEBP images can be used.', stampErrRead: 'The image could not be read — please try again.',
+      stampDone: 'Stamp added.', stampGone: 'Stamp removed.',
       memoPh: 'Bank transfer details / payment note',
       secSave: 'Saved documents', save: 'Save', library: 'Open', newDoc: 'New',
       saveHint: 'Everything stays in this browser. Nothing is uploaded to a server.',
@@ -115,7 +130,8 @@
       },
       colNo: 'No', colItem: 'Description', colQty: 'Qty', colPrice: 'Unit price', colAmount: 'Amount',
       toLabel: 'To', issued: 'Issued',
-      subtotal: 'Subtotal', discountLabel: 'Discount', vatLabel: 'Tax', vatIncluded: 'Tax (incl.)', totalLabel: 'TOTAL',
+      subtotal: 'Subtotal', lineTotal: 'Line total', discountLabel: 'Discount', vatLabel: 'Tax', vatIncluded: 'Tax (incl.)', totalLabel: 'TOTAL',
+      withholdLabel: 'Withholding', netPayLabel: 'Net payment',
       memoLabel: 'Notes', signLabel: 'Issued by', stamp: 'PAID',
       ownerShort: 'Rep.', bizNoShort: 'Reg. no.',
       emptyItems: 'Add a line item to see it here.',
@@ -142,7 +158,10 @@
   ];
   var ZERO_DECIMAL = ['KRW', 'JPY', 'VND', 'IDR', 'CLP', 'ISK'];
 
-  var LS = { state: 'qq.v1.state', drafts: 'qq.v1.drafts', lang: 'qq.v1.lang', seen: 'qq.v1.seen' };
+  var LS = { state: 'qq.v1.state', drafts: 'qq.v1.drafts', lang: 'qq.v1.lang', seen: 'qq.v1.seen', stamp: 'qq.v1.stamp' };
+
+  /* 직인 이미지 — 공급자 공통 값이라 문서 state가 아닌 별도 키에 둔다. */
+  var stampData = '';
 
   /* ------------------------------------------------------------------ *
    * 3. 상태
@@ -235,6 +254,8 @@
       discount: 0,
       vatMode: 'exclusive',
       taxRate: 10,
+      withholdMode: 'none',
+      withholdRate: 3.3,
       terms: '',
       memo: ''
     };
@@ -262,7 +283,14 @@
       supply = roundTo(base - vat, c);
       total = base;
     }
-    return { rows: rows, subtotal: subtotal, discount: discount, supply: supply, vat: vat, total: total, rate: rate };
+    // 원천징수 — 부가세를 뺀 공급가액 기준(소득세 3% + 지방소득세 0.3%)
+    var wrate = state.withholdMode === 'none' ? 0
+      : state.withholdMode === '3.3' ? 3.3
+      : Math.max(0, num(state.withholdRate));
+    var withhold = wrate ? roundTo(supply * wrate / 100, c) : 0;
+    var netPay = roundTo(total - withhold, c);
+    return { rows: rows, subtotal: subtotal, discount: discount, supply: supply, vat: vat,
+             total: total, rate: rate, withhold: withhold, wrate: wrate, netPay: netPay };
   }
 
   /* ------------------------------------------------------------------ *
@@ -316,12 +344,17 @@
       bodyRows = '<tr class="empty-row"><td colspan="5">' + L.emptyItems + '</td></tr>';
     }
 
-    var totalRows = '<tr><td class="lbl">' + L.subtotal + '</td><td>' + fmtMoney(c.supply) + '</td></tr>';
+    var totalRows = '<tr><td class="lbl">' + L.lineTotal + '</td><td>' + fmtMoney(c.subtotal) + '</td></tr>';
     if (c.discount > 0) totalRows += '<tr><td class="lbl">' + L.discountLabel + '</td><td>− ' + fmtMoney(c.discount) + '</td></tr>';
     if (state.vatMode !== 'none' && c.vat) {
+      totalRows += '<tr><td class="lbl">' + L.subtotal + '</td><td>' + fmtMoney(c.supply) + '</td></tr>';
       totalRows += '<tr><td class="lbl">' + (state.vatMode === 'inclusive' ? L.vatIncluded : L.vatLabel + ' (' + c.rate + '%)') + '</td><td>' + fmtMoney(c.vat) + '</td></tr>';
     }
     totalRows += '<tr class="sum-row"><td class="lbl">' + L.totalLabel + '</td><td>' + fmtMoney(c.total) + '</td></tr>';
+    if (c.withhold > 0) {
+      totalRows += '<tr class="wh-row"><td class="lbl">' + L.withholdLabel + ' (' + (Math.round(c.wrate * 100) / 100) + '%)</td><td>− ' + fmtMoney(c.withhold) + '</td></tr>';
+      totalRows += '<tr class="sum-row net-row"><td class="lbl">' + L.netPayLabel + '</td><td>' + fmtMoney(c.netPay) + '</td></tr>';
+    }
 
     var memoBits = [];
     if (state.memo) memoBits.push(esc(state.memo));
@@ -330,7 +363,9 @@
       ? '<div class="doc-memo"><div class="doc-memo-label">' + L.memoLabel + '</div><div class="doc-memo-body">' + memoBits.join('\n') + '</div></div>'
       : '<div></div>';
 
-    var stamp = isReceipt ? '<div class="doc-stamp">' + L.stamp + '</div>' : '';
+    var stamp = stampData
+      ? '<div class="doc-stamp doc-stamp-img"><img src="' + stampData + '" alt="' + esc(L.stampTitle) + '"></div>'
+      : (isReceipt ? '<div class="doc-stamp">' + L.stamp + '</div>' : '');
 
     return '' +
       '<article class="doc" id="doc" aria-label="' + esc(L.docTitle[type]) + '">' +
@@ -417,6 +452,8 @@
    * 7. 폼 <-> 상태
    * ------------------------------------------------------------------ */
   function hydrate() {
+    if (['none', '3.3', 'custom'].indexOf(state.withholdMode) < 0) state.withholdMode = 'none';
+    if (state.withholdRate === undefined || state.withholdRate === null || state.withholdRate === '') state.withholdRate = 3.3;
     $all('[data-path]').forEach(function (el) {
       var v = getPath(state, el.dataset.path);
       el.value = (v === undefined || v === null) ? '' : v;
@@ -435,6 +472,7 @@
       els.dueLabel.textContent = state.type === 'quote' ? t('validUntil') : t('paymentDue');
     }
     if (els.dueField) els.dueField.hidden = state.type === 'receipt';
+    updateWithholdUI();
     renderItems();
     renderDoc();
     updateLibCount();
@@ -449,6 +487,7 @@
         if (el.type === 'number') val = val === '' ? '' : num(val);
         setPath(state, path, val);
         if (path === 'currency') { renderItems(); }
+        if (path === 'withholdMode') { updateWithholdUI(); }
         persist();
         renderDoc();
       });
@@ -602,6 +641,7 @@
     if (md) md.setAttribute('content', t('desc'));
     renderVatOptions();
     if (els.dueLabel) els.dueLabel.textContent = state.type === 'quote' ? t('validUntil') : t('paymentDue');
+    applyStampUI();
     setUrlLang();
   }
   function setUrlLang() {
@@ -639,6 +679,71 @@
       return '<option value="' + c[0] + '">' + c[0] + '  ' + c[1] + '</option>';
     }).join('');
     els.currencySel.value = state.currency;
+  }
+
+  /* ---------- 원천징수 ---------- */
+  function updateWithholdUI() {
+    if (state.withholdMode === '3.3') state.withholdRate = 3.3;
+    var field = els.withholdRateField;
+    if (field) field.hidden = state.withholdMode !== 'custom';
+    var inp = $('#in-withhold-rate');
+    if (inp) inp.value = state.withholdRate;
+  }
+
+  /* ---------- 공급자 직인 ---------- */
+  function loadStamp() {
+    try { stampData = localStorage.getItem(LS.stamp) || ''; } catch (e) { stampData = ''; }
+  }
+
+  function applyStampUI() {
+    var wrap = $('#stampPreview'), img = $('#stampImg'), rm = $('#stampRemoveBtn'), lbl = $('#stampBtnLabel');
+    if (wrap) wrap.hidden = !stampData;
+    if (img) img.src = stampData || '';
+    if (rm) rm.hidden = !stampData;
+    if (lbl) lbl.textContent = stampData ? t('stampChange') : t('stampPick');
+  }
+
+  function setStamp(data) {
+    stampData = data || '';
+    try {
+      if (stampData) localStorage.setItem(LS.stamp, stampData);
+      else localStorage.removeItem(LS.stamp);
+    } catch (e) {
+      toast(t('stampErrSize'));
+      return false;
+    }
+    applyStampUI();
+    renderDoc();
+    return true;
+  }
+
+  function readStampFile(file) {
+    if (!file) return;
+    if (!/^image\/(png|jpeg|webp)$/i.test(file.type)) { toast(t('stampErrType')); return; }
+    if (file.size > 1.5 * 1024 * 1024) { toast(t('stampErrSize')); return; }
+    var fr = new FileReader();
+    fr.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        // 인쇄 화질은 유지하면서 저장 용량만 줄인다 (가장 긴 변 360px)
+        var max = 360;
+        var scale = Math.min(1, max / Math.max(img.width || 1, img.height || 1));
+        var w = Math.max(1, Math.round((img.width || max) * scale));
+        var h = Math.max(1, Math.round((img.height || max) * scale));
+        var cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        var ctx = cv.getContext('2d');
+        if (!ctx) { toast(t('stampErrRead')); return; }
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        var out = cv.toDataURL('image/png');
+        if (setStamp(out)) toast(t('stampDone'));
+      };
+      img.onerror = function () { toast(t('stampErrRead')); };
+      img.src = String(fr.result);
+    };
+    fr.onerror = function () { toast(t('stampErrRead')); };
+    fr.readAsDataURL(file);
   }
 
   function sampleData() {
@@ -741,10 +846,14 @@
       libList: $('#libList'),
       libModal: $('#libModal'),
       langBtn: $('#langBtn'),
-      langLabel: $('#langLabel')
+      langLabel: $('#langLabel'),
+      withholdRateField: $('#withholdRateField')
     };
 
     state = loadState() || blankState();
+    if (typeof state.withholdMode !== 'string' || ['none', '3.3', 'custom'].indexOf(state.withholdMode) < 0) state.withholdMode = 'none';
+    if (state.withholdRate === undefined || state.withholdRate === null || state.withholdRate === '') state.withholdRate = 3.3;
+    loadStamp();
     // PWA 바로가기(?type=quote|statement|receipt)로 열린 경우 해당 양식으로 전환
     var qtype = (qs.get('type') || '').toLowerCase();
     if (['quote', 'statement', 'receipt'].indexOf(qtype) >= 0 && qtype !== state.type) {
@@ -760,6 +869,20 @@
     applyI18n();
     hydrate();
     persist();
+
+    // 직인 이미지
+    var stampInput = $('#stampInput');
+    if (stampInput) {
+      stampInput.addEventListener('change', function () {
+        var f = stampInput.files && stampInput.files[0];
+        if (f) readStampFile(f);
+        stampInput.value = '';
+      });
+    }
+    var stampRemove = $('#stampRemoveBtn');
+    if (stampRemove) stampRemove.addEventListener('click', function () {
+      if (setStamp('')) toast(t('stampGone'));
+    });
 
     // 문서 종류
     $all('.seg').forEach(function (b) {

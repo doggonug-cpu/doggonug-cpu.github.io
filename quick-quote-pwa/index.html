@@ -58,6 +58,8 @@
   "featureList": [
     "견적서·거래명세서·간이영수증 작성",
     "실시간 합계·부가세 자동 계산",
+    "원천징수 3.3% 공제와 실지급액 계산",
+    "공급자 직인(도장) 이미지 저장",
     "PDF 저장 및 인쇄",
     "오프라인 작동 (PWA)",
     "한국어·영어 전환",
@@ -175,6 +177,22 @@
           <span class="field-label" data-i18n="address">주소</span>
           <input type="text" data-path="seller.addr" placeholder="서울 마포구 성미산로 12, 3층" autocomplete="street-address">
         </label>
+        <div class="stamp-field mt-10">
+          <span class="field-label" data-i18n="stampTitle">공급자 직인</span>
+          <div class="stamp-row">
+            <div class="stamp-preview" id="stampPreview" hidden>
+              <img id="stampImg" alt="공급자 직인">
+            </div>
+            <div class="stamp-actions">
+              <label class="btn btn-ghost btn-sm" for="stampInput" id="stampPickLabel">
+                <span id="stampBtnLabel" data-i18n="stampPick">도장 이미지 넣기</span>
+              </label>
+              <input type="file" id="stampInput" class="stamp-input" accept="image/png,image/jpeg,image/webp">
+              <button type="button" class="btn btn-ghost btn-sm" id="stampRemoveBtn" hidden data-i18n="stampRemove">빼기</button>
+            </div>
+          </div>
+          <p class="hint stamp-hint" data-i18n="stampHint">배경이 투명한 PNG를 권합니다. 이미지는 이 브라우저에만 저장되고 서버로 전송되지 않습니다.</p>
+        </div>
       </section>
 
       <section class="card">
@@ -240,6 +258,20 @@
           <span class="field-label" data-i18n="memo">메모</span>
           <textarea data-path="memo" rows="2" data-i18n-ph="memoPh" placeholder="입금 계좌: 하나은행 000-000000-00000"></textarea>
         </label>
+        <div class="grid-2 mt-10">
+          <label class="field">
+            <span class="field-label" data-i18n="withholdMode">원천징수</span>
+            <select data-path="withholdMode" id="withholdSel">
+              <option value="none" data-i18n="withholdNone">없음</option>
+              <option value="3.3" data-i18n="withhold33">3.3% (개인)</option>
+              <option value="custom" data-i18n="withholdCustom">직접 입력</option>
+            </select>
+          </label>
+          <label class="field" id="withholdRateField" hidden>
+            <span class="field-label" data-i18n="withholdRateLabel">원천징수율 (%)</span>
+            <input id="in-withhold-rate" type="number" data-path="withholdRate" inputmode="decimal" min="0" max="100" step="0.1" placeholder="3.3">
+          </label>
+        </div>
       </section>
 
       <section class="card card-archive">

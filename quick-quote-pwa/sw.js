@@ -1,7 +1,9 @@
-/* QuickQuote service worker — offline-first shell */
-const VERSION = 'v1.0.1';
+/* QuickQuote service worker — offline-first shell
+   캐시 버전을 올리면 activate에서 예전 캐시를 지우고 새 파일로 다시 채웁니다.
+   (파일을 고칠 때는 아래 VERSION 문자열을 반드시 함께 올리세요.) */
+const VERSION = 'v1.1.0';
 const CACHE = 'quickquote-' + VERSION;
-const ASSETS = [
+const SHELL = [
   './',
   './index.html',
   './styles.css',
@@ -13,6 +15,8 @@ const ASSETS = [
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png'
 ];
+// 설치 시에는 브라우저 HTTP 캐시를 건너뛰고 새 파일을 받아 둡니다.
+const ASSETS = SHELL.map((url) => new Request(url, { cache: 'reload' }));
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
