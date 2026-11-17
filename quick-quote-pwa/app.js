@@ -26,6 +26,7 @@
   var I18N = {
     ko: {
       title: 'QuickQuote — 10초 견적서·거래명세서·간이영수증 (무료 PWA)',
+      h1: '10초 만에 끝나는 견적서 — QuickQuote 견적서·거래명세서·간이영수증 무료 작성 도구',
       desc: '회원가입 없이 10초 만에 견적서·거래명세서·간이영수증을 작성하고 PDF로 저장하세요. 설치형 PWA, 오프라인 작동, 한국어·영어 지원.',
       brandTag: '견적서 10초 완성',
       offlineBadge: '오프라인 작동 중',
@@ -77,6 +78,7 @@
     },
     en: {
       title: 'QuickQuote — Quotes, statements & receipts in 10 seconds (free PWA)',
+      h1: 'Quotes, statements and receipts in 10 seconds — QuickQuote, a free invoicing tool',
       desc: 'Create a quote, statement of transaction or receipt in 10 seconds and save it as PDF. No sign-up, no server, works offline. Free installable web app.',
       brandTag: 'Quotes in 10 seconds',
       offlineBadge: 'Working offline',

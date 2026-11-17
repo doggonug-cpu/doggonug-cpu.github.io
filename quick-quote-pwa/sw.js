@@ -1,5 +1,5 @@
 /* QuickQuote service worker — offline-first shell */
-const VERSION = 'v1.0.0';
+const VERSION = 'v1.0.1';
 const CACHE = 'quickquote-' + VERSION;
 const ASSETS = [
   './',
@@ -51,17 +51,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets: cache first, then network (and cache what we fetch)
+  // Static assets: answer from cache, refresh it in the background
   event.respondWith(
     caches.match(req).then((hit) => {
-      if (hit) return hit;
-      return fetch(req).then((res) => {
-        if (res && res.ok && res.type === 'basic') {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-        }
-        return res;
-      });
-    }).catch(() => caches.match('./index.html'))
+      const network = fetch(req)
+        .then((res) => {
+          if (res && res.ok && res.type === 'basic') {
+            caches.open(CACHE).then((c) => c.put(req, res.clone()));
+          }
+          return res;
+        })
+        .catch(() => hit);
+      return hit || network;
+    })
   );
 });
