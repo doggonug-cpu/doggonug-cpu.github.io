@@ -616,6 +616,7 @@ html[data-theme="hc"] .pro{background:#000}
 .section--mcp>*{max-width:var(--max);margin-left:auto;margin-right:auto;padding-left:22px;padding-right:22px}
 .section--mcp>.section__head{margin-bottom:32px}
 .mcp__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,48px)}
+.mcp__grid>*{min-width:0}
 .tools{display:grid;gap:2px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .tools__row{display:grid;grid-template-columns:minmax(0,210px) minmax(0,1fr);gap:14px;padding:13px 15px;background:var(--panel-2)}
 .tools__row:nth-child(even){background:#111923}
@@ -624,12 +625,12 @@ html[data-theme="hc"] .tools__row,html[data-theme="hc"] .tools__row:nth-child(ev
 .tools dt code{font-size:.82rem;color:var(--accent);overflow-wrap:anywhere}
 .tools dd{color:var(--muted);font-size:.88rem}
 .mcp__note{color:var(--muted);font-size:.83rem;margin-top:13px}
-.codecard{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:12px;background:#070B10}
+.codecard{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:12px;background:#070B10;min-width:0}
 html[data-theme="hc"] .codecard{border:2px solid #fff}
 .codecard__head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;background:var(--panel-2);border-bottom:1px solid var(--line)}
 .codecard__name{font-family:var(--mono);font-size:.78rem;color:var(--muted);letter-spacing:.03em}
 pre.code{
-  margin:0;padding:14px 16px;overflow-x:auto;
+  margin:0;padding:14px 16px;overflow-x:auto;max-width:100%;
   font-size:.8rem;line-height:1.6;color:#E7EDF3;background:#070B10;
   -webkit-overflow-scrolling:touch;
 }
@@ -759,7 +760,7 @@ html[data-theme="hc"] .plan--featured{background:#000}
   .hero__inner{padding-left:16px;padding-right:16px}
   .section--mcp>*{padding-left:16px;padding-right:16px}
   .a11ybar__label{display:none}
-  .tool__text{display:none}
+  .tool__text{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
   .tool{padding:.3em .55em}
   .card{padding:16px}
   .demo{padding:13px}
