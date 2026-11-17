@@ -386,7 +386,7 @@ def related_cards(ch: Channel, channels, base: str) -> str:
         <span class="mini-kicker">{esc(SITE["groups"][c.group])}</span>
         <strong>{esc(c.name)}</strong>
         <span>{won(c.defaults["price"])} 판매 시 순수익 {won(r["net"])}</span>
-        <span class="mini-metrics">수수료 {pct(r["fee_rate"])} · 마진 {pct(r["margin"])}</span>
+        <span class="mini-metrics">수수료·고정비 {pct(r["platform_rate"])} · 마진 {pct(r["margin"])}</span>
       </a>""")
     return "\n".join(cards)
 
