@@ -6,10 +6,20 @@
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   var cfgEl = document.getElementById("calc-config");
-  if (!cfgEl) return;
+  var multiEl = document.getElementById("calc-configs");
+  if (!cfgEl && !multiEl) return;
 
-  var cfg;
-  try { cfg = JSON.parse(cfgEl.textContent); } catch (e) { return; }
+  var cfg = null;
+  var bundles = null;
+  try {
+    if (cfgEl) {
+      cfg = JSON.parse(cfgEl.textContent);
+    } else {
+      bundles = JSON.parse(multiEl.textContent);
+      cfg = bundles.data[bundles.order[0]].cfg;
+    }
+  } catch (e) { return; }
+  if (!cfg) return;
 
   var VAT = 0.10;
   var $ = function (id) { return document.getElementById(id); };
@@ -206,6 +216,38 @@
         note.textContent = "정산금 " + won(r.settlement) + "에서 원가·배송·광고·세금을 빼면 " +
           won(r.net) + "이 남습니다. 부가세·원천징수는 " + won(r.vat + r.withholding) + "으로 계산했습니다.";
       }
+    }
+  }
+
+  function setVal(id, v) {
+    var el = $(id);
+    if (el && v !== undefined && v !== null) el.value = String(v);
+  }
+
+  function applyBundle(slug) {
+    var b = bundles && bundles.data[slug];
+    if (!b) return;
+    cfg = b.cfg;
+    var d = cfg.defaults || {};
+    setVal("in-price", d.price);
+    setVal("in-cost", d.cost);
+    setVal("in-ship-received", d.ship_received);
+    setVal("in-ship-cost", d.ship_cost);
+    setVal("in-packaging", d.packaging);
+    setVal("in-ad", d.ad_pct);
+    setVal("in-return", d.return_pct);
+    setVal("in-qty", d.monthly_qty);
+    setVal("in-target", d.target_margin);
+    if ($("calc-title")) $("calc-title").textContent = b.name + " 계산기";
+    if ($("calc-basis")) $("calc-basis").textContent = b.basis;
+    render();
+  }
+
+  var channelSel = $("in-channel");
+  if (channelSel && bundles) {
+    channelSel.addEventListener("change", function () { applyBundle(channelSel.value); });
+    if ($("calc-title") && bundles.data[bundles.order[0]]) {
+      $("calc-title").textContent = bundles.data[bundles.order[0]].name + " 계산기";
     }
   }
 

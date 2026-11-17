@@ -219,7 +219,7 @@ def channel_url(base: str, slug: str) -> str:
 
 
 # ---------------------------------------------------------------- fragments
-def calc_widget(ch: Channel) -> str:
+def calc_widget(ch: Channel, channels=None) -> str:
     d = ch.defaults
     cfg = {
         "commission_pct": ch.commission_pct,
@@ -263,14 +263,65 @@ def calc_widget(ch: Channel) -> str:
         num("in-target", "목표 마진율", d.get("target_margin", 20), "%", "1", "이 마진을 내려면 얼마에 팔아야 할까"),
     ])
 
+    select_field = ""
+    extra_script = ""
+    if channels:
+        opts = "\n".join(
+            f'            <option value="{c.slug}">{esc(SITE["groups"][c.group])} · {esc(c.name)}</option>'
+            for c in channels)
+        select_field = ("      <div class=\"field field-wide\">\n"
+                        "        <label for=\"in-channel\">채널 선택<span class=\"hint\">채널을 바꾸면 요율과 기본값이 바뀝니다</span></label>\n"
+                        "        <div class=\"input-wrap\"><select id=\"in-channel\">\n"
+                        f"{opts}\n"
+                        "        </select></div>\n"
+                        "      </div>\n")
+        bundles = {}
+        for c in channels:
+            bundles[c.slug] = {
+                "name": c.name,
+                "basis": c.raw["fee_basis"],
+                "settlement": c.raw["settlement"],
+                "cfg": {
+                    "commission_pct": c.commission_pct,
+                    "commission_tiers": c.commission_tiers,
+                    "commission_vat": c.commission_vat,
+                    "payment_pct": c.payment_pct,
+                    "payment_vat": c.payment_vat,
+                    "payment_base": c.payment_base,
+                    "fixed_per_order": c.fixed_per_order,
+                    "monthly_fee": c.monthly_fee,
+                    "withholding_pct": c.withholding_pct,
+                    "vat_mode": c.vat_mode,
+                    "vat_simplified_pct": c.vat_simplified_pct,
+                    "labels": {
+                        "commission": c.raw["fees"].get("commission_label", "채널 수수료"),
+                        "payment": c.raw["fees"].get("payment_label", "결제 수수료"),
+                    },
+                    "defaults": {
+                        "price": c.defaults["price"],
+                        "cost": c.defaults["cost"],
+                        "ship_received": c.defaults.get("ship_received", 0),
+                        "ship_cost": c.defaults.get("ship_cost", 0),
+                        "packaging": c.defaults.get("packaging", 0),
+                        "ad_pct": c.defaults.get("ad_pct", 0),
+                        "return_pct": c.defaults.get("return_pct", 0),
+                        "monthly_qty": c.defaults.get("monthly_qty", 100),
+                        "target_margin": c.defaults.get("target_margin", 20),
+                    },
+                },
+            }
+        payload = json.dumps({"order": [c.slug for c in channels], "data": bundles},
+                             ensure_ascii=False).replace("</", "<\\/")
+        extra_script = f'<script type="application/json" id="calc-configs">{payload}</script>'
+
     return f"""<section class="calc" id="calculator" aria-labelledby="calc-title">
   <div class="calc-head">
     <h2 id="calc-title">{esc(ch.name)} 계산기</h2>
-    <p>숫자를 바꾸면 아래 결과가 바로 다시 계산됩니다. 요율은 <strong>{esc(ch.raw["fee_basis"])}</strong> 기준으로 미리 넣어 두었습니다.</p>
+    <p>숫자를 바꾸면 아래 결과가 바로 다시 계산됩니다. 요율은 <strong id="calc-basis">{esc(ch.raw["fee_basis"])}</strong> 기준으로 미리 넣어 두었습니다.</p>
   </div>
   <div class="calc-grid">
     <form class="calc-inputs" id="calc-form" autocomplete="off">
-{inputs}
+{select_field}{inputs}
     </form>
     <div class="calc-results" aria-live="polite">
       <div class="result-main">
@@ -293,7 +344,7 @@ def calc_widget(ch: Channel) -> str:
       <p class="result-note" id="out-note"></p>
     </div>
   </div>
-  <script type="application/json" id="calc-config">{cfg_json}</script>
+  <script type="application/json" id="calc-config">{cfg_json}</script>{extra_script}
 </section>"""
 
 
@@ -497,6 +548,7 @@ def build_hub(channels, base) -> dict:
         <div class="faq-body"><p>{esc(a)}</p></div>
       </details>""" for i, (q, a) in enumerate(SITE["hub_faq"]))
 
+    hub_calc = calc_widget(channels[0], channels)
     body = f"""<main id="main">
   <section class="hero">
     <p class="eyebrow">셀러·프리랜서 마진 계산기</p>
@@ -507,6 +559,8 @@ def build_hub(channels, base) -> dict:
       <a class="btn" href="{base}/about/">계산 방법과 출처</a>
     </div>
   </section>
+
+{hub_calc}
 
   <section class="compare" id="compare" aria-labelledby="compare-title">
     <h2 id="compare-title">상품 판매 채널 비교</h2>
@@ -917,6 +971,10 @@ def run_checks(out: Path, channels, base) -> int:
         errors.append("중복 description 존재")
 
     hub = (out / "index.html").read_text(encoding="utf-8")
+    if 'id="calculator"' not in hub:
+        errors.append("허브: 계산기 위젯 없음")
+    if 'id="in-channel"' not in hub:
+        errors.append("허브: 채널 선택 없음")
     for c in channels:
         if f'./{c.slug}/' not in hub:
             errors.append(f"허브에 {c.slug} 링크 없음")

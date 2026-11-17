@@ -160,6 +160,17 @@ section + section { border-top: 1px solid var(--line); }
 }
 .input-wrap input:focus { outline: none; }
 .input-wrap .unit { font-size: 13px; color: var(--ink-3); padding-left: 4px; }
+.field-wide { grid-column: 1 / -1; }
+.input-wrap select {
+  flex: 1; min-width: 0; border: 0; background: transparent;
+  padding: 10px 6px 10px 8px; font: inherit; font-size: 15px; color: var(--ink);
+  appearance: none; -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-3) 50%), linear-gradient(135deg, var(--ink-3) 50%, transparent 50%);
+  background-position: calc(100% - 14px) 20px, calc(100% - 9px) 20px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+.input-wrap select:focus { outline: none; }
 
 .calc-results { background: #fbfdfc; border: 1px solid var(--accent-line); border-radius: var(--radius); padding: 18px; }
 .result-main { display: flex; flex-direction: column; gap: 2px; padding-bottom: 14px; border-bottom: 1px dashed var(--line-2); }
