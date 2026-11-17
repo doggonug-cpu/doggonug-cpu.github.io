@@ -1,0 +1,27 @@
+{
+  "id": "/quick-quote-pwa/",
+  "name": "QuickQuote — 간편견적",
+  "short_name": "QuickQuote",
+  "description": "회원가입 없이 10초 만에 견적서·거래명세서·간이영수증을 만들고 PDF로 저장하는 초경량 PWA.",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#f4f6fa",
+  "theme_color": "#2456ff",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "새 견적서", "short_name": "견적서", "url": "./?type=quote", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "새 거래명세서", "short_name": "명세서", "url": "./?type=statement", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "새 간이영수증", "short_name": "영수증", "url": "./?type=receipt", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ],
+  "prefer_related_applications": false
+}

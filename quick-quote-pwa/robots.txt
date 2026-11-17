@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://doggonug-cpu.github.io/quick-quote-pwa/sitemap.xml
