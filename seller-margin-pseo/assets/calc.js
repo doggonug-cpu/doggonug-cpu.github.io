@@ -12,11 +12,11 @@
   var cfg = null;
   var bundles = null;
   try {
-    if (cfgEl) {
-      cfg = JSON.parse(cfgEl.textContent);
-    } else {
+    if (multiEl) {
       bundles = JSON.parse(multiEl.textContent);
       cfg = bundles.data[bundles.order[0]].cfg;
+    } else if (cfgEl) {
+      cfg = JSON.parse(cfgEl.textContent);
     }
   } catch (e) { return; }
   if (!cfg) return;
