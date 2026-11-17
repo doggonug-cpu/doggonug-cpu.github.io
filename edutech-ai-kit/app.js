@@ -97,39 +97,52 @@
       return;
     }
 
-    var data = {};
-    new FormData(form).forEach(function (value, key) {
-      if (key === '_honey' || key === '동의') return;
-      data[key] = value;
-    });
-    data['동의'] = '자료 소식 수신 동의함';
+  var data = new URLSearchParams();
+  new FormData(form).forEach(function (value, key) {
+    if (key === '_honey' || key === '동의' || key === '_captcha') return;
+    data.append(key, value);
+  });
+  data.append('동의', '자료 소식 수신 동의함');
+  data.append('_captcha', 'false');
 
-    submit.disabled = true;
-    submit.textContent = '보내는 중…';
-    say('');
+  submit.disabled = true;
+  submit.textContent = '보내는 중…';
+  say('');
 
+  // JSON 본문은 CORS 사전요청(OPTIONS)을 만들어 멈추는 일이 있어,
+  // 사전요청이 없는 form-urlencoded 로 보낸다. 응답이 늦으면 실패로 처리한다.
+  var timer = null;
+  var guard = new Promise(function (_, reject) {
+    timer = window.setTimeout(function () { reject(new Error('timeout')); }, 12000);
+  });
+
+  Promise.race([
     fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(data)
-    })
-      .then(function (res) {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
-      .then(function () {
-        form.reset();
-        say('신청되었습니다. 4차시 전체 목차 PDF를 곧 보내드릴게요. 무료 키트는 아래에서 바로 받으실 수 있습니다.', 'ok');
-        submit.textContent = '신청 완료';
-        window.setTimeout(function () {
-          submit.disabled = false;
-          submit.textContent = label;
-        }, 4000);
-      })
-      .catch(function () {
-        say('지금은 신청을 받지 못했습니다. 잠시 뒤 다시 시도하시거나, 무료 키트는 위에서 바로 받아 쓰셔도 됩니다.', 'err');
+      headers: { 'Accept': 'application/json' },
+      body: data
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; });
+    }),
+    guard
+  ])
+    .then(function (result) {
+      window.clearTimeout(timer);
+      var accepted = result && (result.success === 'true' || result.success === true);
+      if (!accepted) throw new Error('not accepted');
+      form.reset();
+      say('신청되었습니다. 4차시 전체 목차 PDF를 곧 보내드릴게요. 무료 키트는 위에서 바로 받으실 수 있습니다.', 'ok');
+      submit.textContent = '신청 완료';
+      window.setTimeout(function () {
         submit.disabled = false;
         submit.textContent = label;
-      });
+      }, 4000);
+    })
+    .catch(function () {
+      window.clearTimeout(timer);
+      say('지금은 신청을 받지 못했습니다. 잠시 뒤 다시 시도하시거나, 무료 키트는 위에서 바로 받아 쓰셔도 됩니다.', 'err');
+      submit.disabled = false;
+      submit.textContent = label;
+    });
   });
 })();

@@ -194,7 +194,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* 카드 스택 */
 .hero-visual { position: relative; min-height: 430px; display: grid; place-items: center; }
-.stack { position: relative; width: 100%; max-width: 380px; height: 400px; }
+.stack { position: relative; width: 100%; max-width: 380px; height: 420px; }
 .stack-card {
   position: absolute; left: 0; right: 0; padding: 20px 22px;
   background: var(--card); border-radius: var(--radius);
@@ -212,10 +212,10 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .chip-3 { color: #4B3A86; background: #F0ECFB; }
 .chip-4 { color: #6B4A12; background: #FBF1DC; }
 
-.stack-card.c1 { top: 6px;   transform: rotate(-2.6deg) translateY(0);  z-index: 4; }
-.stack-card.c2 { top: 96px;  transform: rotate(1.8deg)  translateY(0);  z-index: 3; }
-.stack-card.c3 { top: 186px; transform: rotate(-1.2deg) translateY(0);  z-index: 2; }
-.stack-card.c4 { top: 276px; transform: rotate(2.4deg)  translateY(0);  z-index: 1; }
+.stack-card.c1 { top: 0;   transform: rotate(-2.4deg); z-index: 4; }
+.stack-card.c2 { top: 104px; transform: rotate(1.6deg);  z-index: 3; }
+.stack-card.c3 { top: 208px; transform: rotate(-1deg);   z-index: 2; }
+.stack-card.c4 { top: 312px; transform: rotate(2.2deg);  z-index: 1; }
 
 /* ------------------------------------------------ 공통 섹션 */
 .sec { padding: 96px 0; }
@@ -516,10 +516,11 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .head-nav { display: none; }
   .hero-in { grid-template-columns: 1fr; gap: 40px; }
   .hero-visual { min-height: 360px; order: 2; }
-  .stack { max-width: 360px; height: 350px; }
-  .stack-card { padding: 16px 18px; }
-  .stack-card h3 { font-size: 15.5px; }
-  .stack-card.c2 { top: 84px; } .stack-card.c3 { top: 164px; } .stack-card.c4 { top: 244px; }
+  .stack { max-width: 360px; height: 380px; }
+  .stack-card { padding: 15px 18px; }
+  .stack-card h3 { font-size: 15.5px; margin: 8px 0 4px; }
+  .stack-card p { font-size: 13px; }
+  .stack-card.c2 { top: 94px; } .stack-card.c3 { top: 188px; } .stack-card.c4 { top: 282px; }
   .kit-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cards-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cards-3 .card:last-child { grid-column: 1 / -1; }
@@ -565,8 +566,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 @media (max-width: 400px) {
   .hero h1 { font-size: 32px; }
-  .stack { height: 330px; }
-  .stack-card.c2 { top: 78px; } .stack-card.c3 { top: 152px; } .stack-card.c4 { top: 226px; }
+  .stack { height: 350px; }
+  .stack-card.c2 { top: 86px; } .stack-card.c3 { top: 172px; } .stack-card.c4 { top: 258px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
