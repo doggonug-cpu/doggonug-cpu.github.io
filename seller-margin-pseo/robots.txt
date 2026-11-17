@@ -1,0 +1,8 @@
+# 마진계산기
+# 이 robots.txt는 하위 경로(/seller-margin-pseo/)에 있습니다.
+# 크롤러가 실제로 읽는 파일은 도메인 루트의 /robots.txt 입니다.
+User-agent: *
+Allow: /seller-margin-pseo/
+Disallow: /seller-margin-pseo/_src/
+
+Sitemap: https://doggonug-cpu.github.io/seller-margin-pseo/sitemap.xml
