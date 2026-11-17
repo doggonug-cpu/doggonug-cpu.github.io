@@ -4,3 +4,4 @@ Allow: /
 Sitemap: https://doggonug-cpu.github.io/quick-quote-pwa/sitemap.xml
 Sitemap: https://doggonug-cpu.github.io/seller-margin-pseo/sitemap.xml
 Sitemap: https://doggonug-cpu.github.io/edutech-ai-kit/sitemap.xml
+Sitemap: https://doggonug-cpu.github.io/a11y-ui-kit/sitemap.xml
