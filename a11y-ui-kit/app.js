@@ -183,7 +183,7 @@
   var catalogPromise = null;
   function loadCatalog() {
     if (!catalogPromise) {
-      catalogPromise = fetch('catalog.json', { cache: 'force-cache' }).then(function (r) {
+      catalogPromise = fetch('catalog.json').then(function (r) {
         if (!r.ok) { throw new Error('catalog ' + r.status); }
         return r.json();
       });
