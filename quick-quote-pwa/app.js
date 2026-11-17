@@ -50,6 +50,8 @@
       proNote: '결제 연동 전이라 지금은 모든 핵심 기능을 무료로 사용할 수 있습니다.',
       preview: '미리보기', share: '공유', print: '인쇄 / PDF 저장',
       printHint: '인쇄 창에서 ‘PDF로 저장’을 선택하면 파일로 보관할 수 있습니다.',
+      alsoUse: '함께 쓰면 좋은 도구',
+      alsoUseLink: '셀러·프리랜서 판매 마진 계산기(21개 채널)',
       total: '합계', libEmpty: '저장된 문서가 없습니다. ‘저장’을 누르면 여기에 쌓입니다.',
       docTitle: { quote: '견적서', statement: '거래명세서', receipt: '영수증' },
       docIntro: {
@@ -102,6 +104,8 @@
       proNote: 'No checkout is connected yet — every core feature is free today.',
       preview: 'Preview', share: 'Share', print: 'Print / Save PDF',
       printHint: 'Choose “Save as PDF” in the print dialog to keep a file.',
+      alsoUse: 'Also useful',
+      alsoUseLink: 'Seller & freelancer margin calculator (21 sales channels)',
       total: 'Total', libEmpty: 'No saved documents yet. Press Save to keep one here.',
       docTitle: { quote: 'QUOTATION', statement: 'STATEMENT', receipt: 'RECEIPT' },
       docIntro: {
