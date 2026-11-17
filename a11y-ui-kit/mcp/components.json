@@ -1,0 +1,726 @@
+{
+  "name": "A11yKit",
+  "version": "1.0.0",
+  "updated": "2026-11-18",
+  "site": "https://doggonug-cpu.github.io/a11y-ui-kit/",
+  "license": {
+    "free": "MIT — copy, modify and ship commercially, no attribution required",
+    "pro": "Commercial licence for Pro seats; source is not redistributed"
+  },
+  "component_count": {
+    "total": 18,
+    "free": 10,
+    "pro": 8
+  },
+  "components": {
+    "big-action-button": {
+      "tier": "free",
+      "name": {
+        "en": "Big action buttons + tap sound",
+        "ko": "큰 동작 버튼 + 합성 탭 사운드"
+      },
+      "tags": [
+        "touch",
+        "sound",
+        "kiosk",
+        "primary-action"
+      ],
+      "wcag": [
+        "2.5.5 Target Size (AAA)",
+        "1.4.6 Contrast (AAA)",
+        "2.1.1 Keyboard",
+        "4.1.3 Status Messages"
+      ],
+      "summary": {
+        "en": "56px buttons with a 4px focus ring and a 40 ms synthesized tap, so a press is confirmed in eye and ear at once.",
+        "ko": "56px 버튼, 4px 포커스 링, 40ms 합성 탭음. 누른 사실을 눈과 귀로 동시에 확인합니다."
+      },
+      "notes": {
+        "en": [
+          "Buttons are 56px tall with 12px gaps; the 4px focus ring has a 3px offset and never clips.",
+          "The press result is written into a role=status live region, so screen-reader users hear the same confirmation sighted users see.",
+          "The tone is created inside the click handler; browsers require a user gesture before audio can start, and this keeps the AudioContext out of the initial page load.",
+          "Nothing depends on colour: each action carries a text label."
+        ]
+      },
+      "prompt": {
+        "en": "Build a senior-first action button group in plain HTML, CSS and one vanilla JS block.\n\nRequirements:\n- Three actions: Confirm (primary), Cancel, Help. Buttons are at least 56px tall, 19px bold labels, 2px border, 14px radius, 12px gaps, and wrap on narrow screens.\n- Text contrast at least 7:1 (WCAG AAA). Primary button is dark text on a yellow fill; focus ring is 4px solid #FFE066 with 3px offset and appears only for keyboard focus (:focus-visible).\n- On press, synthesize a 60 ms Web Audio sine tone inside the click handler (880Hz for primary, 520Hz otherwise), created lazily and rate-limited to one tone per 80ms. No audio files, no external requests.\n- Write the result into <p role=\"status\" aria-live=\"polite\">: \"Confirmed. Your change is saved.\" / \"Cancelled. Nothing was changed.\" / \"A staff member has been called.\"\n- Honour prefers-reduced-motion (no transforms), never shift layout when the status text appears (reserve min-height), and keep everything usable at 200% zoom and 320px width.\n\nAcceptance: tab order follows visual order, every action reachable by keyboard with a visible ring, zero console errors, zero network requests, no colour-only meaning.",
+        "ko": "HTML·CSS·바닐라 JS 한 파일로 시니어용 큰 동작 버튼 그룹을 만들어 주세요.\n\n요구사항:\n- 확인(주요), 취소, 도움 3개 버튼. 높이 56px 이상, 19px 굵은 라벨, 2px 테두리, 12px 간격, 좁은 화면에서 줄바꿈.\n- 본문 대비 7:1 이상(AAA). 주요 버튼은 노란 배경에 어두운 글자, 포커스 링은 4px #FFE066에 3px 오프셋, 키보드 포커스에서만 보이게.\n- 클릭 시 Web Audio로 60ms 사인파를 합성(주요 880Hz, 나머지 520Hz). 오디오 파일·외부 요청 금지, 80ms에 1회로 제한, 클릭 핸들러 안에서 지연 생성.\n- 결과는 role=\"status\" aria-live=\"polite\" 문단에 \"확인했습니다. 변경 사항을 저장했습니다.\" 등으로 알립니다.\n- prefers-reduced-motion 존중, 상태 문구가 떠도 레이아웃이 밀리지 않게 min-height 확보, 200% 확대와 320px 폭에서도 사용 가능.\n\n검수: 탭 순서가 시각 순서와 같고, 모든 버튼에 보이는 포커스 링, 콘솔 오류 0, 네트워크 요청 0, 색만으로 의미 전달하지 않기."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Big action buttons</title>\n<style>\n  :root{--ink:#10130A;--accent:#FFD84D;--line:#46586C;--panel:#141C25;--text:#F3F6F9;--muted:#BAC5D1}\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;gap:18px;padding:24px;\n       background:#06090F;color:var(--text);font:600 18px/1.4 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  .row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}\n  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;\n       min-height:56px;padding:0 24px;border-radius:14px;border:2px solid var(--line);\n       background:var(--panel);color:var(--text);font:inherit;font-size:19px;font-weight:700;cursor:pointer}\n  .btn:hover{border-color:var(--accent)}\n  .btn:focus-visible{outline:4px solid #FFE066;outline-offset:3px}\n  .btn--primary{background:var(--accent);border-color:var(--accent);color:var(--ink)}\n  .btn--primary:hover{background:#FFE680}\n  .status{min-height:1.5em;margin:0;text-align:center;color:var(--muted);font-weight:500;font-size:16px}\n</style>\n</head>\n<body>\n  <div class=\"row\">\n    <button class=\"btn btn--primary\" type=\"button\" data-say=\"Confirmed. Your change is saved.\">Confirm</button>\n    <button class=\"btn\" type=\"button\" data-say=\"Cancelled. Nothing was changed.\">Cancel</button>\n    <button class=\"btn\" type=\"button\" data-say=\"A staff member has been called.\">Help</button>\n  </div>\n  <p class=\"status\" role=\"status\" aria-live=\"polite\"></p>\n<script>\n  let ctx, last = 0;\n  function tone(freq, dur, gain) {\n    if (performance.now() - last < 80) return;          // one tone per 80ms\n    last = performance.now();\n    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();\n    if (ctx.state === \"suspended\") ctx.resume();\n    const osc = ctx.createOscillator(), amp = ctx.createGain(), now = ctx.currentTime;\n    osc.type = \"sine\"; osc.frequency.value = freq;\n    amp.gain.setValueAtTime(0.0001, now);\n    amp.gain.exponentialRampToValueAtTime(gain, now + 0.01);\n    amp.gain.exponentialRampToValueAtTime(0.0001, now + dur);\n    osc.connect(amp).connect(ctx.destination);\n    osc.start(now); osc.stop(now + dur + 0.03);\n  }\n  const status = document.querySelector(\".status\");\n  document.querySelectorAll(\"[data-say]\").forEach(function (btn) {\n    btn.addEventListener(\"click\", function () {\n      status.textContent = btn.dataset.say;\n      tone(btn.classList.contains(\"btn--primary\") ? 880 : 520, 0.06, 0.05);\n    });\n  });\n</script>\n</body>\n</html>",
+        "react": "import { useRef, useState } from \"react\";\n\nexport default function BigActions() {\n  const [message, setMessage] = useState(\"\");\n  const ctx = useRef(null);\n  const last = useRef(0);\n\n  function tone(freq) {\n    if (performance.now() - last.current < 80) return;\n    last.current = performance.now();\n    const AC = window.AudioContext || window.webkitAudioContext;\n    if (!AC) return;\n    ctx.current = ctx.current || new AC();\n    const now = ctx.current.currentTime;\n    const osc = ctx.current.createOscillator();\n    const amp = ctx.current.createGain();\n    osc.frequency.value = freq;\n    amp.gain.setValueAtTime(0.0001, now);\n    amp.gain.exponentialRampToValueAtTime(0.05, now + 0.01);\n    amp.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);\n    osc.connect(amp).connect(ctx.current.destination);\n    osc.start(now);\n    osc.stop(now + 0.09);\n  }\n\n  function press(label, freq, messageText) {\n    setMessage(messageText);\n    tone(freq);\n  }\n\n  return (\n    <div>\n      <div style={{ display: \"flex\", flexWrap: \"wrap\", gap: 12, justifyContent: \"center\" }}>\n        <button type=\"button\" onClick={() => press(\"confirm\", 880, \"Confirmed. Your change is saved.\")} style={{ minHeight: 56, padding: \"0 24px\", borderRadius: 14, border: \"2px solid #FFD84D\", background: \"#FFD84D\", color: \"#10130A\", fontSize: 19, fontWeight: 700, cursor: \"pointer\" }}>\n          Confirm\n        </button>\n        <button type=\"button\" onClick={() => press(\"cancel\", 520, \"Cancelled. Nothing was changed.\")} style={{ minHeight: 56, padding: \"0 24px\", borderRadius: 14, border: \"2px solid #46586C\", background: \"#141C25\", color: \"#F3F6F9\", fontSize: 19, fontWeight: 700, cursor: \"pointer\" }}>\n          Cancel\n        </button>\n        <button type=\"button\" onClick={() => press(\"help\", 520, \"A staff member has been called.\")} style={{ minHeight: 56, padding: \"0 24px\", borderRadius: 14, border: \"2px solid #46586C\", background: \"#141C25\", color: \"#F3F6F9\", fontSize: 19, fontWeight: 700, cursor: \"pointer\" }}>\n          Help\n        </button>\n      </div>\n      <p role=\"status\" aria-live=\"polite\" style={{ minHeight: \"1.5em\", marginTop: 18, textAlign: \"center\", color: \"#BAC5D1\" }}>\n        {message}\n      </p>\n    </div>\n  );\n}"
+      },
+      "id": "big-action-button"
+    },
+    "text-scale-switch": {
+      "tier": "free",
+      "name": {
+        "en": "Text scale + contrast switch",
+        "ko": "글자 크기 3단계 · 고대비 스위치"
+      },
+      "tags": [
+        "settings",
+        "contrast",
+        "text-size",
+        "persistence"
+      ],
+      "wcag": [
+        "1.4.4 Resize Text",
+        "1.4.8 Visual Presentation (AAA)",
+        "2.4.7 Focus Visible (AAA)",
+        "4.1.2 Name, Role, Value"
+      ],
+      "summary": {
+        "en": "Three text sizes and a high-contrast mode that apply instantly and survive a reload.",
+        "ko": "글자 크기 3단계와 고대비 모드를 즉시 적용하고, 새로 고침해도 유지합니다."
+      },
+      "notes": {
+        "en": [
+          "Scale is applied with a CSS variable on the card, so only the demo text grows and nothing reflows outside it.",
+          "aria-pressed on each size button and role=switch with aria-checked on the contrast control give the state to assistive tech, not just to the eye.",
+          "The choice is stored in localStorage under one key and restored before first paint of the card."
+        ]
+      },
+      "prompt": {
+        "en": "Build a text-size and high-contrast control for a senior-facing app screen, in plain HTML/CSS/JS.\n\nRequirements:\n- A segmented control with three sizes (100%, 125%, 150%) and a switch for high contrast. Segments are at least 44x44px.\n- Selected size uses aria-pressed=\"true\" and a filled state; the contrast switch is role=\"switch\" with aria-checked and a visible knob that moves.\n- Changing size scales only the preview card via font-size: calc(17px * var(--scale)); the page must not shift or scroll horizontally at 150% on a 320px screen.\n- High-contrast mode switches the card to pure black background, white text and a 2px white border, keeping every text pair at 7:1 or better.\n- Persist both choices in localStorage (one JSON key) and restore them on load, wrapped in try/catch for private mode.\n- No colour-only cues; each control has a visible text label.\n\nAcceptance: state survives reload, keyboard operable, screen reader announces pressed/checked states, no layout shift, no external assets.",
+        "ko": "시니어 화면용 글자 크기·고대비 컨트롤을 HTML/CSS/JS로 만들어 주세요.\n\n요구사항:\n- 100/125/150% 3단계 세그먼트와 고대비 스위치. 각 버튼은 44x44px 이상.\n- 선택된 크기는 aria-pressed=\"true\"와 채워진 상태 표시, 고대비는 role=\"switch\" + aria-checked, 움직이는 노브.\n- 크기 변경은 미리보기 카드에만 font-size: calc(17px * var(--scale))로 적용. 320px 화면에서 150%일 때 가로 스크롤이 생기지 않아야 합니다.\n- 고대비 모드는 카드를 순수 검정 배경·흰 글자·2px 흰 테두리로 바꾸고 모든 대비를 7:1 이상 유지.\n- 두 선택을 localStorage 한 키에 JSON으로 저장하고 로드 시 복원(시크릿 모드 대비 try/catch).\n- 색만으로 상태를 알리지 말고 보이는 텍스트 라벨을 함께 표시.\n\n검수: 새로 고침 후 유지, 키보드 조작 가능, 낭독기가 pressed/checked를 읽음, 레이아웃 이동 없음, 외부 자산 없음."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Text scale and contrast</title>\n<style>\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;padding:24px;background:#06090F;\n       color:#F3F6F9;font:16px/1.5 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  .card{max-width:460px;padding:22px;border:1px solid #2B3644;border-radius:16px;background:#0E141B;\n        font-size:calc(17px * var(--scale,1))}\n  .card[data-contrast=\"on\"]{background:#000;color:#fff;border:2px solid #fff}\n  .card[data-contrast=\"on\"] .muted{color:#fff}\n  .bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:18px}\n  .seg{display:inline-flex;border:1.5px solid #46586C;border-radius:999px;overflow:hidden}\n  .seg button{min-width:46px;min-height:44px;border:0;background:transparent;color:inherit;\n              font:inherit;font-size:14px;font-weight:700;cursor:pointer}\n  .seg button[aria-pressed=\"true\"]{background:#FFD84D;color:#10130A}\n  .switch{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0;border:0;\n          background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:650;cursor:pointer}\n  .track{position:relative;width:64px;height:34px;border:2px solid #46586C;border-radius:999px;background:#141C25}\n  .knob{position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#F3F6F9;transition:transform .16s}\n  .switch[aria-checked=\"true\"] .track{background:#7CF2B0;border-color:#7CF2B0}\n  .switch[aria-checked=\"true\"] .knob{transform:translateX(30px);background:#052015}\n  .time{margin:0 0 6px;font-size:2em;font-weight:800;letter-spacing:-.03em;line-height:1.1}\n  .line{margin:0 0 6px}\n  .muted{color:#BAC5D1;font-size:.92em}\n  :focus-visible{outline:4px solid #FFE066;outline-offset:3px}\n  @media (prefers-reduced-motion:reduce){ .knob{transition:none} }\n</style>\n</head>\n<body>\n  <div class=\"card\" id=\"card\">\n    <div class=\"bar\">\n      <div class=\"seg\" role=\"group\" aria-label=\"Text size\">\n        <button type=\"button\" data-size=\"100\" aria-pressed=\"true\">A</button>\n        <button type=\"button\" data-size=\"125\" aria-pressed=\"false\">A+</button>\n        <button type=\"button\" data-size=\"150\" aria-pressed=\"false\">A++</button>\n      </div>\n      <button class=\"switch\" type=\"button\" role=\"switch\" aria-checked=\"false\" data-contrast>\n        <span class=\"track\" aria-hidden=\"true\"><span class=\"knob\"></span></span>\n        High contrast\n      </button>\n    </div>\n    <p class=\"time\">8:30 AM</p>\n    <p class=\"line\">One blood-pressure tablet with a glass of water.</p>\n    <p class=\"line muted\">Any time within 30 minutes after breakfast.</p>\n  </div>\n<script>\n  const KEY = \"a11y-text-settings\";\n  const card = document.getElementById(\"card\");\n  const contrast = document.querySelector(\"[data-contrast]\");\n\n  function read() {\n    try { return JSON.parse(localStorage.getItem(KEY) || \"{}\"); } catch (e) { return {}; }\n  }\n  function write(patch) {\n    try { localStorage.setItem(KEY, JSON.stringify(Object.assign(read(), patch))); } catch (e) {}\n  }\n  function setSize(value) {\n    card.style.setProperty(\"--scale\", String(value / 100));\n    document.querySelectorAll(\"[data-size]\").forEach(function (b) {\n      b.setAttribute(\"aria-pressed\", String(Number(b.dataset.size) === value));\n    });\n  }\n  function setContrast(on) {\n    card.dataset.contrast = on ? \"on\" : \"off\";\n    contrast.setAttribute(\"aria-checked\", String(on));\n  }\n\n  document.querySelectorAll(\"[data-size]\").forEach(function (b) {\n    b.addEventListener(\"click\", function () {\n      const value = Number(b.dataset.size);\n      setSize(value);\n      write({ size: value });\n    });\n  });\n  contrast.addEventListener(\"click\", function () {\n    const on = contrast.getAttribute(\"aria-checked\") !== \"true\";\n    setContrast(on);\n    write({ contrast: on });\n  });\n\n  const saved = read();\n  setSize(saved.size || 100);\n  setContrast(saved.contrast === true);\n</script>\n</body>\n</html>",
+        "react": "import { useEffect, useState } from \"react\";\n\nconst KEY = \"a11y-text-settings\";\n\nexport default function TextScaleSwitch() {\n  const [size, setSize] = useState(100);\n  const [contrast, setContrast] = useState(false);\n\n  useEffect(() => {\n    try {\n      const saved = JSON.parse(localStorage.getItem(KEY) || \"{}\");\n      if (saved.size) setSize(saved.size);\n      if (saved.contrast) setContrast(true);\n    } catch (e) {}\n  }, []);\n\n  function save(patch) {\n    try {\n      const next = Object.assign({}, JSON.parse(localStorage.getItem(KEY) || \"{}\"), patch);\n      localStorage.setItem(KEY, JSON.stringify(next));\n    } catch (e) {}\n  }\n\n  const dark = contrast;\n\n  return (\n    <div style={{ padding: 22, borderRadius: 16, border: dark ? \"2px solid #fff\" : \"1px solid #2B3644\", background: dark ? \"#000\" : \"#0E141B\", color: dark ? \"#fff\" : \"#F3F6F9\", fontSize: 17 * (size / 100) }}>\n      <div style={{ display: \"flex\", flexWrap: \"wrap\", gap: 10, alignItems: \"center\", marginBottom: 18 }}>\n        <div role=\"group\" aria-label=\"Text size\" style={{ display: \"inline-flex\", border: \"1.5px solid #46586C\", borderRadius: 999, overflow: \"hidden\" }}>\n          {[100, 125, 150].map((value) => (\n            <button key={value} type=\"button\" aria-pressed={size === value} onClick={() => { setSize(value); save({ size: value }); }} style={{ minWidth: 46, minHeight: 44, border: 0, background: size === value ? \"#FFD84D\" : \"transparent\", color: size === value ? \"#10130A\" : \"inherit\", fontSize: 14, fontWeight: 700, cursor: \"pointer\" }}>\n              {value === 100 ? \"A\" : value === 125 ? \"A+\" : \"A++\"}\n            </button>\n          ))}\n        </div>\n        <button type=\"button\" role=\"switch\" aria-checked={contrast} onClick={() => { const on = !contrast; setContrast(on); save({ contrast: on }); }} style={{ display: \"inline-flex\", alignItems: \"center\", gap: 10, minHeight: 44, border: 0, background: \"transparent\", color: \"inherit\", fontSize: 14, fontWeight: 650, cursor: \"pointer\" }}>\n          <span aria-hidden=\"true\" style={{ position: \"relative\", width: 64, height: 34, borderRadius: 999, border: \"2px solid #46586C\", background: contrast ? \"#7CF2B0\" : \"#141C25\" }}>\n            <span style={{ position: \"absolute\", top: 2, left: 2, width: 26, height: 26, borderRadius: \"50%\", background: contrast ? \"#052015\" : \"#F3F6F9\", transform: contrast ? \"translateX(30px)\" : \"none\", transition: \"transform .16s\" }} />\n          </span>\n          High contrast\n        </button>\n      </div>\n      <p style={{ margin: \"0 0 6px\", fontSize: \"2em\", fontWeight: 800, lineHeight: 1.1 }}>8:30 AM</p>\n      <p style={{ margin: \"0 0 6px\" }}>One blood-pressure tablet with a glass of water.</p>\n      <p style={{ margin: 0, color: dark ? \"#fff\" : \"#BAC5D1\", fontSize: \".92em\" }}>Any time within 30 minutes after breakfast.</p>\n    </div>\n  );\n}"
+      },
+      "id": "text-scale-switch"
+    },
+    "medication-card": {
+      "tier": "free",
+      "name": {
+        "en": "Medication checklist",
+        "ko": "큰 글씨 복약 체크 카드"
+      },
+      "tags": [
+        "care",
+        "checklist",
+        "daily",
+        "live-region"
+      ],
+      "wcag": [
+        "1.3.1 Info and Relationships",
+        "2.5.5 Target Size (AAA)",
+        "4.1.3 Status Messages",
+        "1.4.6 Contrast (AAA)"
+      ],
+      "summary": {
+        "en": "Three doses a day as 64px rows. One tap marks it taken and the count is announced.",
+        "ko": "하루 세 번 복약을 64px 행으로. 한 번 누르면 복용 완료가 되고 남은 개수를 읽어줍니다."
+      },
+      "notes": {
+        "en": [
+          "Each dose is a button with aria-pressed, not a checkbox the user must aim at; the whole 64px row is the target.",
+          "The counter is a separate role=status region, so the change is announced once without re-reading the whole list.",
+          "Taken state is shown by a filled pill word ('Taken') plus a colour change, never colour alone."
+        ]
+      },
+      "prompt": {
+        "en": "Build a large-type medication checklist for a senior user in plain HTML/CSS/JS.\n\nRequirements:\n- Three doses with times 08:00, 12:30, 20:00 and names such as \"Blood pressure · 1 tablet\".\n- Each dose is a full-width button at least 64px tall with aria-pressed, a time, a name and a state pill reading Take/Taken. No small checkboxes.\n- One tap toggles taken state; when taken, the row turns dark green with a green border and the state pill becomes filled.\n- A counter in <p role=\"status\" aria-live=\"polite\"> reads \"1 of 3 taken\" and updates on every toggle.\n- Contrast at least 7:1 for all text in both states; 4px focus ring; the layout must not jump when labels change.\n- Add a short data-driven array so the times and names can be edited in one place.\n\nAcceptance: keyboard toggling works, state is announced once, no layout shift, no external assets, works at 320px width.",
+        "ko": "시니어용 큰 글씨 복약 체크 목록을 HTML/CSS/JS로 만들어 주세요.\n\n요구사항:\n- 08:00, 12:30, 20:00 세 번, 이름은 \"혈압약 · 1정\" 같은 형식.\n- 각 항목은 aria-pressed가 있는 64px 이상 전체 폭 버튼. 시간·이름·상태 알약(먹기/먹음)을 함께 표시. 작은 체크박스 금지.\n- 한 번 누르면 복용 상태가 바뀌고, 복용 시 어두운 초록 배경+초록 테두리, 상태 알약은 채워짐.\n- role=\"status\" aria-live=\"polite\" 카운터가 \"3번 중 1번 복용\"처럼 갱신.\n- 두 상태 모두 텍스트 대비 7:1 이상, 4px 포커스 링, 라벨이 바뀌어도 레이아웃이 흔들리지 않게.\n- 시간·이름은 한 곳에서 수정할 수 있게 배열로 관리.\n\n검수: 키보드 토글 가능, 상태를 한 번만 읽어줌, 레이아웃 이동 없음, 외부 자산 없음, 320px에서 동작."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Medication checklist</title>\n<style>\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;padding:24px;background:#06090F;\n       color:#F3F6F9;font:16px/1.5 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  .med{width:min(460px,100%);display:grid;gap:12px}\n  .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}\n  .date{font-weight:750;margin:0}\n  .count{margin:0;color:#FFD84D;font-weight:800;font-size:.85rem}\n  ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}\n  .dose{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;width:100%;\n        min-height:64px;padding:10px 14px;border:2px solid #46586C;border-radius:12px;\n        background:#141C25;color:#F3F6F9;font:inherit;text-align:left;cursor:pointer}\n  .dose:hover{border-color:#FFD84D}\n  .dose:focus-visible{outline:4px solid #FFE066;outline-offset:3px}\n  .time{font-variant-numeric:tabular-nums;color:#FFD84D;font-weight:700}\n  .name{font-weight:650}\n  .state{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;\n         border:1.5px solid #46586C;border-radius:999px;padding:.35em .7em}\n  .dose[aria-pressed=\"true\"]{background:#0E2419;border-color:#7CF2B0}\n  .dose[aria-pressed=\"true\"] .state{background:#7CF2B0;border-color:#7CF2B0;color:#052015}\n  .dose[aria-pressed=\"true\"] .time{color:#7CF2B0}\n</style>\n</head>\n<body>\n  <div class=\"med\">\n    <div class=\"head\">\n      <p class=\"date\">Wednesday 18 Nov</p>\n      <p class=\"count\" role=\"status\" aria-live=\"polite\" id=\"count\">None taken yet</p>\n    </div>\n    <ul id=\"list\"></ul>\n  </div>\n<script>\n  const doses = [\n    { time: \"08:00\", name: \"Blood pressure · 1 tablet\" },\n    { time: \"12:30\", name: \"Diabetes · 1 tablet\" },\n    { time: \"20:00\", name: \"Cholesterol · 1 tablet\" }\n  ];\n  const list = document.getElementById(\"list\");\n  const count = document.getElementById(\"count\");\n\n  doses.forEach(function (dose) {\n    const li = document.createElement(\"li\");\n    const btn = document.createElement(\"button\");\n    btn.type = \"button\";\n    btn.className = \"dose\";\n    btn.setAttribute(\"aria-pressed\", \"false\");\n    btn.innerHTML = '<span class=\"time\"></span><span class=\"name\"></span><span class=\"state\">Take</span>';\n    btn.querySelector(\".time\").textContent = dose.time;\n    btn.querySelector(\".name\").textContent = dose.name;\n    btn.addEventListener(\"click\", function () {\n      const taken = btn.getAttribute(\"aria-pressed\") !== \"true\";\n      btn.setAttribute(\"aria-pressed\", String(taken));\n      btn.querySelector(\".state\").textContent = taken ? \"Taken\" : \"Take\";\n      updateCount();\n    });\n    li.appendChild(btn);\n    list.appendChild(li);\n  });\n\n  function updateCount() {\n    const total = doses.length;\n    const taken = document.querySelectorAll('.dose[aria-pressed=\"true\"]').length;\n    count.textContent = taken === 0 ? \"None taken yet\" : taken + \" of \" + total + \" taken\";\n  }\n</script>\n</body>\n</html>",
+        "react": "import { useState } from \"react\";\n\nconst DOSES = [\n  { time: \"08:00\", name: \"Blood pressure · 1 tablet\" },\n  { time: \"12:30\", name: \"Diabetes · 1 tablet\" },\n  { time: \"20:00\", name: \"Cholesterol · 1 tablet\" },\n];\n\nexport default function MedicationChecklist() {\n  const [taken, setTaken] = useState([]);\n  const count = taken.length;\n\n  function toggle(time) {\n    setTaken((prev) => (prev.includes(time) ? prev.filter((t) => t !== time) : prev.concat(time)));\n  }\n\n  return (\n    <div style={{ width: \"min(460px, 100%)\", color: \"#F3F6F9\" }}>\n      <div style={{ display: \"flex\", justifyContent: \"space-between\", alignItems: \"baseline\", gap: 10, flexWrap: \"wrap\" }}>\n        <p style={{ margin: 0, fontWeight: 750 }}>Wednesday 18 Nov</p>\n        <p role=\"status\" aria-live=\"polite\" style={{ margin: 0, color: \"#FFD84D\", fontWeight: 800, fontSize: \".85rem\" }}>\n          {count === 0 ? \"None taken yet\" : count + \" of \" + DOSES.length + \" taken\"}\n        </p>\n      </div>\n      <ul style={{ listStyle: \"none\", margin: \"12px 0 0\", padding: 0, display: \"grid\", gap: 8 }}>\n        {DOSES.map((dose) => {\n          const isTaken = taken.includes(dose.time);\n          return (\n            <li key={dose.time}>\n              <button type=\"button\" aria-pressed={isTaken} onClick={() => toggle(dose.time)} style={{ display: \"grid\", gridTemplateColumns: \"auto 1fr auto\", gap: 12, alignItems: \"center\", width: \"100%\", minHeight: 64, padding: \"10px 14px\", borderRadius: 12, border: isTaken ? \"2px solid #7CF2B0\" : \"2px solid #46586C\", background: isTaken ? \"#0E2419\" : \"#141C25\", color: \"#F3F6F9\", font: \"inherit\", textAlign: \"left\", cursor: \"pointer\" }}>\n                <span style={{ color: isTaken ? \"#7CF2B0\" : \"#FFD84D\", fontWeight: 700, fontVariantNumeric: \"tabular-nums\" }}>{dose.time}</span>\n                <span style={{ fontWeight: 650 }}>{dose.name}</span>\n                <span style={{ fontSize: \".72rem\", fontWeight: 800, textTransform: \"uppercase\", letterSpacing: \".06em\", border: isTaken ? \"1.5px solid #7CF2B0\" : \"1.5px solid #46586C\", background: isTaken ? \"#7CF2B0\" : \"transparent\", color: isTaken ? \"#052015\" : \"inherit\", borderRadius: 999, padding: \".35em .7em\" }}>\n                  {isTaken ? \"Taken\" : \"Take\"}\n                </span>\n              </button>\n            </li>\n          );\n        })}\n      </ul>\n    </div>\n  );\n}"
+      },
+      "id": "medication-card"
+    },
+    "kiosk-choice-list": {
+      "tier": "free",
+      "name": {
+        "en": "Kiosk choice list",
+        "ko": "키오스크 1열 대형 선택"
+      },
+      "tags": [
+        "kiosk",
+        "radio-group",
+        "keyboard",
+        "touch"
+      ],
+      "wcag": [
+        "2.5.5 Target Size (AAA)",
+        "2.1.1 Keyboard",
+        "3.3.2 Labels or Instructions",
+        "4.1.2 Name, Role, Value"
+      ],
+      "summary": {
+        "en": "One 64px choice per row with arrow-key focus and the choice announced aloud.",
+        "ko": "한 줄에 하나씩 64px 선택지, 방향키 이동, 선택 상태를 음성으로 안내합니다."
+      },
+      "notes": {
+        "en": [
+          "Uses role=radiogroup with role=radio buttons, aria-checked and a roving tabindex so the group is one tab stop.",
+          "Arrow keys move and select; Space and Enter select without moving focus away.",
+          "The selected label is echoed in a polite live region because kiosk users often look away from the screen."
+        ]
+      },
+      "prompt": {
+        "en": "Build a kiosk menu as a single-column large radio group in plain HTML/CSS/JS.\n\nRequirements:\n- Four options (\"Book an appointment\", \"Pay a bill\", \"Print a document\", \"Ask a person for help\"), each a 64px full-width button in its own row with a visible number.\n- Wrap in a fieldset with a legend question; use role=\"radiogroup\" and role=\"radio\" with aria-checked, plus roving tabindex so the group is a single tab stop.\n- Arrow Up/Down/Left/Right move selection and focus; Space or Enter selects; Home/End jump to first and last.\n- Selected state: yellow 2px border, dark amber background, a check mark, and the number chip inverted. Never colour alone.\n- Echo the selected label in <p role=\"status\" aria-live=\"polite\">: \"Selected: Pay a bill. Press Next to continue.\"\n- 4px focus ring, 7:1 text contrast, 320px width safe.\n\nAcceptance: entire flow operable by keyboard, screen reader announces radio position and checked state, no horizontal scroll.",
+        "ko": "키오스크 메뉴를 1열 대형 라디오 그룹으로 만들어 주세요.\n\n요구사항:\n- \"진료 예약\", \"수납·결제\", \"서류 발급\", \"직원 도움 요청\" 4개, 각각 64px 전체 폭 버튼, 앞에 번호 표시.\n- fieldset+legend 질문으로 감싸고 role=\"radiogroup\"/\"radio\", aria-checked, 로빙 tabindex로 그룹 전체가 탭 1회.\n- 방향키로 이동·선택, Space/Enter 선택, Home/End 처음·끝.\n- 선택 상태는 노란 2px 테두리, 어두운 호박색 배경, 체크 표시, 번호칩 반전. 색만으로 구분 금지.\n- 선택 라벨을 role=\"status\" aria-live=\"polite\"에 \"수납·결제 선택됨. 다음을 누르면 이어집니다.\"로 안내.\n- 4px 포커스 링, 텍스트 대비 7:1, 320px 폭 안전.\n\n검수: 키보드만으로 전체 흐름 가능, 낭독기가 라디오 위치와 선택 상태를 읽음, 가로 스크롤 없음."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Kiosk choice list</title>\n<style>\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;padding:24px;background:#06090F;\n       color:#F3F6F9;font:16px/1.5 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  fieldset{width:min(460px,100%);margin:0;padding:0;border:0;display:grid;gap:10px}\n  legend{padding:0;margin-bottom:4px;font-size:1.08rem;font-weight:750}\n  .opt{display:flex;align-items:center;gap:13px;width:100%;min-height:64px;padding:10px 15px;\n       border:2px solid #46586C;border-radius:14px;background:#141C25;color:#F3F6F9;\n       font:inherit;font-size:1.02rem;font-weight:650;text-align:left;cursor:pointer}\n  .opt:hover{border-color:#FFD84D}\n  .opt:focus-visible{outline:4px solid #FFE066;outline-offset:3px}\n  .n{font-variant-numeric:tabular-nums;font-size:.78rem;color:#BAC5D1;border:1px solid #2B3644;\n     border-radius:6px;padding:.1em .4em}\n  .opt[aria-checked=\"true\"]{border-color:#FFD84D;background:#26200A}\n  .opt[aria-checked=\"true\"]::after{content:\"\\2713\";margin-left:auto;color:#FFD84D;font-weight:900;font-size:1.15rem}\n  .opt[aria-checked=\"true\"] .n{background:#FFD84D;border-color:#FFD84D;color:#10130A}\n  .status{margin:14px 0 0;min-height:1.4em;color:#BAC5D1;font-size:.9rem}\n</style>\n</head>\n<body>\n  <fieldset>\n    <legend>How can we help?</legend>\n    <div role=\"radiogroup\" aria-label=\"Kiosk menu\" id=\"group\">\n      <button class=\"opt\" type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\"><span class=\"n\" aria-hidden=\"true\">1</span><span>Book an appointment</span></button>\n      <button class=\"opt\" type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\"><span class=\"n\" aria-hidden=\"true\">2</span><span>Pay a bill</span></button>\n      <button class=\"opt\" type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\"><span class=\"n\" aria-hidden=\"true\">3</span><span>Print a document</span></button>\n      <button class=\"opt\" type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\"><span class=\"n\" aria-hidden=\"true\">4</span><span>Ask a person for help</span></button>\n    </div>\n    <p class=\"status\" role=\"status\" aria-live=\"polite\">Nothing selected.</p>\n  </fieldset>\n<script>\n  const group = document.getElementById(\"group\");\n  const opts = Array.from(group.querySelectorAll('[role=\"radio\"]'));\n  const status = document.querySelector(\".status\");\n\n  function select(index) {\n    opts.forEach(function (o, i) {\n      o.setAttribute(\"aria-checked\", String(i === index));\n      o.tabIndex = i === index ? 0 : -1;\n    });\n    const label = opts[index].lastElementChild.textContent.trim();\n    status.textContent = \"Selected: \" + label + \". Press Next to continue.\";\n  }\n\n  opts.forEach(function (o, i) {\n    o.addEventListener(\"click\", function () { select(i); });\n    o.addEventListener(\"keydown\", function (e) {\n      let next = null;\n      if (e.key === \"ArrowDown\" || e.key === \"ArrowRight\") next = (i + 1) % opts.length;\n      if (e.key === \"ArrowUp\" || e.key === \"ArrowLeft\") next = (i - 1 + opts.length) % opts.length;\n      if (e.key === \"Home\") next = 0;\n      if (e.key === \"End\") next = opts.length - 1;\n      if (e.key === \" \" || e.key === \"Enter\") { e.preventDefault(); select(i); return; }\n      if (next !== null) {\n        e.preventDefault();\n        opts[next].focus();\n        select(next);\n      }\n    });\n  });\n</script>\n</body>\n</html>",
+        "react": "import { useRef, useState } from \"react\";\n\nconst OPTIONS = [\"Book an appointment\", \"Pay a bill\", \"Print a document\", \"Ask a person for help\"];\n\nexport default function KioskChoiceList() {\n  const [selected, setSelected] = useState(0);\n  const refs = useRef([]);\n\n  function choose(index) {\n    setSelected(index);\n    refs.current[index]?.focus();\n  }\n\n  function onKeyDown(event, index) {\n    const last = OPTIONS.length - 1;\n    if (event.key === \"ArrowDown\" || event.key === \"ArrowRight\") {\n      event.preventDefault();\n      choose(index === last ? 0 : index + 1);\n    } else if (event.key === \"ArrowUp\" || event.key === \"ArrowLeft\") {\n      event.preventDefault();\n      choose(index === 0 ? last : index - 1);\n    } else if (event.key === \"Home\") {\n      event.preventDefault();\n      choose(0);\n    } else if (event.key === \"End\") {\n      event.preventDefault();\n      choose(last);\n    } else if (event.key === \" \" || event.key === \"Enter\") {\n      event.preventDefault();\n      setSelected(index);\n    }\n  }\n\n  return (\n    <fieldset style={{ width: \"min(460px, 100%)\", margin: 0, padding: 0, border: 0 }}>\n      <legend style={{ padding: 0, marginBottom: 10, fontSize: \"1.08rem\", fontWeight: 750, color: \"#F3F6F9\" }}>\n        How can we help?\n      </legend>\n      <div role=\"radiogroup\" aria-label=\"Kiosk menu\" style={{ display: \"grid\", gap: 8 }}>\n        {OPTIONS.map((label, index) => {\n          const on = selected === index;\n          return (\n            <button\n              key={label}\n              ref={(el) => { refs.current[index] = el; }}\n              type=\"button\"\n              role=\"radio\"\n              aria-checked={on}\n              tabIndex={on ? 0 : -1}\n              onClick={() => setSelected(index)}\n              onKeyDown={(event) => onKeyDown(event, index)}\n              style={{ display: \"flex\", alignItems: \"center\", gap: 13, width: \"100%\", minHeight: 64, padding: \"10px 15px\", borderRadius: 14, border: on ? \"2px solid #FFD84D\" : \"2px solid #46586C\", background: on ? \"#26200A\" : \"#141C25\", color: \"#F3F6F9\", fontSize: \"1.02rem\", fontWeight: 650, textAlign: \"left\", cursor: \"pointer\" }}\n            >\n              <span aria-hidden=\"true\" style={{ fontSize: \".78rem\", color: on ? \"#10130A\" : \"#BAC5D1\", background: on ? \"#FFD84D\" : \"transparent\", border: \"1px solid \" + (on ? \"#FFD84D\" : \"#2B3644\"), borderRadius: 6, padding: \".1em .4em\" }}>\n                {index + 1}\n              </span>\n              <span>{label}</span>\n              {on ? <span aria-hidden=\"true\" style={{ marginLeft: \"auto\", color: \"#FFD84D\", fontWeight: 900 }}>✓</span> : null}\n            </button>\n          );\n        })}\n      </div>\n      <p role=\"status\" aria-live=\"polite\" style={{ margin: \"14px 0 0\", minHeight: \"1.4em\", color: \"#BAC5D1\", fontSize: \".9rem\" }}>\n        Selected: {OPTIONS[selected]}. Press Next to continue.\n      </p>\n    </fieldset>\n  );\n}"
+      },
+      "id": "kiosk-choice-list"
+    },
+    "read-aloud": {
+      "tier": "free",
+      "name": {
+        "en": "Read aloud button",
+        "ko": "음성 읽어주기 버튼"
+      },
+      "tags": [
+        "speech",
+        "tts",
+        "reading",
+        "browser-api"
+      ],
+      "wcag": [
+        "1.1.1 Non-text Content",
+        "1.4.5 Images of Text",
+        "4.1.3 Status Messages"
+      ],
+      "summary": {
+        "en": "speechSynthesis in about 20 lines, with rate control and a stop button.",
+        "ko": "20줄 남짓의 speechSynthesis, 속도 조절과 정지 버튼 포함."
+      },
+      "notes": {
+        "en": [
+          "Always show the text being read; speech is an aid, not the only channel.",
+          "Cancel any current utterance before starting a new one, or voices queue up and read three times.",
+          "Detect missing speech support and say so in the status region instead of failing silently."
+        ]
+      },
+      "prompt": {
+        "en": "Build a read-aloud control for a paragraph of appointment text using the Web Speech API.\n\nRequirements:\n- A \"Read aloud\" button and a \"Stop\" button, both at least 56px tall, plus a speed select (Slow / Normal / Fast mapped to 0.7 / 0.9 / 1.1).\n- Use speechSynthesis with an utterance whose lang matches the page (ko-KR or en-US) and the selected rate; cancel any current speech before starting.\n- The paragraph being read stays visible and selectable; highlight it with a left border only, never by dimming it.\n- Report state in a polite live region: speaking, finished, stopped, and \"This browser has no speech voice\" when speechSynthesis is unavailable.\n- No audio files, no external services, no autoplay; nothing speaks without a click.\n\nAcceptance: stop works mid-sentence, second click does not double-read, keyboard accessible, graceful on browsers without voices.",
+        "ko": "예약 안내 문단을 읽어주는 컨트롤을 Web Speech API로 만들어 주세요.\n\n요구사항:\n- \"읽어주기\"와 \"정지\" 버튼(56px 이상)과 속도 선택(느리게/보통/빠르게 = 0.7/0.9/1.1).\n- speechSynthesis로 페이지 언어(ko-KR/en-US)와 선택 속도를 사용하고, 시작 전에 기존 발화를 취소.\n- 읽는 문단은 계속 보이고 선택 가능해야 하며, 왼쪽 테두리로만 강조(흐리게 처리 금지).\n- 상태를 정중한 라이브 리전에 안내: 읽는 중, 끝남, 멈춤, 음성 미지원 시 \"이 브라우저에는 음성 엔진이 없습니다\".\n- 오디오 파일·외부 서비스·자동 재생 금지, 클릭 없이는 읽지 않음.\n\n검수: 문장 중간 정지 동작, 두 번 눌러도 중복 재생 없음, 키보드 접근 가능, 음성 없는 브라우저에서 안내."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Read aloud</title>\n<style>\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;padding:24px;background:#06090F;\n       color:#F3F6F9;font:16px/1.6 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  .wrap{width:min(540px,100%);display:grid;gap:14px}\n  blockquote{margin:0;padding:16px;border-left:4px solid #FFD84D;border-radius:0 12px 12px 0;\n             background:#141C25;font-size:1.05rem}\n  .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}\n  button{min-height:56px;padding:0 20px;border-radius:14px;border:2px solid #46586C;\n         background:#141C25;color:#F3F6F9;font:inherit;font-weight:700;cursor:pointer}\n  button:hover{border-color:#FFD84D}\n  button:focus-visible{outline:4px solid #FFE066;outline-offset:3px}\n  .primary{background:#FFD84D;border-color:#FFD84D;color:#10130A}\n  label{display:inline-flex;align-items:center;gap:8px;color:#BAC5D1;font-size:.9rem;min-height:56px}\n  select{font:inherit;min-height:48px;padding:.4em .6em;border-radius:10px;border:2px solid #46586C;\n         background:#141C25;color:#F3F6F9}\n  .status{margin:0;min-height:1.4em;color:#BAC5D1;font-size:.9rem}\n</style>\n</head>\n<body>\n  <div class=\"wrap\">\n    <blockquote id=\"text\">Your appointment is Thursday 20 November at 2:30 PM with Dr. Park, room 302. Please bring your ID card.</blockquote>\n    <div class=\"row\">\n      <button class=\"primary\" type=\"button\" id=\"speak\">Read aloud</button>\n      <button type=\"button\" id=\"stop\">Stop</button>\n      <label>Speed\n        <select id=\"rate\">\n          <option value=\"0.7\">Slow</option>\n          <option value=\"0.9\" selected>Normal</option>\n          <option value=\"1.1\">Fast</option>\n        </select>\n      </label>\n    </div>\n    <p class=\"status\" role=\"status\" aria-live=\"polite\"></p>\n  </div>\n<script>\n  const text = document.getElementById(\"text\");\n  const status = document.querySelector(\".status\");\n  const rate = document.getElementById(\"rate\");\n  const supported = \"speechSynthesis\" in window;\n\n  if (!supported) {\n    status.textContent = \"This browser has no speech voice. The text above is the full content.\";\n  }\n\n  document.getElementById(\"speak\").addEventListener(\"click\", function () {\n    if (!supported) return;\n    speechSynthesis.cancel();                       // never queue two readings\n    const utterance = new SpeechSynthesisUtterance(text.textContent.trim());\n    utterance.lang = document.documentElement.lang || \"en-US\";\n    utterance.rate = Number(rate.value);\n    status.textContent = \"Reading aloud. Press Stop to end it.\";\n    utterance.onend = function () { status.textContent = \"Finished reading.\"; };\n    utterance.onerror = function () { status.textContent = \"This browser could not read the text.\"; };\n    speechSynthesis.speak(utterance);\n  });\n\n  document.getElementById(\"stop\").addEventListener(\"click\", function () {\n    if (!supported) return;\n    speechSynthesis.cancel();\n    status.textContent = \"Stopped.\";\n  });\n</script>\n</body>\n</html>",
+        "react": "import { useEffect, useRef, useState } from \"react\";\n\nconst TEXT = \"Your appointment is Thursday 20 November at 2:30 PM with Dr. Park, room 302. Please bring your ID card.\";\n\nexport default function ReadAloud() {\n  const [status, setStatus] = useState(\"\");\n  const [rate, setRate] = useState(0.9);\n  const supported = typeof window !== \"undefined\" && \"speechSynthesis\" in window;\n\n  useEffect(() => {\n    if (!supported) setStatus(\"This browser has no speech voice. The text above is the full content.\");\n    return () => {\n      if (supported) window.speechSynthesis.cancel();\n    };\n  }, [supported]);\n\n  function speak() {\n    if (!supported) return;\n    window.speechSynthesis.cancel();\n    const utterance = new SpeechSynthesisUtterance(TEXT);\n    utterance.lang = document.documentElement.lang || \"en-US\";\n    utterance.rate = rate;\n    setStatus(\"Reading aloud. Press Stop to end it.\");\n    utterance.onend = () => setStatus(\"Finished reading.\");\n    utterance.onerror = () => setStatus(\"This browser could not read the text.\");\n    window.speechSynthesis.speak(utterance);\n  }\n\n  function stop() {\n    if (!supported) return;\n    window.speechSynthesis.cancel();\n    setStatus(\"Stopped.\");\n  }\n\n  return (\n    <div style={{ width: \"min(540px, 100%)\", color: \"#F3F6F9\" }}>\n      <blockquote style={{ margin: 0, padding: 16, borderLeft: \"4px solid #FFD84D\", borderRadius: \"0 12px 12px 0\", background: \"#141C25\", fontSize: \"1.05rem\", lineHeight: 1.6 }}>\n        {TEXT}\n      </blockquote>\n      <div style={{ display: \"flex\", flexWrap: \"wrap\", alignItems: \"center\", gap: 10, marginTop: 14 }}>\n        <button type=\"button\" onClick={speak} style={{ minHeight: 56, padding: \"0 20px\", borderRadius: 14, border: \"2px solid #FFD84D\", background: \"#FFD84D\", color: \"#10130A\", fontWeight: 700, cursor: \"pointer\" }}>\n          Read aloud\n        </button>\n        <button type=\"button\" onClick={stop} style={{ minHeight: 56, padding: \"0 20px\", borderRadius: 14, border: \"2px solid #46586C\", background: \"#141C25\", color: \"#F3F6F9\", fontWeight: 700, cursor: \"pointer\" }}>\n          Stop\n        </button>\n        <label style={{ display: \"inline-flex\", alignItems: \"center\", gap: 8, color: \"#BAC5D1\", fontSize: \".9rem\", minHeight: 56 }}>\n          Speed\n          <select value={rate} onChange={(event) => setRate(Number(event.target.value))} style={{ font: \"inherit\", minHeight: 48, padding: \".4em .6em\", borderRadius: 10, border: \"2px solid #46586C\", background: \"#141C25\", color: \"#F3F6F9\" }}>\n            <option value={0.7}>Slow</option>\n            <option value={0.9}>Normal</option>\n            <option value={1.1}>Fast</option>\n          </select>\n        </label>\n      </div>\n      <p role=\"status\" aria-live=\"polite\" style={{ minHeight: \"1.4em\", color: \"#BAC5D1\", fontSize: \".9rem\", marginTop: 12 }}>{status}</p>\n    </div>\n  );\n}"
+      },
+      "id": "read-aloud"
+    },
+    "confirm-switch": {
+      "tier": "free",
+      "name": {
+        "en": "Two-step confirm switch",
+        "ko": "2단계 확인 · 슬라이드 스위치"
+      },
+      "tags": [
+        "dialog",
+        "destructive",
+        "safety",
+        "focus"
+      ],
+      "wcag": [
+        "3.3.4 Error Prevention (AAA)",
+        "3.3.6 Error Prevention (AAA)",
+        "2.4.3 Focus Order",
+        "4.1.2 Name, Role, Value"
+      ],
+      "summary": {
+        "en": "A native dialog: the destructive button only arms after you move a switch in step two.",
+        "ko": "네이티브 dialog. 2단계에서 스위치를 직접 움직여야 삭제 버튼이 켜집니다."
+      },
+      "notes": {
+        "en": [
+          "showModal() gives the focus trap, Escape handling and focus return for free; do not rebuild them with divs.",
+          "Step two is a deliberate second gesture, which is what WCAG 3.3.4 asks for on destructive actions.",
+          "The dialog keeps its accessible name and description visible while the step changes."
+        ]
+      },
+      "prompt": {
+        "en": "Build a two-step confirmation dialog for a destructive action in plain HTML/CSS/JS.\n\nRequirements:\n- Trigger: a 56px red \"Delete photos\" button. Dialog: native <dialog> opened with showModal(), labelled by its heading and described by its text.\n- Step 1 shows the consequence in one sentence and two actions: Cancel (secondary) and Continue (primary).\n- Step 2 hides the step-1 actions, changes the step label to \"Step 2 of 2\", and shows a slide switch (role=\"switch\", aria-checked) labelled \"Yes, delete 14 photos\". The final Delete button stays disabled until the switch is on.\n- Cancel and Escape close the dialog and return focus to the trigger; finishing closes it and writes \"Deleted 14 photos.\" into a polite live region.\n- The switch is keyboard operable (Space/Enter) with a 4px focus ring; the knob animates only if prefers-reduced-motion is not set.\n- Dark surface, white text, at least 7:1 contrast, readable at 320px.\n\nAcceptance: focus never escapes the dialog, Escape cancels at either step, Delete cannot run without the switch, focus returns to the trigger.",
+        "ko": "파괴적 동작을 위한 2단계 확인 대화상자를 HTML/CSS/JS로 만들어 주세요.\n\n요구사항:\n- 실행 버튼은 56px 빨간 \"사진 지우기\". 대화상자는 네이티브 <dialog>를 showModal()로 열고 제목·설명으로 연결.\n- 1단계는 결과를 한 문장으로 보여주고 취소(보조)·계속(주요) 두 버튼.\n- 2단계는 1단계 버튼을 숨기고 단계 표시를 \"2단계 / 2\"로 바꾸며, role=\"switch\" aria-checked 슬라이드 스위치(\"네, 14장을 지웁니다\")를 표시. 스위치를 켜기 전까지 삭제 버튼은 비활성.\n- 취소와 ESC는 닫고 실행 버튼으로 포커스를 돌려줌. 완료 시 \"사진 14장을 지웠습니다.\"를 라이브 리전에 기록.\n- 스위치는 Space/Enter로 조작, 4px 포커스 링, prefers-reduced-motion이 아니면 노브 애니메이션.\n- 어두운 배경에 흰 글자, 대비 7:1 이상, 320px에서 읽기 가능.\n\n검수: 포커스가 대화상자를 벗어나지 않음, 어느 단계에서든 ESC 취소, 스위치 없이는 삭제 불가, 포커스 복귀."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Two-step confirm</title>\n<style>\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;gap:12px;padding:24px;background:#06090F;\n       color:#F3F6F9;font:16px/1.5 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  .warn{margin:0;font-weight:700;font-size:1.05rem}\n  .btn{min-height:56px;padding:0 22px;border-radius:14px;border:2px solid #46586C;background:#141C25;\n       color:#F3F6F9;font:inherit;font-weight:700;cursor:pointer}\n  .btn:hover{border-color:#FFD84D}\n  .btn:focus-visible{outline:4px solid #FFE066;outline-offset:3px}\n  .btn--danger{background:#FF9A9A;border-color:#FF9A9A;color:#22090A}\n  .btn--primary{background:#FFD84D;border-color:#FFD84D;color:#10130A}\n  .btn[disabled]{opacity:.45;cursor:not-allowed}\n  dialog{width:min(94vw,480px);padding:0;border:2px solid #46586C;border-radius:18px;\n         background:#0E141B;color:#F3F6F9}\n  dialog::backdrop{background:rgba(2,4,7,.78)}\n  .inner{padding:22px;display:grid;gap:13px}\n  .step{margin:0;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:#FFD84D;font-weight:800}\n  h2{margin:0;font-size:1.3rem}\n  .desc{margin:0;color:#BAC5D1;font-size:.95rem}\n  .actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}\n  .switch{display:flex;align-items:center;gap:12px;min-height:52px;border:0;background:none;\n          color:#F3F6F9;font:inherit;font-weight:650;text-align:left;cursor:pointer;padding:0}\n  .track{position:relative;width:66px;height:36px;border:2px solid #46586C;border-radius:999px;background:#141C25}\n  .knob{position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#F3F6F9;transition:transform .16s}\n  .switch[aria-checked=\"true\"] .track{background:#7CF2B0;border-color:#7CF2B0}\n  .switch[aria-checked=\"true\"] .knob{transform:translateX(30px);background:#052015}\n  .status{margin:0;min-height:1.4em;color:#BAC5D1;font-size:.9rem}\n  @media (prefers-reduced-motion:reduce){ .knob{transition:none} }\n</style>\n</head>\n<body>\n  <p class=\"warn\">Delete 14 photos from the family album?</p>\n  <p><button class=\"btn btn--danger\" type=\"button\" id=\"open\">Delete photos</button></p>\n  <p class=\"status\" role=\"status\" aria-live=\"polite\" id=\"status\"></p>\n\n  <dialog id=\"dialog\" aria-labelledby=\"title\" aria-describedby=\"desc\">\n    <div class=\"inner\">\n      <p class=\"step\" id=\"step\">Step 1 of 2</p>\n      <h2 id=\"title\">Delete 14 photos</h2>\n      <p class=\"desc\" id=\"desc\">Deleted photos leave the bin after 30 days.</p>\n\n      <div class=\"actions\" id=\"step1\">\n        <button class=\"btn\" type=\"button\" data-cancel>Cancel</button>\n        <button class=\"btn btn--primary\" type=\"button\" id=\"next\">Continue</button>\n      </div>\n\n      <div id=\"step2\" hidden style=\"display:grid;gap:13px\">\n        <p class=\"desc\" style=\"font-weight:700;color:#F3F6F9\">To go ahead, switch this on.</p>\n        <button class=\"switch\" type=\"button\" role=\"switch\" aria-checked=\"false\" id=\"arm\">\n          <span class=\"track\" aria-hidden=\"true\"><span class=\"knob\"></span></span>\n          Yes, delete 14 photos\n        </button>\n        <div class=\"actions\">\n          <button class=\"btn\" type=\"button\" data-cancel>Cancel</button>\n          <button class=\"btn btn--danger\" type=\"button\" id=\"final\" disabled>Delete</button>\n        </div>\n      </div>\n    </div>\n  </dialog>\n<script>\n  const dialog = document.getElementById(\"dialog\");\n  const open = document.getElementById(\"open\");\n  const stepLabel = document.getElementById(\"step\");\n  const step1 = document.getElementById(\"step1\");\n  const step2 = document.getElementById(\"step2\");\n  const arm = document.getElementById(\"arm\");\n  const finalBtn = document.getElementById(\"final\");\n  const status = document.getElementById(\"status\");\n\n  open.addEventListener(\"click\", function () {\n    stepLabel.textContent = \"Step 1 of 2\";\n    step1.hidden = false;\n    step2.hidden = true;\n    arm.setAttribute(\"aria-checked\", \"false\");\n    finalBtn.disabled = true;\n    dialog.showModal();\n  });\n\n  document.getElementById(\"next\").addEventListener(\"click\", function () {\n    stepLabel.textContent = \"Step 2 of 2\";\n    step1.hidden = true;\n    step2.hidden = false;\n    arm.focus();\n  });\n\n  arm.addEventListener(\"click\", function () {\n    const on = arm.getAttribute(\"aria-checked\") !== \"true\";\n    arm.setAttribute(\"aria-checked\", String(on));\n    finalBtn.disabled = !on;\n  });\n\n  document.querySelectorAll(\"[data-cancel]\").forEach(function (b) {\n    b.addEventListener(\"click\", function () {\n      dialog.close();\n      status.textContent = \"Cancelled. Nothing was deleted.\";\n    });\n  });\n\n  finalBtn.addEventListener(\"click\", function () {\n    dialog.close();\n    status.textContent = \"Deleted 14 photos.\";\n  });\n</script>\n</body>\n</html>",
+        "react": "import { useRef, useState } from \"react\";\n\nexport default function ConfirmSwitch() {\n  const dialogRef = useRef(null);\n  const [step, setStep] = useState(1);\n  const [armed, setArmed] = useState(false);\n  const [status, setStatus] = useState(\"\");\n\n  function open() {\n    setStep(1);\n    setArmed(false);\n    setStatus(\"\");\n    dialogRef.current?.showModal();\n  }\n\n  function cancel(message) {\n    dialogRef.current?.close();\n    setStatus(message);\n  }\n\n  return (\n    <div>\n      <p style={{ margin: 0, fontWeight: 700 }}>Delete 14 photos from the family album?</p>\n      <button type=\"button\" onClick={open} style={{ minHeight: 56, marginTop: 12, padding: \"0 22px\", borderRadius: 14, border: \"2px solid #FF9A9A\", background: \"#FF9A9A\", color: \"#22090A\", fontWeight: 700, cursor: \"pointer\" }}>\n        Delete photos\n      </button>\n      <p role=\"status\" aria-live=\"polite\" style={{ minHeight: \"1.4em\", marginTop: 12, color: \"#BAC5D1\", fontSize: \".9rem\" }}>{status}</p>\n\n      <dialog ref={dialogRef} aria-labelledby=\"confirm-title\" aria-describedby=\"confirm-desc\" style={{ width: \"min(94vw, 480px)\", padding: 0, border: \"2px solid #46586C\", borderRadius: 18, background: \"#0E141B\", color: \"#F3F6F9\" }}>\n        <div style={{ padding: 22, display: \"grid\", gap: 13 }}>\n          <p style={{ margin: 0, fontSize: \".7rem\", letterSpacing: \".15em\", textTransform: \"uppercase\", color: \"#FFD84D\", fontWeight: 800 }}>\n            Step {step} of 2\n          </p>\n          <h2 id=\"confirm-title\" style={{ margin: 0, fontSize: \"1.3rem\" }}>Delete 14 photos</h2>\n          <p id=\"confirm-desc\" style={{ margin: 0, color: \"#BAC5D1\", fontSize: \".95rem\" }}>Deleted photos leave the bin after 30 days.</p>\n\n          {step === 1 ? (\n            <div style={{ display: \"flex\", justifyContent: \"flex-end\", gap: 10, flexWrap: \"wrap\" }}>\n              <button type=\"button\" onClick={() => cancel(\"Cancelled. Nothing was deleted.\")} style={{ minHeight: 56, padding: \"0 22px\", borderRadius: 14, border: \"2px solid #46586C\", background: \"#141C25\", color: \"#F3F6F9\", fontWeight: 700, cursor: \"pointer\" }}>Cancel</button>\n              <button type=\"button\" onClick={() => setStep(2)} style={{ minHeight: 56, padding: \"0 22px\", borderRadius: 14, border: \"2px solid #FFD84D\", background: \"#FFD84D\", color: \"#10130A\", fontWeight: 700, cursor: \"pointer\" }}>Continue</button>\n            </div>\n          ) : (\n            <div style={{ display: \"grid\", gap: 13 }}>\n              <p style={{ margin: 0, fontWeight: 700 }}>To go ahead, switch this on.</p>\n              <button type=\"button\" role=\"switch\" aria-checked={armed} onClick={() => setArmed((v) => !v)} style={{ display: \"flex\", alignItems: \"center\", gap: 12, minHeight: 52, border: 0, background: \"none\", color: \"#F3F6F9\", fontWeight: 650, textAlign: \"left\", cursor: \"pointer\", padding: 0 }}>\n                <span aria-hidden=\"true\" style={{ position: \"relative\", width: 66, height: 36, border: \"2px solid \" + (armed ? \"#7CF2B0\" : \"#46586C\"), borderRadius: 999, background: armed ? \"#7CF2B0\" : \"#141C25\" }}>\n                  <span style={{ position: \"absolute\", top: 2, left: 2, width: 26, height: 26, borderRadius: \"50%\", background: armed ? \"#052015\" : \"#F3F6F9\", transform: armed ? \"translateX(30px)\" : \"none\", transition: \"transform .16s\" }} />\n                </span>\n                Yes, delete 14 photos\n              </button>\n              <div style={{ display: \"flex\", justifyContent: \"flex-end\", gap: 10, flexWrap: \"wrap\" }}>\n                <button type=\"button\" onClick={() => cancel(\"Cancelled. Nothing was deleted.\")} style={{ minHeight: 56, padding: \"0 22px\", borderRadius: 14, border: \"2px solid #46586C\", background: \"#141C25\", color: \"#F3F6F9\", fontWeight: 700, cursor: \"pointer\" }}>Cancel</button>\n                <button type=\"button\" disabled={!armed} onClick={() => cancel(\"Deleted 14 photos.\")} style={{ minHeight: 56, padding: \"0 22px\", borderRadius: 14, border: \"2px solid #FF9A9A\", background: armed ? \"#FF9A9A\" : \"transparent\", color: armed ? \"#22090A\" : \"#BAC5D1\", fontWeight: 700, cursor: armed ? \"pointer\" : \"not-allowed\" }}>Delete</button>\n              </div>\n            </div>\n          )}\n        </div>\n      </dialog>\n    </div>\n  );\n}"
+      },
+      "id": "confirm-switch"
+    },
+    "number-keypad": {
+      "tier": "free",
+      "name": {
+        "en": "Big number keypad",
+        "ko": "대형 숫자 키패드"
+      },
+      "tags": [
+        "keypad",
+        "pin",
+        "kiosk",
+        "touch"
+      ],
+      "wcag": [
+        "2.5.5 Target Size (AAA)",
+        "2.4.7 Focus Visible (AAA)",
+        "4.1.2 Name, Role, Value",
+        "1.4.11 Non-text Contrast"
+      ],
+      "summary": {
+        "en": "64px keys, a 4px focus ring and a masked display that announces each digit count.",
+        "ko": "64px 키, 4px 포커스 링, 입력 자릿수를 음성으로 알려주는 마스킹 표시."
+      },
+      "notes": {
+        "en": [
+          "The display shows bullets, so a shoulder-surfer learns nothing; the live region says how many digits were entered instead of reading them.",
+          "Keys are 64px with 8px gaps, well above the 44px AAA target.",
+          "The value lives in one variable and never leaves the page in the demo."
+        ]
+      },
+      "prompt": {
+        "en": "Build a large numeric keypad for PIN or room-number entry, plain HTML/CSS/JS.\n\nRequirements:\n- A 3x4 grid: 1-9, then Clear, 0, OK. Every key is at least 64px tall with an 8px gap; OK is filled yellow with dark text.\n- The display shows one bullet per entered digit (never the digits), keeps a fixed height and uses tabular numerals.\n- A polite live region announces \"4 digits entered.\" on each key press; Clear announces \"No digits entered.\"; OK announces \"Accepted — demo only, nothing was sent.\"\n- Limit input to 6 digits silently; Clear resets.\n- 4px focus ring on every key with 2px offset; keys are real buttons in DOM order so arrow-free tab order is natural.\n- 7:1 text contrast, perceived non-text contrast at least 3:1 for key borders.\n\nAcceptance: works with keyboard only, screen reader hears the count not the digits, no console errors, no network calls.",
+        "ko": "비밀번호·병실 번호 입력용 대형 숫자 키패드를 HTML/CSS/JS로 만들어 주세요.\n\n요구사항:\n- 3x4 그리드: 1~9, 지움, 0, 확인. 모든 키 64px 이상, 간격 8px, 확인 키는 노란 채움에 어두운 글자.\n- 표시창은 입력 자릿수만큼 불릿(•)으로 보여주고 숫자는 노출하지 않음. 고정 높이, 등폭 숫자.\n- 정중한 라이브 리전이 키 입력마다 \"4자리 입력됨.\"을 알리고, 지움은 \"입력된 숫자가 없습니다.\", 확인은 \"확인했습니다. 데모라 어디로도 전송하지 않았습니다.\"\n- 입력은 6자리로 제한, 지움은 초기화.\n- 모든 키에 4px 포커스 링(2px 오프셋), 실제 button 요소로 DOM 순서대로 탭 이동.\n- 텍스트 대비 7:1, 키 테두리 비텍스트 대비 3:1 이상.\n\n검수: 키보드만으로 조작 가능, 낭독기는 숫자가 아니라 자릿수를 읽음, 콘솔 오류 0, 네트워크 요청 0."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Number keypad</title>\n<style>\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;padding:24px;background:#06090F;\n       color:#F3F6F9;font:16px/1.5 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  .kp{width:min(320px,100%);display:grid;gap:12px}\n  .display{display:flex;align-items:center;justify-content:center;min-height:64px;border:2px solid #46586C;\n           border-radius:12px;background:#05080C;color:#FFD84D;font-family:ui-monospace,Menlo,Consolas,monospace;\n           font-size:1.7rem;letter-spacing:.28em}\n  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}\n  .key{min-height:64px;border:2px solid #46586C;border-radius:12px;background:#141C25;color:#F3F6F9;\n       font:inherit;font-size:1.3rem;font-weight:750;cursor:pointer}\n  .key:hover{border-color:#FFD84D;background:#1B2634}\n  .key:focus-visible{outline:4px solid #FFE066;outline-offset:2px}\n  .fn{font-size:.92rem;color:#BAC5D1}\n  .ok{background:#FFD84D;border-color:#FFD84D;color:#10130A;font-size:1rem}\n  .status{margin:0;min-height:1.4em;color:#BAC5D1;font-size:.88rem}\n</style>\n</head>\n<body>\n  <div class=\"kp\">\n    <output class=\"display\" id=\"display\" aria-live=\"polite\">— — — —</output>\n    <div class=\"grid\">\n      <button class=\"key\" type=\"button\" data-key=\"1\">1</button>\n      <button class=\"key\" type=\"button\" data-key=\"2\">2</button>\n      <button class=\"key\" type=\"button\" data-key=\"3\">3</button>\n      <button class=\"key\" type=\"button\" data-key=\"4\">4</button>\n      <button class=\"key\" type=\"button\" data-key=\"5\">5</button>\n      <button class=\"key\" type=\"button\" data-key=\"6\">6</button>\n      <button class=\"key\" type=\"button\" data-key=\"7\">7</button>\n      <button class=\"key\" type=\"button\" data-key=\"8\">8</button>\n      <button class=\"key\" type=\"button\" data-key=\"9\">9</button>\n      <button class=\"key fn\" type=\"button\" data-key=\"clear\">Clear</button>\n      <button class=\"key\" type=\"button\" data-key=\"0\">0</button>\n      <button class=\"key ok\" type=\"button\" data-key=\"ok\">OK</button>\n    </div>\n    <p class=\"status\" id=\"status\">Demo only — nothing is sent.</p>\n  </div>\n<script>\n  const display = document.getElementById(\"display\");\n  const status = document.getElementById(\"status\");\n  let value = \"\";\n\n  function render() {\n    display.textContent = value ? \"\\u2022\".repeat(value.length) : \"\\u2014 \\u2014 \\u2014 \\u2014\";\n    display.setAttribute(\"aria-label\", value ? value.length + \" digits entered.\" : \"No digits entered.\");\n    if (value) status.textContent = value.length + \" digits entered.\";\n  }\n\n  document.querySelectorAll(\"[data-key]\").forEach(function (key) {\n    key.addEventListener(\"click\", function () {\n      const k = key.dataset.key;\n      if (k === \"clear\") {\n        value = \"\";\n        render();\n        status.textContent = \"No digits entered.\";\n        return;\n      }\n      if (k === \"ok\") {\n        status.textContent = \"Accepted — demo only, nothing was sent.\";\n        return;\n      }\n      if (value.length < 6) {\n        value += k;\n        render();\n      }\n    });\n  });\n</script>\n</body>\n</html>",
+        "react": "import { useState } from \"react\";\n\nconst KEYS = [\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"clear\", \"0\", \"ok\"];\n\nexport default function NumberKeypad() {\n  const [value, setValue] = useState(\"\");\n  const [status, setStatus] = useState(\"Demo only — nothing is sent.\");\n\n  function press(key) {\n    if (key === \"clear\") {\n      setValue(\"\");\n      setStatus(\"No digits entered.\");\n      return;\n    }\n    if (key === \"ok\") {\n      setStatus(\"Accepted — demo only, nothing was sent.\");\n      return;\n    }\n    if (value.length < 6) {\n      const next = value + key;\n      setValue(next);\n      setStatus(next.length + \" digits entered.\");\n    }\n  }\n\n  return (\n    <div style={{ width: \"min(320px, 100%)\", color: \"#F3F6F9\" }}>\n      <output aria-live=\"polite\" aria-label={value ? value.length + \" digits entered.\" : \"No digits entered.\"} style={{ display: \"flex\", alignItems: \"center\", justifyContent: \"center\", minHeight: 64, border: \"2px solid #46586C\", borderRadius: 12, background: \"#05080C\", color: \"#FFD84D\", fontFamily: \"ui-monospace, Menlo, monospace\", fontSize: \"1.7rem\", letterSpacing: \".28em\" }}>\n        {value ? \"•\".repeat(value.length) : \"— — — —\"}\n      </output>\n      <div style={{ display: \"grid\", gridTemplateColumns: \"repeat(3, 1fr)\", gap: 8, marginTop: 12 }}>\n        {KEYS.map((key) => (\n          <button\n            key={key}\n            type=\"button\"\n            onClick={() => press(key)}\n            style={{ minHeight: 64, border: key === \"ok\" ? \"2px solid #FFD84D\" : \"2px solid #46586C\", borderRadius: 12, background: key === \"ok\" ? \"#FFD84D\" : \"#141C25\", color: key === \"ok\" ? \"#10130A\" : key === \"clear\" ? \"#BAC5D1\" : \"#F3F6F9\", fontSize: key === \"ok\" || key === \"clear\" ? \"1rem\" : \"1.3rem\", fontWeight: 750, cursor: \"pointer\" }}\n          >\n            {key === \"clear\" ? \"Clear\" : key === \"ok\" ? \"OK\" : key}\n          </button>\n        ))}\n      </div>\n      <p role=\"status\" aria-live=\"polite\" style={{ minHeight: \"1.4em\", color: \"#BAC5D1\", fontSize: \".88rem\", marginTop: 12 }}>{status}</p>\n    </div>\n  );\n}"
+      },
+      "id": "number-keypad"
+    },
+    "status-banner": {
+      "tier": "free",
+      "name": {
+        "en": "Success and error banners",
+        "ko": "오류 · 성공 안내 배너"
+      },
+      "tags": [
+        "feedback",
+        "errors",
+        "live-region",
+        "sound"
+      ],
+      "wcag": [
+        "1.4.1 Use of Color",
+        "4.1.3 Status Messages",
+        "3.3.1 Error Identification",
+        "1.4.6 Contrast (AAA)"
+      ],
+      "summary": {
+        "en": "Icon, heading and one plain sentence, with a different tone for success and error.",
+        "ko": "아이콘·제목·한 문장, 성공과 오류에 서로 다른 알림음."
+      },
+      "notes": {
+        "en": [
+          "Errors use role=alert so they interrupt; success and info use role=status so they wait their turn.",
+          "Each state has an icon shape (check, triangle, circle) in addition to colour.",
+          "The error copy says what happened and what to do next, not just 'Error'."
+        ]
+      },
+      "prompt": {
+        "en": "Build a status banner system for a senior-facing form, plain HTML/CSS/JS.\n\nRequirements:\n- Three variants: success (green border, check icon), error (red border, triangle icon), info (blue border, circle icon).\n- Each banner: icon, bold heading, one plain sentence, and a 44px close button with an accessible name.\n- Error uses role=\"alert\"; success and info use role=\"status\" with aria-live set explicitly.\n- Play a distinct Web Audio tone per state (two rising notes for success, two low notes for error, one neutral note for info) and offer no autoplay.\n- Text contrast at least 7:1 on the dark surface; borders at least 3:1; the icon is decorative (aria-hidden) because the heading carries the meaning.\n- Buttons that trigger each variant are 56px tall with visible labels.\n\nAcceptance: screen reader announces error immediately and success politely; banner can be dismissed by keyboard; no colour-only meaning.",
+        "ko": "시니어용 폼의 상태 배너 시스템을 HTML/CSS/JS로 만들어 주세요.\n\n요구사항:\n- 성공(초록 테두리·체크), 오류(빨강 테두리·삼각형), 안내(파랑 테두리·원) 3종.\n- 각 배너는 아이콘, 굵은 제목, 한 문장, 접근 가능한 이름을 가진 44px 닫기 버튼.\n- 오류는 role=\"alert\", 성공·안내는 role=\"status\"와 aria-live 명시.\n- 상태별로 다른 Web Audio 음(성공은 상승 2음, 오류는 낮은 2음, 안내는 중립 1음), 자동 재생 금지.\n- 어두운 배경에서 텍스트 대비 7:1 이상, 테두리 3:1 이상. 아이콘은 장식(aria-hidden)이고 의미는 제목이 담당.\n- 각 상태를 부르는 버튼은 56px 높이와 보이는 라벨.\n\n검수: 오류는 즉시, 성공은 정중하게 낭독됨, 키보드로 닫기 가능, 색만으로 의미 전달하지 않음."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Status banners</title>\n<style>\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;gap:14px;padding:24px;background:#06090F;\n       color:#F3F6F9;font:16px/1.5 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  .row{display:flex;gap:10px;flex-wrap:wrap}\n  button.trigger{min-height:56px;padding:0 18px;border-radius:14px;border:2px solid #46586C;background:#141C25;\n                 color:#F3F6F9;font:inherit;font-weight:700;cursor:pointer}\n  button.trigger:hover{border-color:#FFD84D}\n  :focus-visible{outline:4px solid #FFE066;outline-offset:3px}\n  .slot{width:min(480px,100%)}\n  .banner{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;\n          padding:13px 14px;border:2px solid;border-radius:12px;background:#141C25}\n  .banner h2{margin:0 0 2px;font-size:.98rem}\n  .banner p{margin:0;color:#BAC5D1;font-size:.88rem}\n  .icon{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:900}\n  .banner--success{border-color:#7CF2B0}\n  .banner--success .icon{background:#7CF2B0;color:#052015}\n  .banner--error{border-color:#FF9A9A}\n  .banner--error .icon{background:#FF9A9A;color:#22090A}\n  .banner--info{border-color:#8FC7FF}\n  .banner--info .icon{background:#8FC7FF;color:#04121F}\n  .close{min-width:44px;min-height:44px;border:2px solid transparent;border-radius:10px;background:none;\n         color:#BAC5D1;font:inherit;font-size:1.1rem;cursor:pointer}\n  .close:hover{color:#F3F6F9;border-color:#2B3644}\n</style>\n</head>\n<body>\n  <div class=\"row\">\n    <button class=\"trigger\" type=\"button\" data-kind=\"success\">Success</button>\n    <button class=\"trigger\" type=\"button\" data-kind=\"error\">Error</button>\n    <button class=\"trigger\" type=\"button\" data-kind=\"info\">Info</button>\n  </div>\n  <div class=\"slot\" id=\"slot\" aria-live=\"polite\"></div>\n<script>\n  const COPY = {\n    success: [\"Saved\", \"Your appointment is confirmed for Thursday 2:30 PM.\", \"\\u2713\"],\n    error: [\"Not saved\", \"The connection dropped. Your changes are still on this screen — try again.\", \"!\"],\n    info: [\"Heads up\", \"This kiosk closes at 6 PM today.\", \"i\"]\n  };\n  const slot = document.getElementById(\"slot\");\n  let ctx;\n  function tone(freq, delay) {\n    const AC = window.AudioContext || window.webkitAudioContext;\n    if (!AC) return;\n    ctx = ctx || new AC();\n    const now = ctx.currentTime + delay;\n    const osc = ctx.createOscillator(), amp = ctx.createGain();\n    osc.frequency.value = freq;\n    amp.gain.setValueAtTime(0.0001, now);\n    amp.gain.exponentialRampToValueAtTime(0.05, now + 0.01);\n    amp.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);\n    osc.connect(amp).connect(ctx.destination);\n    osc.start(now); osc.stop(now + 0.15);\n  }\n  function sound(kind) {\n    if (kind === \"success\") { tone(660, 0); tone(990, 0.08); }\n    else if (kind === \"error\") { tone(320, 0); tone(220, 0.1); }\n    else { tone(520, 0); }\n  }\n  function show(kind) {\n    const words = COPY[kind];\n    const el = document.createElement(\"div\");\n    el.className = \"banner banner--\" + kind;\n    el.setAttribute(\"role\", kind === \"error\" ? \"alert\" : \"status\");\n    el.innerHTML = '<span class=\"icon\" aria-hidden=\"true\"></span><div><h2></h2><p></p></div>' +\n      '<button class=\"close\" type=\"button\" aria-label=\"Close\">\\u2715</button>';\n    el.querySelector(\".icon\").textContent = words[2];\n    el.querySelector(\"h2\").textContent = words[0];\n    el.querySelector(\"p\").textContent = words[1];\n    el.querySelector(\".close\").addEventListener(\"click\", function () { el.remove(); });\n    slot.innerHTML = \"\";\n    slot.appendChild(el);\n    sound(kind);\n    el.querySelector(\".close\").focus({ preventScroll: true });\n  }\n  document.querySelectorAll(\"[data-kind]\").forEach(function (b) {\n    b.addEventListener(\"click\", function () { show(b.dataset.kind); });\n  });\n</script>\n</body>\n</html>",
+        "react": "import { useState } from \"react\";\n\nconst COPY = {\n  success: { title: \"Saved\", text: \"Your appointment is confirmed for Thursday 2:30 PM.\", icon: \"✓\" },\n  error: { title: \"Not saved\", text: \"The connection dropped. Your changes are still on this screen — try again.\", icon: \"!\" },\n  info: { title: \"Heads up\", text: \"This kiosk closes at 6 PM today.\", icon: \"i\" },\n};\n\nconst BORDERS = { success: \"#7CF2B0\", error: \"#FF9A9A\", info: \"#8FC7FF\" };\nconst INKS = { success: \"#052015\", error: \"#22090A\", info: \"#04121F\" };\n\nexport default function StatusBanners() {\n  const [kind, setKind] = useState(null);\n\n  const words = kind ? COPY[kind] : null;\n\n  return (\n    <div style={{ color: \"#F3F6F9\" }}>\n      <div style={{ display: \"flex\", gap: 10, flexWrap: \"wrap\" }}>\n        {Object.keys(COPY).map((key) => (\n          <button key={key} type=\"button\" onClick={() => setKind(key)} style={{ minHeight: 56, padding: \"0 18px\", borderRadius: 14, border: \"2px solid #46586C\", background: \"#141C25\", color: \"#F3F6F9\", fontWeight: 700, cursor: \"pointer\" }}>\n            {key === \"success\" ? \"Success\" : key === \"error\" ? \"Error\" : \"Info\"}\n          </button>\n        ))}\n      </div>\n      <div style={{ marginTop: 14 }}>\n        {words ? (\n          <div role={kind === \"error\" ? \"alert\" : \"status\"} aria-live={kind === \"error\" ? \"assertive\" : \"polite\"} style={{ display: \"grid\", gridTemplateColumns: \"auto 1fr auto\", gap: 12, alignItems: \"start\", padding: \"13px 14px\", border: \"2px solid \" + BORDERS[kind], borderRadius: 12, background: \"#141C25\" }}>\n            <span aria-hidden=\"true\" style={{ width: 30, height: 30, borderRadius: \"50%\", display: \"grid\", placeItems: \"center\", fontWeight: 900, background: BORDERS[kind], color: INKS[kind] }}>{words.icon}</span>\n            <div>\n              <h2 style={{ margin: \"0 0 2px\", fontSize: \".98rem\" }}>{words.title}</h2>\n              <p style={{ margin: 0, color: \"#BAC5D1\", fontSize: \".88rem\" }}>{words.text}</p>\n            </div>\n            <button type=\"button\" onClick={() => setKind(null)} aria-label=\"Close\" style={{ minWidth: 44, minHeight: 44, border: \"2px solid transparent\", borderRadius: 10, background: \"none\", color: \"#BAC5D1\", fontSize: \"1.1rem\", cursor: \"pointer\" }}>✕</button>\n          </div>\n        ) : null}\n      </div>\n    </div>\n  );\n}"
+      },
+      "id": "status-banner"
+    },
+    "step-progress": {
+      "tier": "free",
+      "name": {
+        "en": "Step progress",
+        "ko": "대형 단계 진행 표시"
+      },
+      "tags": [
+        "wizard",
+        "progress",
+        "forms"
+      ],
+      "wcag": [
+        "1.3.1 Info and Relationships",
+        "2.4.8 Location (AAA)",
+        "4.1.2 Name, Role, Value",
+        "1.4.11 Non-text Contrast"
+      ],
+      "summary": {
+        "en": "Four numbered stages, a filling track and aria-current, announced in words.",
+        "ko": "숫자와 이름이 있는 4단계, 채워지는 막대, aria-current, 문장으로 안내."
+      },
+      "notes": {
+        "en": [
+          "Progress is an ordered list with aria-current='step' on the active item; screen readers get the structure, not just the bar.",
+          "Completed steps swap their number for a check mark and keep the text label.",
+          "A polite live region says 'Step 2 of 4 · Symptoms' whenever the step changes."
+        ]
+      },
+      "prompt": {
+        "en": "Build a large step indicator with Back/Next controls for a four-step booking flow.\n\nRequirements:\n- Ordered list of four steps: Identity, Symptoms, Time, Confirm. Each step has a 42px numbered circle and a visible label.\n- Active step: yellow filled circle, dark text, 4px halo, and aria-current=\"step\". Completed steps: green circle with a check mark. Upcoming: outlined circle.\n- A 10px progress track above fills to (current+1)/4 of its width with a 200ms transition that is removed under prefers-reduced-motion.\n- Back and Next are 56px buttons; Back is disabled at the first step, Next at the last.\n- A polite live region announces \"Step 3 of 4 · Time\" after every change; announce in words, never rely on the visual bar alone.\n- Keep labels from wrapping to more than two lines at 320px.\n\nAcceptance: screen reader reports the current step, state survives rapid clicking, keyboard only, contrast 7:1 for text and 3:1 for the track.",
+        "ko": "4단계 예약 흐름의 대형 단계 표시와 이전/다음 컨트롤을 만들어 주세요.\n\n요구사항:\n- 순서 있는 목록 4단계: 본인 확인, 증상 선택, 시간 선택, 확정. 각 단계는 42px 번호 원과 보이는 라벨.\n- 현재 단계는 노란 채움+어두운 글자+4px 후광+aria-current=\"step\", 완료 단계는 초록 원에 체크, 예정 단계는 테두리만.\n- 위쪽 10px 진행 막대가 (현재+1)/4까지 채워지고 200ms 전환, prefers-reduced-motion에서는 전환 제거.\n- 이전/다음은 56px 버튼, 첫 단계에서 이전 비활성, 마지막에서 다음 비활성.\n- 변경마다 라이브 리전이 \"4단계 중 3단계 · 시간 선택\"처럼 말로 안내. 시각 막대에만 의존 금지.\n- 320px 폭에서 라벨이 3줄 이상으로 늘어나지 않게.\n\n검수: 낭독기가 현재 단계를 알려줌, 빠른 연속 클릭에도 상태 유지, 키보드 전용 조작, 텍스트 7:1·막대 3:1."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Step progress</title>\n<style>\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;padding:24px;background:#06090F;\n       color:#F3F6F9;font:16px/1.4 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  .wrap{width:min(520px,100%);display:grid;gap:14px}\n  .track{height:10px;border:1px solid #2B3644;border-radius:999px;background:#141C25;overflow:hidden}\n  .fill{display:block;height:100%;width:25%;background:#FFD84D;transition:width .2s}\n  ol{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0;padding:0;list-style:none}\n  li{display:grid;justify-items:center;gap:6px;text-align:center;font-size:.78rem;color:#BAC5D1}\n  .dot{width:42px;height:42px;border:2px solid #46586C;border-radius:50%;display:grid;place-items:center;\n       background:#141C25;color:#F3F6F9;font-weight:800}\n  li[aria-current=\"step\"]{color:#F3F6F9;font-weight:750}\n  li[aria-current=\"step\"] .dot{background:#FFD84D;border-color:#FFD84D;color:#10130A;box-shadow:0 0 0 4px rgba(255,216,77,.18)}\n  li.done .dot{background:#7CF2B0;border-color:#7CF2B0;color:#052015}\n  .row{display:flex;gap:10px}\n  button{min-height:56px;padding:0 22px;border-radius:14px;border:2px solid #46586C;background:#141C25;\n         color:#F3F6F9;font:inherit;font-weight:700;cursor:pointer}\n  button:hover{border-color:#FFD84D}\n  button:focus-visible{outline:4px solid #FFE066;outline-offset:3px}\n  .next{background:#FFD84D;border-color:#FFD84D;color:#10130A}\n  button[disabled]{opacity:.45;cursor:not-allowed}\n  .status{margin:0;min-height:1.4em;color:#BAC5D1;font-size:.88rem}\n  @media (prefers-reduced-motion:reduce){ .fill{transition:none} }\n</style>\n</head>\n<body>\n  <div class=\"wrap\">\n    <div class=\"track\" aria-hidden=\"true\"><span class=\"fill\" id=\"fill\"></span></div>\n    <ol id=\"steps\">\n      <li aria-current=\"step\"><span class=\"dot\">1</span><span>Identity</span></li>\n      <li><span class=\"dot\">2</span><span>Symptoms</span></li>\n      <li><span class=\"dot\">3</span><span>Time</span></li>\n      <li><span class=\"dot\">4</span><span>Confirm</span></li>\n    </ol>\n    <div class=\"row\">\n      <button type=\"button\" id=\"prev\">Back</button>\n      <button type=\"button\" class=\"next\" id=\"next\">Next</button>\n    </div>\n    <p class=\"status\" role=\"status\" aria-live=\"polite\" id=\"status\">Step 1 of 4 · Identity</p>\n  </div>\n<script>\n  const items = Array.from(document.querySelectorAll(\"#steps li\"));\n  const fill = document.getElementById(\"fill\");\n  const status = document.getElementById(\"status\");\n  let current = 0;\n\n  function render() {\n    items.forEach(function (item, i) {\n      const dot = item.querySelector(\".dot\");\n      item.classList.toggle(\"done\", i < current);\n      if (i === current) item.setAttribute(\"aria-current\", \"step\");\n      else item.removeAttribute(\"aria-current\");\n      dot.textContent = i < current ? \"\\u2713\" : String(i + 1);\n    });\n    fill.style.width = ((current + 1) / items.length * 100) + \"%\";\n    const name = items[current].lastElementChild.textContent.trim();\n    status.textContent = \"Step \" + (current + 1) + \" of \" + items.length + \" · \" + name;\n    document.getElementById(\"prev\").disabled = current === 0;\n    document.getElementById(\"next\").disabled = current === items.length - 1;\n  }\n\n  document.getElementById(\"next\").addEventListener(\"click\", function () {\n    current = Math.min(items.length - 1, current + 1);\n    render();\n  });\n  document.getElementById(\"prev\").addEventListener(\"click\", function () {\n    current = Math.max(0, current - 1);\n    render();\n  });\n  render();\n</script>\n</body>\n</html>",
+        "react": "import { useState } from \"react\";\n\nconst STEPS = [\"Identity\", \"Symptoms\", \"Time\", \"Confirm\"];\n\nexport default function StepProgress() {\n  const [current, setCurrent] = useState(0);\n\n  return (\n    <div style={{ width: \"min(520px, 100%)\", color: \"#F3F6F9\" }}>\n      <div aria-hidden=\"true\" style={{ height: 10, border: \"1px solid #2B3644\", borderRadius: 999, background: \"#141C25\", overflow: \"hidden\" }}>\n        <span style={{ display: \"block\", height: \"100%\", width: ((current + 1) / STEPS.length) * 100 + \"%\", background: \"#FFD84D\", transition: \"width .2s\" }} />\n      </div>\n      <ol style={{ display: \"grid\", gridTemplateColumns: \"repeat(4, 1fr)\", gap: 6, margin: \"14px 0 0\", padding: 0, listStyle: \"none\" }}>\n        {STEPS.map((name, index) => {\n          const done = index < current;\n          const active = index === current;\n          return (\n            <li key={name} aria-current={active ? \"step\" : undefined} style={{ display: \"grid\", justifyItems: \"center\", gap: 6, textAlign: \"center\", fontSize: \".78rem\", color: active ? \"#F3F6F9\" : \"#BAC5D1\", fontWeight: active ? 750 : 400 }}>\n              <span style={{ width: 42, height: 42, borderRadius: \"50%\", display: \"grid\", placeItems: \"center\", fontWeight: 800, border: \"2px solid \" + (done || active ? \"transparent\" : \"#46586C\"), background: done ? \"#7CF2B0\" : active ? \"#FFD84D\" : \"#141C25\", color: done ? \"#052015\" : active ? \"#10130A\" : \"#F3F6F9\" }}>\n                {done ? \"✓\" : index + 1}\n              </span>\n              <span>{name}</span>\n            </li>\n          );\n        })}\n      </ol>\n      <div style={{ display: \"flex\", gap: 10, marginTop: 14 }}>\n        <button type=\"button\" disabled={current === 0} onClick={() => setCurrent((c) => Math.max(0, c - 1))} style={{ minHeight: 56, padding: \"0 22px\", borderRadius: 14, border: \"2px solid #46586C\", background: \"#141C25\", color: \"#F3F6F9\", fontWeight: 700, cursor: current === 0 ? \"not-allowed\" : \"pointer\", opacity: current === 0 ? 0.45 : 1 }}>\n          Back\n        </button>\n        <button type=\"button\" disabled={current === STEPS.length - 1} onClick={() => setCurrent((c) => Math.min(STEPS.length - 1, c + 1))} style={{ minHeight: 56, padding: \"0 22px\", borderRadius: 14, border: \"2px solid #FFD84D\", background: \"#FFD84D\", color: \"#10130A\", fontWeight: 700, cursor: current === STEPS.length - 1 ? \"not-allowed\" : \"pointer\", opacity: current === STEPS.length - 1 ? 0.45 : 1 }}>\n          Next\n        </button>\n      </div>\n      <p role=\"status\" aria-live=\"polite\" style={{ minHeight: \"1.4em\", marginTop: 12, color: \"#BAC5D1\", fontSize: \".88rem\" }}>\n        Step {current + 1} of {STEPS.length} · {STEPS[current]}\n      </p>\n    </div>\n  );\n}"
+      },
+      "id": "step-progress"
+    },
+    "senior-form": {
+      "tier": "free",
+      "name": {
+        "en": "Senior-friendly form",
+        "ko": "시니어 친화 입력 폼"
+      },
+      "tags": [
+        "form",
+        "validation",
+        "errors",
+        "labels"
+      ],
+      "wcag": [
+        "3.3.1 Error Identification",
+        "3.3.3 Error Suggestion (AAA)",
+        "3.3.2 Labels or Instructions",
+        "1.3.1 Info and Relationships"
+      ],
+      "summary": {
+        "en": "Labels fixed above 56px fields, an error summary that links to each field, messages written as sentences.",
+        "ko": "라벨은 입력칸 위, 56px 입력칸, 각 칸으로 이동하는 오류 요약, 문장으로 쓴 오류."
+      },
+      "notes": {
+        "en": [
+          "Placeholders are never the label: they vanish on typing and fail 3.3.2.",
+          "The error summary is focusable (tabindex=-1) and its links move focus to the field, which is the 3.3.1 pattern screen-reader users expect.",
+          "Errors are described by aria-describedby and marked aria-invalid; they do not clear until the user edits the field."
+        ]
+      },
+      "prompt": {
+        "en": "Build a senior-friendly three-field form (name, phone, preferred date) with accessible validation.\n\nRequirements:\n- Visible labels above every field, never placeholders as labels. Inputs are 56px tall, 17px text, 2px border, dark surface.\n- Validate on submit, not on every keystroke. On failure: an error summary box with tabindex=\"-1\" focused, listing each problem as a link that moves focus to that input.\n- Each field gets aria-invalid=\"true\" and aria-describedby pointing at a large error message written as an instruction (\"Enter at least 9 digits, numbers only.\"), with an icon glyph in the text, not colour alone.\n- Phone accepts digits only; strip spaces and hyphens before counting; require at least 9 digits. Date is required.\n- On success, show a polite status message and do not navigate anywhere.\n- Focus ring 4px, 7:1 text contrast, error text at least 7:1 against the surface, 320px safe.\n\nAcceptance: keyboard-only completion, screen reader reads label + hint + error, minimum 56px targets, no layout jump when errors appear.",
+        "ko": "시니어 친화 3필드 폼(이름·전화번호·방문 희망일)과 접근 가능한 검증을 만들어 주세요.\n\n요구사항:\n- 모든 입력칸 위에 보이는 라벨, 플레이스홀더를 라벨로 쓰지 않음. 입력칸 56px, 17px 글자, 2px 테두리, 어두운 배경.\n- 검증은 제출 시에만. 실패하면 tabindex=\"-1\" 오류 요약 상자를 포커스하고, 각 문제를 해당 입력칸으로 이동하는 링크로 나열.\n- 각 입력칸에 aria-invalid=\"true\"와 aria-describedby로 큰 오류 문장을 연결(\"숫자 9자리 이상 입력해 주세요.\"), 색이 아니라 아이콘 문자 포함.\n- 전화번호는 숫자만 허용, 공백·하이픈 제거 후 9자리 이상. 날짜는 필수.\n- 성공 시 정중한 상태 메시지만 표시하고 페이지 이동 없음.\n- 4px 포커스 링, 텍스트 대비 7:1, 오류 문구도 배경 대비 7:1, 320px 안전.\n\n검수: 키보드만으로 완주 가능, 낭독기가 라벨+힌트+오류를 읽음, 모든 타깃 56px 이상, 오류 표시 시 레이아웃 이동 없음."
+      },
+      "code": {
+        "html": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Senior-friendly form</title>\n<style>\n  *{box-sizing:border-box}\n  body{margin:0;min-height:100vh;display:grid;place-content:center;padding:24px;background:#06090F;\n       color:#F3F6F9;font:16px/1.5 system-ui,-apple-system,\"Segoe UI\",sans-serif}\n  form{width:min(520px,100%);display:grid;gap:15px}\n  .field{display:grid;gap:6px}\n  label{font-weight:750;font-size:.98rem}\n  input{width:100%;min-height:56px;padding:.5em .7em;font:inherit;font-size:1.02rem;color:#F3F6F9;\n        background:#05080C;border:2px solid #46586C;border-radius:10px}\n  input:focus-visible{outline:4px solid #FFE066;outline-offset:2px;border-color:#FFD84D}\n  input[aria-invalid=\"true\"]{border-color:#FF9A9A;border-width:3px}\n  .hint{color:#BAC5D1;font-size:.85rem;margin:0}\n  .err{color:#FF9A9A;font-size:.94rem;font-weight:700;margin:0}\n  .summary{border:2px solid #FF9A9A;background:#2A1013;border-radius:12px;padding:13px 16px;font-size:.93rem}\n  .summary h2{font-size:.95rem;margin:0 0 6px;color:#FF9A9A}\n  .summary ul{margin:0;padding-left:1.2em;display:grid;gap:4px}\n  .summary a{color:#F3F6F9;font-weight:650}\n  button{min-height:56px;border-radius:14px;border:2px solid #FFD84D;background:#FFD84D;color:#10130A;\n         font:inherit;font-weight:700;cursor:pointer}\n  button:focus-visible{outline:4px solid #FFE066;outline-offset:3px}\n  .status{margin:0;min-height:1.4em;font-size:.9rem;color:#7CF2B0}\n</style>\n</head>\n<body>\n  <form id=\"form\" novalidate>\n    <div class=\"summary\" id=\"summary\" role=\"alert\" tabindex=\"-1\" hidden></div>\n\n    <div class=\"field\">\n      <label for=\"name\">Full name</label>\n      <input id=\"name\" name=\"name\" type=\"text\" autocomplete=\"name\" aria-describedby=\"name-err\" required>\n      <p class=\"err\" id=\"name-err\" hidden></p>\n    </div>\n\n    <div class=\"field\">\n      <label for=\"phone\">Phone number</label>\n      <input id=\"phone\" name=\"phone\" type=\"tel\" inputmode=\"tel\" autocomplete=\"tel\" aria-describedby=\"phone-hint phone-err\" required>\n      <p class=\"hint\" id=\"phone-hint\">Digits only, for example 01012345678</p>\n      <p class=\"err\" id=\"phone-err\" hidden></p>\n    </div>\n\n    <div class=\"field\">\n      <label for=\"date\">Preferred date</label>\n      <input id=\"date\" name=\"date\" type=\"date\" aria-describedby=\"date-err\" required>\n      <p class=\"err\" id=\"date-err\" hidden></p>\n    </div>\n\n    <button type=\"submit\">Request a callback</button>\n    <p class=\"status\" role=\"status\" aria-live=\"polite\" id=\"status\"></p>\n  </form>\n<script>\n  const form = document.getElementById(\"form\");\n  const summary = document.getElementById(\"summary\");\n  const status = document.getElementById(\"status\");\n  const fields = [document.getElementById(\"name\"), document.getElementById(\"phone\"), document.getElementById(\"date\")];\n\n  function setError(input, message) {\n    const err = document.getElementById(input.id + \"-err\");\n    if (message) {\n      input.setAttribute(\"aria-invalid\", \"true\");\n      err.hidden = false;\n      err.textContent = \"\\u26A0 \" + message;\n    } else {\n      input.removeAttribute(\"aria-invalid\");\n      err.hidden = true;\n      err.textContent = \"\";\n    }\n  }\n\n  function validate() {\n    const problems = [];\n    if (!fields[0].value.trim()) { setError(fields[0], \"Enter your name.\"); problems.push([fields[0], \"Enter your name.\"]); }\n    else setError(fields[0], \"\");\n\n    const digits = fields[1].value.replace(/[^0-9]/g, \"\");\n    if (!fields[1].value.trim()) { setError(fields[1], \"Enter a phone number.\"); problems.push([fields[1], \"Enter a phone number.\"]); }\n    else if (digits.length < 9) { setError(fields[1], \"Enter at least 9 digits, numbers only.\"); problems.push([fields[1], \"Enter at least 9 digits, numbers only.\"]); }\n    else setError(fields[1], \"\");\n\n    if (!fields[2].value) { setError(fields[2], \"Choose a date.\"); problems.push([fields[2], \"Choose a date.\"]); }\n    else setError(fields[2], \"\");\n\n    return problems;\n  }\n\n  form.addEventListener(\"submit\", function (event) {\n    event.preventDefault();\n    status.textContent = \"\";\n    const problems = validate();\n    if (problems.length) {\n      summary.hidden = false;\n      summary.innerHTML = \"<h2></h2><ul></ul>\";\n      summary.querySelector(\"h2\").textContent = \"Please check \" + problems.length + \" field\" + (problems.length === 1 ? \"\" : \"s\") + \" below.\";\n      problems.forEach(function (pair) {\n        const li = document.createElement(\"li\");\n        const a = document.createElement(\"a\");\n        a.href = \"#\" + pair[0].id;\n        a.textContent = pair[1];\n        a.addEventListener(\"click\", function (e) { e.preventDefault(); pair[0].focus(); });\n        li.appendChild(a);\n        summary.querySelector(\"ul\").appendChild(li);\n      });\n      summary.focus();\n      return;\n    }\n    summary.hidden = true;\n    status.textContent = \"Request recorded. This demo does not send anything.\";\n  });\n\n  fields.forEach(function (input) {\n    input.addEventListener(\"input\", function () {\n      if (input.getAttribute(\"aria-invalid\") === \"true\") setError(input, \"\");\n    });\n  });\n</script>\n</body>\n</html>",
+        "react": "import { useRef, useState } from \"react\";\n\nconst EMPTY = { name: \"\", phone: \"\", date: \"\" };\n\nexport default function SeniorForm() {\n  const [values, setValues] = useState(EMPTY);\n  const [errors, setErrors] = useState({});\n  const [status, setStatus] = useState(\"\");\n  const summaryRef = useRef(null);\n  const refs = { name: useRef(null), phone: useRef(null), date: useRef(null) };\n\n  function validate(next) {\n    const out = {};\n    if (!next.name.trim()) out.name = \"Enter your name.\";\n    const digits = next.phone.replace(/[^0-9]/g, \"\");\n    if (!next.phone.trim()) out.phone = \"Enter a phone number.\";\n    else if (digits.length < 9) out.phone = \"Enter at least 9 digits, numbers only.\";\n    if (!next.date) out.date = \"Choose a date.\";\n    return out;\n  }\n\n  function submit(event) {\n    event.preventDefault();\n    const found = validate(values);\n    setErrors(found);\n    setStatus(\"\");\n    if (Object.keys(found).length) {\n      setTimeout(() => summaryRef.current?.focus(), 0);\n      return;\n    }\n    setStatus(\"Request recorded. This demo does not send anything.\");\n  }\n\n  const labels = { name: \"Full name\", phone: \"Phone number\", date: \"Preferred date\" };\n  const keys = Object.keys(labels);\n\n  return (\n    <form onSubmit={submit} noValidate style={{ width: \"min(520px, 100%)\", color: \"#F3F6F9\" }}>\n      {Object.keys(errors).length ? (\n        <div ref={summaryRef} tabIndex={-1} role=\"alert\" style={{ border: \"2px solid #FF9A9A\", background: \"#2A1013\", borderRadius: 12, padding: \"13px 16px\", marginBottom: 15, fontSize: \".93rem\" }}>\n          <h2 style={{ margin: \"0 0 6px\", fontSize: \".95rem\", color: \"#FF9A9A\" }}>\n            Please check {Object.keys(errors).length} field{Object.keys(errors).length === 1 ? \"\" : \"s\"} below.\n          </h2>\n          <ul style={{ margin: 0, paddingLeft: \"1.2em\", display: \"grid\", gap: 4 }}>\n            {keys.filter((k) => errors[k]).map((k) => (\n              <li key={k}>\n                <a href={\"#\" + k} onClick={(event) => { event.preventDefault(); refs[k].current?.focus(); }} style={{ color: \"#F3F6F9\", fontWeight: 650 }}>\n                  {errors[k]}\n                </a>\n              </li>\n            ))}\n          </ul>\n        </div>\n      ) : null}\n\n      {keys.map((key) => (\n        <div key={key} style={{ display: \"grid\", gap: 6, marginBottom: 15 }}>\n          <label htmlFor={key} style={{ fontWeight: 750, fontSize: \".98rem\" }}>{labels[key]}</label>\n          <input\n            id={key}\n            ref={refs[key]}\n            type={key === \"phone\" ? \"tel\" : key === \"date\" ? \"date\" : \"text\"}\n            inputMode={key === \"phone\" ? \"tel\" : undefined}\n            autoComplete={key === \"name\" ? \"name\" : key === \"phone\" ? \"tel\" : undefined}\n            value={values[key]}\n            aria-invalid={Boolean(errors[key])}\n            aria-describedby={errors[key] ? key + \"-err\" : undefined}\n            onChange={(event) => {\n              const next = Object.assign({}, values, { [key]: event.target.value });\n              setValues(next);\n              if (errors[key]) setErrors(validate(next));\n            }}\n            style={{ width: \"100%\", minHeight: 56, padding: \".5em .7em\", fontSize: \"1.02rem\", color: \"#F3F6F9\", background: \"#05080C\", border: errors[key] ? \"3px solid #FF9A9A\" : \"2px solid #46586C\", borderRadius: 10, fontFamily: \"inherit\" }}\n          />\n          {key === \"phone\" && !errors[key] ? (\n            <p style={{ margin: 0, color: \"#BAC5D1\", fontSize: \".85rem\" }}>Digits only, for example 01012345678</p>\n          ) : null}\n          {errors[key] ? (\n            <p id={key + \"-err\"} style={{ margin: 0, color: \"#FF9A9A\", fontWeight: 700, fontSize: \".94rem\" }}>⚠ {errors[key]}</p>\n          ) : null}\n        </div>\n      ))}\n\n      <button type=\"submit\" style={{ minHeight: 56, width: \"100%\", borderRadius: 14, border: \"2px solid #FFD84D\", background: \"#FFD84D\", color: \"#10130A\", fontWeight: 700, cursor: \"pointer\" }}>\n        Request a callback\n      </button>\n      <p role=\"status\" aria-live=\"polite\" style={{ minHeight: \"1.4em\", marginTop: 12, color: \"#7CF2B0\", fontSize: \".9rem\" }}>{status}</p>\n    </form>\n  );\n}"
+      },
+      "id": "senior-form"
+    },
+    "voice-search": {
+      "id": "voice-search",
+      "name": {
+        "en": "Voice search bar",
+        "ko": "음성 인식 검색바"
+      },
+      "tags": [
+        "speech",
+        "search",
+        "fallback"
+      ],
+      "wcag": [
+        "2.5.5 Target Size (AAA)",
+        "1.2.1 Audio-only",
+        "4.1.3 Status Messages"
+      ],
+      "summary": {
+        "en": "Hold to talk, watch the transcript build in large type, and fall back to typing after three failed tries.",
+        "ko": "누르고 말하면 큰 글씨로 문장이 쌓이고, 세 번 실패하면 타이핑으로 넘어갑니다."
+      },
+      "spec": {
+        "en": [
+          "Web Speech recognition with drug-name and number normalisation (\"blood pressure pill\" → 혈압약)",
+          "Typed fallback after three failed recognitions, with the transcript kept for editing",
+          "Waveform state indicator that is decorative; the live region carries the words"
+        ],
+        "ko": [
+          "약 이름·숫자 정규화를 붙인 Web Speech 인식",
+          "3회 실패 시 타이핑 대체 경로, 인식 문장은 편집 가능하게 유지",
+          "파형은 장식, 실제 문구는 라이브 리전이 전달"
+        ]
+      },
+      "tier": "pro",
+      "locked": true,
+      "notes": {
+        "en": [
+          "Pro component: the full source, React version and MCP payload are released to Pro seats only."
+        ]
+      }
+    },
+    "family-checkin": {
+      "id": "family-checkin",
+      "name": {
+        "en": "Family check-in card",
+        "ko": "가족 안부 확인 카드"
+      },
+      "tags": [
+        "care",
+        "family",
+        "notifications"
+      ],
+      "wcag": [
+        "2.5.5 Target Size (AAA)",
+        "3.3.4 Error Prevention (AAA)",
+        "4.1.3 Status Messages"
+      ],
+      "summary": {
+        "en": "One press sends “I’m okay”; the family side keeps the last-seen time and a plain-language history.",
+        "ko": "한 번 눌러 '저는 괜찮아요'를 보내고, 가족 쪽에는 마지막 확인 시각과 기록이 남습니다."
+      },
+      "spec": {
+        "en": [
+          "One-tap reply with three large options and a retry path when the send fails",
+          "Last-seen time and a three-day streak shown as text, not a chart",
+          "Web Push and SMS handoff documented with no vendor lock-in"
+        ],
+        "ko": [
+          "1탭 응답 3개 큰 선택지와 전송 실패 시 재시도 경로",
+          "마지막 확인 시각과 3일 연속 기록을 차트가 아닌 문장으로 표시",
+          "Web Push·문자 핸드오프 설계 포함, 특정 업체 종속 없음"
+        ]
+      },
+      "tier": "pro",
+      "locked": true,
+      "notes": {
+        "en": [
+          "Pro component: the full source, React version and MCP payload are released to Pro seats only."
+        ]
+      }
+    },
+    "hospital-timeslot": {
+      "id": "hospital-timeslot",
+      "name": {
+        "en": "Hospital timeslots",
+        "ko": "병원 예약 타임슬롯"
+      },
+      "tags": [
+        "booking",
+        "health",
+        "kiosk"
+      ],
+      "wcag": [
+        "2.5.5 Target Size (AAA)",
+        "2.5.2 Pointer Cancellation",
+        "1.4.1 Use of Color"
+      ],
+      "summary": {
+        "en": "60px slots grouped by morning and afternoon, with doctor and room, confirmed by a 1.2 s hold.",
+        "ko": "오전·오후로 나뉜 60px 슬롯, 의사·진료실 표시, 1.2초 길게 눌러 확정."
+      },
+      "spec": {
+        "en": [
+          "Slots at least 60px, selection shown by check icon, weight and border — not colour alone",
+          "1.2 s press-and-hold confirmation with a visible progress ring to prevent mis-bookings",
+          "Empty-state and full-day messaging written as sentences"
+        ],
+        "ko": [
+          "슬롯 60px 이상, 선택은 체크 아이콘·굵기·테두리로 표시(색만 사용 금지)",
+          "1.2초 길게 눌러 확정, 진행 링 표시로 오예약 방지",
+          "예약 불가·만료 상태를 문장으로 안내"
+        ]
+      },
+      "tier": "pro",
+      "locked": true,
+      "notes": {
+        "en": [
+          "Pro component: the full source, React version and MCP payload are released to Pro seats only."
+        ]
+      }
+    },
+    "large-receipt": {
+      "id": "large-receipt",
+      "name": {
+        "en": "Large-print receipt",
+        "ko": "큰 글씨 영수증 인쇄 뷰"
+      },
+      "tags": [
+        "print",
+        "receipt",
+        "typography"
+      ],
+      "wcag": [
+        "1.4.8 Visual Presentation (AAA)",
+        "1.4.6 Contrast (AAA)",
+        "1.3.1 Info and Relationships"
+      ],
+      "summary": {
+        "en": "18pt or larger on both 80 mm receipt paper and A4, with items, tax and total aligned.",
+        "ko": "80mm 영수증과 A4 모두에서 18pt 이상, 품목·부가세·총액 정렬."
+      },
+      "spec": {
+        "en": [
+          "@media print layouts for 80 mm and A4 with an 18pt floor and 1.4 line height",
+          "Right-aligned amounts with grouped digits and an emphasised total",
+          "No icons carry meaning; every line is text"
+        ],
+        "ko": [
+          "@media print로 80mm·A4 자동 맞춤, 최소 18pt, 줄 간격 1.4",
+          "금액 우측 정렬·자릿수 구분, 총액 강조",
+          "아이콘 없이 모든 정보를 텍스트로"
+        ]
+      },
+      "tier": "pro",
+      "locked": true,
+      "notes": {
+        "en": [
+          "Pro component: the full source, React version and MCP payload are released to Pro seats only."
+        ]
+      }
+    },
+    "tts-phrase-pack": {
+      "id": "tts-phrase-pack",
+      "name": {
+        "en": "Multilingual TTS pack",
+        "ko": "다국어 음성 안내 팩"
+      },
+      "tags": [
+        "speech",
+        "i18n",
+        "kiosk"
+      ],
+      "wcag": [
+        "3.1.2 Language of Parts",
+        "1.2.1 Audio-only",
+        "4.1.2 Name, Role, Value"
+      ],
+      "summary": {
+        "en": "Forty fixed phrases in Korean, English, Japanese and Chinese, read by the device voice with a large-text fallback.",
+        "ko": "한국어·영어·일본어·중국어 40개 고정 문구를 기기 음성으로 읽고, 음성이 없으면 큰 글씨로 대체합니다."
+      },
+      "spec": {
+        "en": [
+          "40 phrases across four languages with per-language rate and pitch presets",
+          "Voice availability probe; when no voice matches, the phrase shows in large text",
+          "lang attributes set per phrase so screen readers switch voice correctly"
+        ],
+        "ko": [
+          "4개 언어 40문구, 언어별 속도·음높이 프리셋",
+          "음성 가용성 확인 후 없으면 큰 글씨로 표시",
+          "문구마다 lang 속성을 지정해 낭독기 음성이 바뀌도록"
+        ]
+      },
+      "tier": "pro",
+      "locked": true,
+      "notes": {
+        "en": [
+          "Pro component: the full source, React version and MCP payload are released to Pro seats only."
+        ]
+      }
+    },
+    "memory-gallery": {
+      "id": "memory-gallery",
+      "name": {
+        "en": "Reminiscence gallery",
+        "ko": "회상 갤러리"
+      },
+      "tags": [
+        "care",
+        "gallery",
+        "keyboard"
+      ],
+      "wcag": [
+        "2.4.3 Focus Order",
+        "1.1.1 Non-text Content",
+        "2.5.5 Target Size (AAA)"
+      ],
+      "summary": {
+        "en": "Large photo tiles, 20pt captions, a keyboard-only lightbox and optional audio notes.",
+        "ko": "큰 사진 타일, 20pt 설명, 키보드 전용 라이트박스, 선택형 음성 메모."
+      },
+      "spec": {
+        "en": [
+          "3×2 tiles with a 160px minimum touch area and captions that never truncate",
+          "Lightbox: focus trap, arrow navigation, Escape to close, focus returned to the tile",
+          "Alt text comes from a caption field, so no image ships without a description"
+        ],
+        "ko": [
+          "3×2 타일, 최소 160px 터치 영역, 잘리지 않는 설명",
+          "라이트박스: 포커스 트랩, 화살표 이동, ESC 닫기, 타일로 포커스 복귀",
+          "설명 필드에서 대체 텍스트를 생성해 설명 없는 이미지가 없도록"
+        ]
+      },
+      "tier": "pro",
+      "locked": true,
+      "notes": {
+        "en": [
+          "Pro component: the full source, React version and MCP payload are released to Pro seats only."
+        ]
+      }
+    },
+    "vitals-trend": {
+      "id": "vitals-trend",
+      "name": {
+        "en": "Vitals trend",
+        "ko": "큰 글씨 활력징후 추이"
+      },
+      "tags": [
+        "care",
+        "health",
+        "data"
+      ],
+      "wcag": [
+        "1.4.1 Use of Color",
+        "1.1.1 Non-text Content",
+        "1.4.8 Visual Presentation (AAA)"
+      ],
+      "summary": {
+        "en": "40pt numbers with a status word beside each, a 7-day sparkline and the same data as a table.",
+        "ko": "40pt 숫자와 상태 단어, 7일 스파크라인, 같은 데이터를 표로도 제공합니다."
+      },
+      "spec": {
+        "en": [
+          "Numbers at 40pt with a plain status word (Normal / High) so colour is never the only signal",
+          "7- and 30-day sparklines with a table alternative and aria-describedby summary",
+          "Honest empty states when no reading exists for the day"
+        ],
+        "ko": [
+          "숫자 40pt와 '보통/높음' 상태 단어를 병기해 색에만 의존하지 않음",
+          "7·30일 스파크라인, 표 대안과 aria-describedby 요약",
+          "측정값이 없는 날은 빈 상태 문구로 정확히 표시"
+        ]
+      },
+      "tier": "pro",
+      "locked": true,
+      "notes": {
+        "en": [
+          "Pro component: the full source, React version and MCP payload are released to Pro seats only."
+        ]
+      }
+    },
+    "hold-to-pay": {
+      "id": "hold-to-pay",
+      "name": {
+        "en": "Hold to pay",
+        "ko": "길게 눌러 결제"
+      },
+      "tags": [
+        "kiosk",
+        "payment",
+        "safety"
+      ],
+      "wcag": [
+        "2.5.2 Pointer Cancellation",
+        "3.3.4 Error Prevention (AAA)",
+        "2.5.5 Target Size (AAA)"
+      ],
+      "summary": {
+        "en": "The amount is spoken aloud and payment starts only after a three-second hold; lifting the finger cancels.",
+        "ko": "금액을 소리로 읽고 3초간 눌러야 결제가 시작되며, 손을 떼면 취소됩니다."
+      },
+      "spec": {
+        "en": [
+          "Pointer and keyboard hold (Space/Enter) with a visible 3-second ring; release or Escape cancels",
+          "Amount spoken with the device voice before payment starts",
+          "Input locked while paying, with a plain-language failure message and a retry that keeps the amount"
+        ],
+        "ko": [
+          "포인터·키보드(Space/Enter) 길게 누르기, 3초 진행 링, 떼거나 ESC면 취소",
+          "결제 시작 전 금액을 기기 음성으로 안내",
+          "결제 중 입력 잠금, 실패 시 쉬운 문장과 금액을 유지한 재시도"
+        ]
+      },
+      "tier": "pro",
+      "locked": true,
+      "notes": {
+        "en": [
+          "Pro component: the full source, React version and MCP payload are released to Pro seats only."
+        ]
+      }
+    }
+  }
+}

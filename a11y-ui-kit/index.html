@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-textsize="100" data-sound="on">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A11yKit — Senior-first accessible UI components for AI builders (WCAG AAA, MCP)</title>
+<meta name="description" content="18 senior-first UI components: 48px+ targets, 18.4:1 text contrast, synthesized tap sounds with zero audio files, plus a local MCP server so Claude Code and Cursor generate accessible UI correctly. 10 components are free under MIT.">
+<meta name="theme-color" content="#06090F">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://doggonug-cpu.github.io/a11y-ui-kit/">
+<link rel="sitemap" type="application/xml" href="https://doggonug-cpu.github.io/a11y-ui-kit/sitemap.xml">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="A11yKit">
+<meta property="og:url" content="https://doggonug-cpu.github.io/a11y-ui-kit/">
+<meta property="og:title" content="A11yKit — Senior-first accessible UI components for AI builders">
+<meta property="og:description" content="18 components built for 70-year-old hands and 18:1 contrast, with an MCP server that makes Claude Code and Cursor ship them right. 10 free under MIT.">
+<meta property="og:image" content="https://doggonug-cpu.github.io/a11y-ui-kit/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A11yKit — Senior-first accessible UI components for AI builders">
+<meta name="twitter:description" content="48px+ targets, 18.4:1 text contrast, 0 KB sounds, and a local MCP server. 10 components free under MIT.">
+<meta name="twitter:image" content="https://doggonug-cpu.github.io/a11y-ui-kit/assets/og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://doggonug-cpu.github.io/a11y-ui-kit/#webpage",
+      "url": "https://doggonug-cpu.github.io/a11y-ui-kit/",
+      "name": "A11yKit — Senior-first accessible UI components for AI builders",
+      "description": "18 senior-first UI components with live demos, copy-ready HTML/CSS/JS and React code, AI implementation prompts, and a local MCP server for Claude Code and Cursor.",
+      "inLanguage": "en",
+      "isPartOf": { "@id": "https://doggonug-cpu.github.io/a11y-ui-kit/#website" },
+      "dateModified": "2026-11-18"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://doggonug-cpu.github.io/a11y-ui-kit/#website",
+      "url": "https://doggonug-cpu.github.io/a11y-ui-kit/",
+      "name": "A11yKit",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://doggonug-cpu.github.io/a11y-ui-kit/#app",
+      "name": "A11yKit",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any (static HTML/CSS/JS, React, MCP over stdio)",
+      "description": "A senior-first accessible UI component kit and MCP server: large targets, AAA text contrast, optional synthesized sound cues, and AI-ready code + prompts.",
+      "url": "https://doggonug-cpu.github.io/a11y-ui-kit/",
+      "featureList": [
+        "10 free MIT components with live demos",
+        "8 Pro components for care, kiosk and public-sector flows",
+        "Copy-ready HTML/CSS/JS and React code",
+        "AI implementation prompts for Claude Code and Cursor",
+        "Local MCP server with list_components, get_component, get_ai_prompt and check_wcag_checklist"
+      ],
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Free",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        {
+          "@type": "Offer",
+          "name": "Pro Annual",
+          "price": "49",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://doggonug-cpu.github.io/a11y-ui-kit/#pricing"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body id="top">
+
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 22 20H2L12 3Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 9v5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 11v6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="7.6" r="1.4" fill="currentColor"/></symbol>
+  <symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z" fill="currentColor"/><path d="M15.5 9a4.4 4.4 0 0 1 0 6M18.2 6.4a8 8 0 0 1 0 11.2" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></symbol>
+  <symbol id="i-contrast" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10" width="15" height="10.5" rx="2.4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 10V7.8a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 5.5h-8a2 2 0 0 0-2 2v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.35 4.7-4.58 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" fill="currentColor"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="currentColor"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.4l1.7 4.4-2.2 1.6a11.6 11.6 0 0 0 5.1 5.1l1.6-2.2L19 14.6V18a1.9 1.9 0 0 1-2.1 1.9A15.6 15.6 0 0 1 3.1 6.1 1.9 1.9 0 0 1 5 4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pill" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="8" rx="4" transform="rotate(-40 12 12)" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M9 15 15 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+</svg>
+
+<a class="skip" href="#main" data-ko="본문으로 건너뛰기">Skip to content</a>
+
+<header class="top">
+  <div class="top__row top__row--main">
+    <a class="brand" href="#top" aria-label="A11yKit home">
+      <span class="brand__mark" aria-hidden="true">a<span>11</span>y</span>
+      <span class="brand__name">A11yKit</span>
+      <span class="brand__tag" data-ko="시니어 우선 UI 킷">senior-first UI kit</span>
+    </a>
+    <nav class="top__nav" aria-label="Main">
+      <a href="#components" data-ko="컴포넌트">Components</a>
+      <a href="#mcp" data-ko="MCP 서버">MCP</a>
+      <a href="#pricing" data-ko="가격">Pricing</a>
+      <a href="#faq" data-ko="자주 묻는 질문">FAQ</a>
+    </nav>
+    <div class="top__cta">
+      <a class="btn btn--sm btn--ghost" href="https://github.com/doggonug-cpu/doggonug-cpu.github.io/tree/main/a11y-ui-kit" target="_blank" rel="noopener">
+        <svg class="ic" aria-hidden="true"><use href="#i-github"/></svg>
+        <span data-ko="소스 보기">Source</span>
+      </a>
+      <button class="btn btn--sm btn--primary" type="button" data-open-waitlist data-plan="pro">
+        <span data-ko="Pro 얼리 액세스">Get Pro</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="top__row top__row--a11y">
+    <div class="a11ybar" role="group" aria-label="Display and language settings">
+      <span class="a11ybar__label" data-ko="화면 설정">Display</span>
+      <button class="tool" type="button" role="switch" aria-checked="true" data-sound-toggle>
+        <svg class="ic" aria-hidden="true"><use href="#i-speaker"/></svg>
+        <span class="tool__text" data-ko="소리">Sound</span>
+        <span class="tool__state" data-sound-state>On</span>
+      </button>
+      <div class="seg" role="group" aria-label="Text size">
+        <button class="seg__btn" type="button" data-textsize-set="100" aria-pressed="true" aria-label="Text size 100 percent">A</button>
+        <button class="seg__btn" type="button" data-textsize-set="125" aria-pressed="false" aria-label="Text size 125 percent">A+</button>
+        <button class="seg__btn" type="button" data-textsize-set="150" aria-pressed="false" aria-label="Text size 150 percent">A++</button>
+      </div>
+      <button class="tool" type="button" role="switch" aria-checked="false" data-contrast-toggle>
+        <svg class="ic" aria-hidden="true"><use href="#i-contrast"/></svg>
+        <span class="tool__text" data-ko="고대비">High contrast</span>
+        <span class="tool__state" data-contrast-state>Off</span>
+      </button>
+      <div class="seg seg--lang" role="group" aria-label="Language">
+        <button class="seg__btn" type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+        <button class="seg__btn" type="button" data-lang="ko" aria-pressed="false" lang="ko">KO</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="hero__inner">
+      <div class="hero__copy">
+        <p class="eyebrow">
+          <span class="dot" aria-hidden="true"></span>
+          <span data-ko="WCAG 2.2 AAA 대비 · 무료 10종 MIT · MCP 서버 포함">WCAG 2.2 AAA contrast · 10 MIT components · MCP server inside</span>
+        </p>
+        <h1 class="display" id="hero-title">
+          <span data-ko="우리 부모님이 쓸 수 있는 화면.">Screens your parents</span>
+          <span data-ko="AI 에이전트가 제대로 만드는 화면.">can actually use.</span>
+        </h1>
+        <p class="lede" data-ko="48px 이상 큰 타깃, 18.4:1 본문 대비, 오디오 파일 0개짜리 합성 탭 사운드. 그리고 Claude Code·Cursor가 이 규칙대로 코드를 짜도록 만드는 로컬 MCP 서버까지.">
+          Targets above 48px, 18.4:1 body contrast, tap sounds synthesized with zero audio files — plus a local MCP server that makes Claude Code and Cursor build it right the first time.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn--primary btn--lg" href="#components">
+            <span data-ko="무료 10종 먼저 보기">Browse the free 10</span>
+            <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+          <a class="btn btn--ghost btn--lg" href="#mcp">
+            <span data-ko="MCP 연결 방법">Connect the MCP server</span>
+          </a>
+        </div>
+        <ul class="hero__facts">
+          <li><strong>18</strong> <span data-ko="개 컴포넌트">components</span></li>
+          <li><strong>0</strong> <span data-ko="의존성 · 외부 스크립트">dependencies, external scripts</span></li>
+          <li><strong>18.4:1</strong> <span data-ko="본문 명암비">body contrast on this page</span></li>
+        </ul>
+      </div>
+
+      <div class="hero__demo">
+        <div class="device" role="group" aria-label="Live preview: senior home screen pattern">
+          <div class="device__bar">
+            <span class="device__led" aria-hidden="true"></span>
+            <span data-ko="이 페이지에서 실제로 동작합니다">Live on this page</span>
+            <span class="device__sound" data-hero-sound>Sound on</span>
+          </div>
+          <div class="device__screen">
+            <p class="device__hello" data-ko="좋은 아침이에요, 이 여사님">Good morning, Mrs. Lee</p>
+            <p class="device__date" data-ko="11월 18일 수요일 · 오전 8시 30분">Wednesday 18 November · 8:30</p>
+            <button class="hd__action" type="button" data-hero-med>
+              <svg class="ic ic--lg" aria-hidden="true"><use href="#i-pill"/></svg>
+              <span class="hd__text">
+                <strong data-ko="혈압약 1정">Blood pressure · 1 tablet</strong>
+                <small data-ko="오전 8시 30분 · 아직 안 드셨어요">8:30 AM · not taken yet</small>
+              </span>
+              <span class="hd__check" aria-hidden="true">Take</span>
+            </button>
+            <button class="hd__action" type="button" data-hero-call>
+              <svg class="ic ic--lg" aria-hidden="true"><use href="#i-phone"/></svg>
+              <span class="hd__text">
+                <strong data-ko="딸에게 전화">Call my daughter</strong>
+                <small data-ko="한 번 누르면 바로 연결">One tap, no menu</small>
+              </span>
+            </button>
+            <button class="hd__listen" type="button" data-hero-listen>
+              <svg class="ic" aria-hidden="true"><use href="#i-speaker"/></svg>
+              <span data-ko="화면 읽어주기">Read this screen aloud</span>
+            </button>
+            <p class="device__status" role="status" aria-live="polite" data-hero-status></p>
+          </div>
+        </div>
+        <p class="hero__note" data-ko="위 버튼은 이 페이지의 실제 코드입니다. 소리·음성은 브라우저에서 직접 생성됩니다.">
+          Those buttons are real code running here. Sound is synthesized by the browser; speech uses your device voice.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STRIP ============ -->
+  <section class="strip" aria-label="What every component includes">
+    <div class="strip__inner">
+      <div class="strip__item">
+        <span class="strip__k" data-ko="누르면 바로">Live</span>
+        <span class="strip__v" data-ko="복사만 하지 말고 직접 눌러보세요. 실제 동작하는 데모입니다.">Every demo runs here — not a screenshot.</span>
+      </div>
+      <div class="strip__item">
+        <span class="strip__k" data-ko="코드">Code</span>
+        <span class="strip__v" data-ko="HTML+CSS+JS 한 파일, 또는 React 컴포넌트로 복사.">Copy one HTML file, or a single React component.</span>
+      </div>
+      <div class="strip__item">
+        <span class="strip__k" data-ko="프롬프트">Prompt</span>
+        <span class="strip__v" data-ko="Claude Code·Cursor에 붙여넣으면 같은 결과가 나오는 정밀 프롬프트.">A precise prompt that reproduces the component in Claude Code or Cursor.</span>
+      </div>
+      <div class="strip__item">
+        <span class="strip__k" data-ko="검증">Verify</span>
+        <span class="strip__v" data-ko="MCP의 check_wcag_checklist가 항목별 수동 점검표를 돌려줍니다.">check_wcag_checklist returns the manual checks for each criterion.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHY ============ -->
+  <section class="section" aria-labelledby="why-title">
+    <div class="section__head">
+      <h2 id="why-title" class="h2" data-ko="왜 시니어용 UI가 따로 필요한가">Why senior UI is a different problem</h2>
+      <p class="sub" data-ko="일반적인 디자인 시스템은 20대의 손가락과 눈을 기준으로 맞춰져 있습니다. 여기서는 기준을 바꿉니다.">
+        Most design systems are tuned for a 25-year-old thumb. This one moves the baseline.
+      </p>
+    </div>
+    <div class="grid3">
+      <article class="feature">
+        <p class="feature__num" aria-hidden="true">01</p>
+        <h3 data-ko="손이 떨려도 눌리는 크기">Sized for a shaking hand</h3>
+        <p data-ko="최소 48px, 주요 동작 56~64px, 버튼 사이 12px 이상. WCAG 2.5.5(AAA)가 요구하는 44px보다 크게 잡았습니다.">
+          A 48px floor, 56–64px for primary actions, 12px between targets — above the 44px that WCAG 2.5.5 (AAA) requires.
+        </p>
+      </article>
+      <article class="feature">
+        <p class="feature__num" aria-hidden="true">02</p>
+        <h3 data-ko="눈이 흐려도 읽히는 대비">Readable when eyes blur</h3>
+        <p data-ko="본문 18.4:1, 보조문 10.6:1. AAA 기준 7:1을 넘습니다. 색만으로 상태를 구분하지 않고 아이콘과 문장을 함께 씁니다.">
+          Body text at 18.4:1 and secondary text at 10.6:1, past the 7:1 AAA bar. State never relies on colour alone — icon and sentence come with it.
+        </p>
+      </article>
+      <article class="feature">
+        <p class="feature__num" aria-hidden="true">03</p>
+        <h3 data-ko="귀로도 확인되는 동작">Feedback you can hear</h3>
+        <p data-ko="Web Audio로 40ms 음을 합성합니다. mp3 0개, 다운로드 0KB. 소리는 언제든 끌 수 있고, 모든 소리 신호는 화면 문구와 화면 낭독기 알림으로도 전달됩니다.">
+          A 40 ms tone synthesized with Web Audio. No mp3, no download. Sound can be switched off, and every cue is mirrored by visible text and a screen-reader announcement.
+        </p>
+      </article>
+      <article class="feature">
+        <p class="feature__num" aria-hidden="true">04</p>
+        <h3 data-ko="AI가 틀리지 않게">Correct by construction for AI</h3>
+        <p data-ko="MCP 서버가 컴포넌트 코드와 구현 프롬프트, WCAG 점검표를 에이전트에 직접 건넵니다. 에이전트가 기억으로 추측하지 않습니다.">
+          The MCP server hands your agent the code, the implementation prompt and the WCAG checklist directly, so it stops guessing from memory.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ CATALOG ============ -->
+  <section class="section section--catalog" id="components" aria-labelledby="cat-title">
+    <div class="section__head">
+      <div>
+        <h2 id="cat-title" class="h2" data-ko="카탈로그 · 18종">Catalog · 18 components</h2>
+        <p class="sub" data-ko="10종은 MIT로 무료, 8종은 Pro입니다. Pro 카드는 미리보기와 스펙만 열려 있습니다.">
+          Ten are MIT and free. Eight are Pro — their cards show the preview and the spec, not the source.
+        </p>
+      </div>
+      <div class="filters" role="group" aria-label="Filter the catalog">
+        <button class="chip" type="button" data-filter="all" aria-pressed="true"><span data-ko="전체">All</span> <span class="chip__n">18</span></button>
+        <button class="chip" type="button" data-filter="free" aria-pressed="false"><span data-ko="무료">Free</span> <span class="chip__n">10</span></button>
+        <button class="chip" type="button" data-filter="pro" aria-pressed="false"><span data-ko="Pro">Pro</span> <span class="chip__n">8</span></button>
+      </div>
+    </div>
+
+    <p class="catalog__hint" role="status" aria-live="polite" data-filter-status></p>
+
+    <div class="cards" data-cards>
+
+      <!-- 01 -->
+      <article class="card" data-tier="free" id="c-big-action-button" aria-labelledby="t-big-action-button">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">01</span>
+          <h3 class="card__title" id="t-big-action-button" data-ko="큰 동작 버튼 + 합성 탭 사운드">Big action buttons + tap sound</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="56px 높이, 노란 4px 포커스 링, 그리고 40ms 합성음. 누른 것이 눈과 귀에 동시에 확인됩니다.">
+          56px tall, a 4px yellow focus ring, and a 40 ms synthesized tone so the press lands in eye and ear at once.
+        </p>
+        <div class="demo" data-demo="big-action-button">
+          <div class="btnrow">
+            <button class="ax-btn ax-btn--primary" type="button" data-ax="confirm">
+              <svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span data-ko="확인">Confirm</span>
+            </button>
+            <button class="ax-btn ax-btn--quiet" type="button" data-ax="cancel">
+              <svg class="ic" aria-hidden="true"><use href="#i-x"/></svg><span data-ko="취소">Cancel</span>
+            </button>
+            <button class="ax-btn ax-btn--quiet" type="button" data-ax="help">
+              <svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><span data-ko="도움">Help</span>
+            </button>
+          </div>
+          <p class="demo__status" role="status" aria-live="polite" data-live="big">Nothing pressed yet.</p>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>WCAG 2.5.5 AAA</li><li>1.4.6 AAA</li><li>2.1.1</li><li>4.1.3</li><li data-ko="사운드 0KB">0 KB sound</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="big-action-button" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="big-action-button" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="big-action-button">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 02 -->
+      <article class="card" data-tier="free" id="c-text-scale-switch" aria-labelledby="t-text-scale-switch">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">02</span>
+          <h3 class="card__title" id="t-text-scale-switch" data-ko="글자 크기 3단계 · 고대비 스위치">Text scale + contrast switch</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="100/125/150% 글자 크기와 고대비 모드를 즉시 적용하고, 선택을 저장해 새로 고침해도 유지합니다.">
+          Three text sizes and a high-contrast mode that apply instantly and survive a reload.
+        </p>
+        <div class="demo" data-demo="text-scale-switch">
+          <div class="scaledemo" data-scale-scope>
+            <div class="scaledemo__bar">
+              <span class="scaledemo__label" data-ko="이 카드만">This card</span>
+              <div class="seg" role="group" aria-label="Text size for this card">
+                <button class="seg__btn" type="button" data-scale="100" aria-pressed="true">100%</button>
+                <button class="seg__btn" type="button" data-scale="125" aria-pressed="false" aria-label="125 percent">125%</button>
+                <button class="seg__btn" type="button" data-scale="150" aria-pressed="false" aria-label="150 percent">150%</button>
+              </div>
+            </div>
+            <div class="scaledemo__body" data-scale-body>
+              <p class="scaledemo__time">8:30 AM</p>
+              <p class="scaledemo__line" data-ko="혈압약 한 정을 물 한 잔과 함께 드세요.">One blood-pressure tablet with a glass of water.</p>
+              <p class="scaledemo__line scaledemo__line--muted" data-ko="식사 후 30분 안에 드시면 됩니다.">Any time within 30 minutes after breakfast.</p>
+            </div>
+            <button class="switchrow" type="button" role="switch" aria-checked="false" data-hc-scope>
+              <span class="switchrow__track" aria-hidden="true"><span class="switchrow__knob"></span></span>
+              <span class="switchrow__label" data-ko="이 카드 고대비">High contrast for this card</span>
+            </button>
+          </div>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>1.4.4</li><li>1.4.8 AAA</li><li>2.4.7 AAA</li><li>4.1.2</li><li data-ko="localStorage 저장">localStorage</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="text-scale-switch" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="text-scale-switch" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="text-scale-switch">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 03 -->
+      <article class="card" data-tier="free" id="c-medication-card" aria-labelledby="t-medication-card">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">03</span>
+          <h3 class="card__title" id="t-medication-card" data-ko="큰 글씨 복약 체크 카드">Medication checklist</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="하루 세 번 복약을 48px 행으로. 한 번 누르면 복용 완료로 바뀌고, 남은 개수를 화면 낭독기가 읽어줍니다.">
+          Three doses a day as 48px rows. One tap marks it taken, announces it to screen readers and keeps a visible count.
+        </p>
+        <div class="demo" data-demo="medication-card">
+          <div class="med">
+            <div class="med__head">
+              <p class="med__date" data-ko="11월 18일 수요일">Wednesday 18 Nov</p>
+              <p class="med__count" role="status" aria-live="polite" data-med-count>0 of 3 taken</p>
+            </div>
+            <ul class="med__list">
+              <li><button class="med__item" type="button" aria-pressed="false" data-med="08:00">
+                <span class="med__time">08:00</span>
+                <span class="med__name" data-ko="혈압약 · 1정">Blood pressure · 1 tablet</span>
+                <span class="med__state" data-ko="먹기">Take</span>
+              </button></li>
+              <li><button class="med__item" type="button" aria-pressed="false" data-med="12:30">
+                <span class="med__time">12:30</span>
+                <span class="med__name" data-ko="당뇨약 · 1정">Diabetes · 1 tablet</span>
+                <span class="med__state" data-ko="먹기">Take</span>
+              </button></li>
+              <li><button class="med__item" type="button" aria-pressed="false" data-med="20:00">
+                <span class="med__time">20:00</span>
+                <span class="med__name" data-ko="콜레스테롤 · 1정">Cholesterol · 1 tablet</span>
+                <span class="med__state" data-ko="먹기">Take</span>
+              </button></li>
+            </ul>
+          </div>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>1.3.1</li><li>2.5.5 AAA</li><li>4.1.3</li><li>1.4.6 AAA</li><li data-ko="상태 저장">state kept</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="medication-card" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="medication-card" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="medication-card">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 04 -->
+      <article class="card" data-tier="free" id="c-kiosk-choice-list" aria-labelledby="t-kiosk-choice-list">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">04</span>
+          <h3 class="card__title" id="t-kiosk-choice-list" data-ko="키오스크 1열 대형 선택">Kiosk choice list</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="한 줄에 하나씩 64px 선택지, 방향키 이동, 선택 상태 음성 안내. 장갑 낀 손가락과 5초의 결정을 위해.">
+          One 64px choice per row with arrow-key focus and the choice announced aloud.
+        </p>
+        <div class="demo" data-demo="kiosk-choice-list">
+          <fieldset class="kiosk">
+            <legend class="kiosk__legend" data-ko="무엇을 도와드릴까요?">How can we help?</legend>
+            <div class="kiosk__list" role="radiogroup" aria-label="Kiosk menu" data-kiosk>
+              <button class="kiosk__opt" type="button" role="radio" aria-checked="false" tabindex="0">
+                <span class="kiosk__n" aria-hidden="true">1</span><span data-ko="진료 예약">Book an appointment</span>
+              </button>
+              <button class="kiosk__opt" type="button" role="radio" aria-checked="false" tabindex="-1">
+                <span class="kiosk__n" aria-hidden="true">2</span><span data-ko="수납 · 결제">Pay a bill</span>
+              </button>
+              <button class="kiosk__opt" type="button" role="radio" aria-checked="false" tabindex="-1">
+                <span class="kiosk__n" aria-hidden="true">3</span><span data-ko="서류 발급">Print a document</span>
+              </button>
+              <button class="kiosk__opt" type="button" role="radio" aria-checked="false" tabindex="-1">
+                <span class="kiosk__n" aria-hidden="true">4</span><span data-ko="직원 도움 요청">Ask a person for help</span>
+              </button>
+            </div>
+          </fieldset>
+          <p class="demo__status" role="status" aria-live="polite" data-live="kiosk">Nothing selected.</p>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>2.5.5 AAA</li><li>2.1.1</li><li>3.3.2</li><li>4.1.2</li><li data-ko="방향키 로빙">arrow keys</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="kiosk-choice-list" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="kiosk-choice-list" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="kiosk-choice-list">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 05 -->
+      <article class="card" data-tier="free" id="c-read-aloud" aria-labelledby="t-read-aloud">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">05</span>
+          <h3 class="card__title" id="t-read-aloud" data-ko="음성 읽어주기 버튼">Read aloud button</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="speechSynthesis로 본문을 읽어줍니다. 속도 조절, 정지 버튼, 읽는 동안 본문은 그대로 보입니다.">
+          `speechSynthesis` with rate control and a stop button — the text stays on screen while it is spoken.
+        </p>
+        <div class="demo" data-demo="read-aloud">
+          <blockquote class="readtext" id="readtext" data-readtext>
+            <span data-ko="진료 예약은 11월 20일 목요일 오후 2시 30분, 박 선생님 302호입니다. 신분증을 가져오세요.">
+              Your appointment is Thursday 20 November at 2:30 PM with Dr. Park, room 302. Please bring your ID card.
+            </span>
+          </blockquote>
+          <div class="btnrow">
+            <button class="ax-btn ax-btn--primary" type="button" data-speak>
+              <svg class="ic" aria-hidden="true"><use href="#i-speaker"/></svg><span data-ko="읽어주기">Read aloud</span>
+            </button>
+            <button class="ax-btn ax-btn--quiet" type="button" data-speak-stop>
+              <svg class="ic" aria-hidden="true"><use href="#i-stop"/></svg><span data-ko="정지">Stop</span>
+            </button>
+            <label class="inlinesel">
+              <span data-ko="속도">Speed</span>
+              <select data-speak-rate>
+                <option value="0.7" data-ko="느리게">Slow</option>
+                <option value="0.9" selected data-ko="보통">Normal</option>
+                <option value="1.1" data-ko="빠르게">Fast</option>
+              </select>
+            </label>
+          </div>
+          <p class="demo__status" role="status" aria-live="polite" data-live="speech"></p>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>1.1.1</li><li>4.1.3</li><li>1.4.5</li><li data-ko="기기 음성 사용">device voices</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="read-aloud" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="read-aloud" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="read-aloud">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 06 -->
+      <article class="card" data-tier="free" id="c-confirm-switch" aria-labelledby="t-confirm-switch">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">06</span>
+          <h3 class="card__title" id="t-confirm-switch" data-ko="2단계 확인 · 슬라이드 스위치">Two-step confirm switch</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="네이티브 dialog 2단계. 두 번째 단계에서 스위치를 직접 움직여야 삭제 버튼이 켜집니다.">
+          A native `dialog` in two steps — the destructive button arms only after you move the switch yourself.
+        </p>
+        <div class="demo" data-demo="confirm-switch">
+          <p class="demo__warn" data-ko="가족 앨범에서 사진 14장을 지우시겠어요?">Delete 14 photos from the family album?</p>
+          <button class="ax-btn ax-btn--danger" type="button" data-confirm-open>
+            <span data-ko="사진 지우기">Delete photos</span>
+          </button>
+          <p class="demo__status" role="status" aria-live="polite" data-live="confirm"></p>
+          <dialog class="dlg" data-confirm-dialog aria-labelledby="dlg-title" aria-describedby="dlg-desc">
+            <form method="dialog" class="dlg__inner">
+              <p class="dlg__step"><span data-ko="1단계 / 2">Step 1 of 2</span></p>
+              <h4 class="dlg__title" id="dlg-title" data-ko="사진 14장을 지웁니다">Delete 14 photos</h4>
+              <p class="dlg__desc" id="dlg-desc" data-ko="지운 사진은 휴지통에서 30일 뒤 완전히 사라집니다.">
+                Deleted photos leave the bin after 30 days.
+              </p>
+              <div class="dlg__actions">
+                <button class="ax-btn ax-btn--quiet" type="button" data-confirm-cancel data-ko="그만두기">Cancel</button>
+                <button class="ax-btn ax-btn--primary" type="button" data-confirm-next data-ko="계속">Continue</button>
+              </div>
+              <div class="dlg__step2" data-confirm-step2 hidden>
+                <p class="dlg__step"><span data-ko="2단계 / 2">Step 2 of 2</span></p>
+                <p class="dlg__title2" data-ko="정말 지우시려면 아래 스위치를 켜 주세요.">To go ahead, switch this on.</p>
+                <button class="switchrow" type="button" role="switch" aria-checked="false" data-confirm-switch>
+                  <span class="switchrow__track" aria-hidden="true"><span class="switchrow__knob"></span></span>
+                  <span class="switchrow__label" data-ko="네, 14장을 지웁니다">Yes, delete 14 photos</span>
+                </button>
+                <div class="dlg__actions">
+                  <button class="ax-btn ax-btn--quiet" type="button" data-confirm-cancel data-ko="그만두기">Cancel</button>
+                  <button class="ax-btn ax-btn--danger" type="button" data-confirm-final disabled data-ko="삭제 실행">Delete</button>
+                </div>
+              </div>
+            </form>
+          </dialog>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>3.3.4 AAA</li><li>3.3.6 AAA</li><li>2.4.3</li><li>4.1.2</li><li data-ko="포커스 반환">focus return</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="confirm-switch" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="confirm-switch" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="confirm-switch">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 07 -->
+      <article class="card" data-tier="free" id="c-number-keypad" aria-labelledby="t-number-keypad">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">07</span>
+          <h3 class="card__title" id="t-number-keypad" data-ko="대형 숫자 키패드">Big number keypad</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="64px 키, 4px 고대비 포커스 링, 입력을 가리고 알려주는 표시. 비밀번호·병실·전화번호 입력에.">
+          64px keys, a 4px focus ring and a masked display that announces the length as you type.
+        </p>
+        <div class="demo" data-demo="number-keypad">
+          <div class="kp">
+            <output class="kp__display" aria-live="polite" data-kp-display>••••</output>
+            <div class="kp__grid">
+              <button class="kp__key" type="button" data-kp="1">1</button>
+              <button class="kp__key" type="button" data-kp="2">2</button>
+              <button class="kp__key" type="button" data-kp="3">3</button>
+              <button class="kp__key" type="button" data-kp="4">4</button>
+              <button class="kp__key" type="button" data-kp="5">5</button>
+              <button class="kp__key" type="button" data-kp="6">6</button>
+              <button class="kp__key" type="button" data-kp="7">7</button>
+              <button class="kp__key" type="button" data-kp="8">8</button>
+              <button class="kp__key" type="button" data-kp="9">9</button>
+              <button class="kp__key kp__key--fn" type="button" data-kp="clear" data-ko="지움">Clear</button>
+              <button class="kp__key" type="button" data-kp="0">0</button>
+              <button class="kp__key kp__key--ok" type="button" data-kp="ok" data-ko="확인">OK</button>
+            </div>
+            <p class="demo__status" role="status" aria-live="polite" data-live="keypad" data-ko="데모입니다. 어디로도 전송되지 않습니다.">Demo only — nothing is sent.</p>
+          </div>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>2.5.5 AAA</li><li>2.4.7 AAA</li><li>4.1.2</li><li>1.4.11</li><li data-ko="64px 키">64px keys</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="number-keypad" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="number-keypad" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="number-keypad">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 08 -->
+      <article class="card" data-tier="free" id="c-status-banner" aria-labelledby="t-status-banner">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">08</span>
+          <h3 class="card__title" id="t-status-banner" data-ko="오류 · 성공 안내 배너">Success and error banners</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="아이콘+제목+한 문장. 성공과 오류는 다른 음 높이로 울리고, 오류만 role=alert로 즉시 읽힙니다.">
+          Icon, heading, one plain sentence. Success and error get different tones; only errors interrupt as `role="alert"`.
+        </p>
+        <div class="demo" data-demo="status-banner">
+          <div class="btnrow">
+            <button class="ax-btn ax-btn--quiet" type="button" data-banner="success" data-ko="성공">Success</button>
+            <button class="ax-btn ax-btn--quiet" type="button" data-banner="error" data-ko="오류">Error</button>
+            <button class="ax-btn ax-btn--quiet" type="button" data-banner="info" data-ko="안내">Info</button>
+          </div>
+          <div class="banner-slot" data-banner-slot></div>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>1.4.1</li><li>4.1.3</li><li>3.3.1</li><li>1.4.6 AAA</li><li data-ko="음 높이 구분">tone per state</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="status-banner" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="status-banner" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="status-banner">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 09 -->
+      <article class="card" data-tier="free" id="c-step-progress" aria-labelledby="t-step-progress">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">09</span>
+          <h3 class="card__title" id="t-step-progress" data-ko="대형 단계 진행 표시">Step progress</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="숫자와 이름이 있는 4단계, 채워지는 막대, aria-current. 화면 낭독기는 지금 몇 단계인지 말해줍니다.">
+          Four numbered stages, a filling track and `aria-current` — a screen reader says exactly where you are.
+        </p>
+        <div class="demo" data-demo="step-progress">
+          <div class="steps" data-steps>
+            <div class="steps__track" aria-hidden="true"><span class="steps__fill" data-steps-fill></span></div>
+            <ol class="steps__list">
+              <li class="steps__item is-current" aria-current="step"><span class="steps__dot">1</span><span class="steps__name" data-ko="본인 확인">Identity</span></li>
+              <li class="steps__item"><span class="steps__dot">2</span><span class="steps__name" data-ko="증상 선택">Symptoms</span></li>
+              <li class="steps__item"><span class="steps__dot">3</span><span class="steps__name" data-ko="시간 선택">Time</span></li>
+              <li class="steps__item"><span class="steps__dot">4</span><span class="steps__name" data-ko="확정">Confirm</span></li>
+            </ol>
+          </div>
+          <div class="btnrow">
+            <button class="ax-btn ax-btn--quiet" type="button" data-step="prev" data-ko="이전">Back</button>
+            <button class="ax-btn ax-btn--primary" type="button" data-step="next" data-ko="다음">Next</button>
+          </div>
+          <p class="demo__status" role="status" aria-live="polite" data-live="steps">Step 1 of 4 · Identity</p>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>1.3.1</li><li>2.4.8 AAA</li><li>4.1.2</li><li>1.4.11</li><li data-ko="단계 알림">live step text</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="step-progress" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="step-progress" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="step-progress">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 10 -->
+      <article class="card" data-tier="free" id="c-senior-form" aria-labelledby="t-senior-form">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">10</span>
+          <h3 class="card__title" id="t-senior-form" data-ko="시니어 친화 입력 폼">Senior-friendly form</h3>
+          <span class="badge badge--free" data-ko="무료 · MIT">Free · MIT</span>
+        </div>
+        <p class="card__desc" data-ko="라벨은 입력칸 위에 고정, 56px 입력칸, 각 칸으로 이동하는 오류 요약, 문장으로 쓴 오류 메시지.">
+          Labels fixed above fields, 56px inputs, an error summary that links to each field, messages written as sentences.
+        </p>
+        <div class="demo" data-demo="senior-form">
+          <form class="sform" data-senior-form novalidate>
+            <div class="sform__summary" role="alert" tabindex="-1" hidden data-form-summary></div>
+            <div class="field">
+              <label class="field__label" for="sf-name" data-ko="이름">Full name</label>
+              <input class="field__input" id="sf-name" name="name" type="text" autocomplete="name" aria-describedby="sf-name-err" required>
+              <p class="field__err" id="sf-name-err" hidden></p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="sf-phone" data-ko="전화번호">Phone number</label>
+              <input class="field__input" id="sf-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" aria-describedby="sf-phone-hint sf-phone-err" required>
+              <p class="field__hint" id="sf-phone-hint" data-ko="숫자만 입력하세요. 예: 01012345678">Digits only, for example 01012345678</p>
+              <p class="field__err" id="sf-phone-err" hidden></p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="sf-date" data-ko="방문 희망일">Preferred date</label>
+              <input class="field__input" id="sf-date" name="date" type="date" aria-describedby="sf-date-err" required>
+              <p class="field__err" id="sf-date-err" hidden></p>
+            </div>
+            <button class="ax-btn ax-btn--primary" type="submit" data-ko="회신 요청">Request a callback</button>
+            <p class="demo__status" role="status" aria-live="polite" data-form-status></p>
+          </form>
+        </div>
+        <ul class="specs" aria-label="Specification">
+          <li>3.3.1</li><li>3.3.3 AAA</li><li>1.3.1</li><li>3.3.2</li><li data-ko="오류 요약">error summary</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="senior-form" data-format="html">
+            <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="HTML+CSS+JS 복사">Copy HTML+CSS+JS</span>
+          </button>
+          <button class="btn btn--sm" type="button" data-copy="code" data-id="senior-form" data-format="react">
+            <span data-ko="React 복사">Copy React</span>
+          </button>
+          <button class="btn btn--sm btn--prompt" type="button" data-copy="prompt" data-id="senior-form">
+            <span data-ko="AI 프롬프트 복사">Copy AI prompt</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- ======= PRO ======= -->
+      <!-- 11 -->
+      <article class="card card--pro" data-tier="pro" id="c-voice-search" aria-labelledby="t-voice-search">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">11</span>
+          <h3 class="card__title" id="t-voice-search" data-ko="음성 인식 검색바">Voice search bar</h3>
+          <span class="badge badge--pro"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Pro</span>
+        </div>
+        <p class="card__desc" data-ko="누르고 말하면 인식된 문장이 큰 글씨로 쌓이고, 실패하면 타이핑으로 넘어갑니다.">
+          Hold to talk: the transcript builds in large type, and a failed recognition falls back to typing.
+        </p>
+        <div class="pro" aria-label="Static preview of the Pro component">
+          <div class="pro__frame">
+            <div class="vs">
+              <div class="vs__field"><svg class="ic" aria-hidden="true"><use href="#i-mic"/></svg><span data-ko="약 이름을 말해보세요">Say a medicine name</span></div>
+              <div class="vs__wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <p class="vs__tx" data-ko="“혈압약”이라고 들었어요">Heard: “blood pressure pill”</p>
+            </div>
+          </div>
+          <p class="pro__lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="미리보기만 열려 있습니다">Preview only — source and MCP access are Pro</span></p>
+        </div>
+        <ul class="prospec">
+          <li data-ko="Web Speech 인식 + 숫자·약 이름 정규화">Web Speech recognition with number and drug-name normalisation</li>
+          <li data-ko="인식 실패 시 타이핑 대체 경로, 3회 재시도">Typed fallback after three failed tries</li>
+          <li>WCAG 1.2.1 · 2.5.5 AAA · 4.1.3</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm btn--prompt" type="button" data-open-waitlist data-plan="founding">
+            <svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="Pro 대기 신청">Join the Pro list</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 12 -->
+      <article class="card card--pro" data-tier="pro" id="c-family-checkin" aria-labelledby="t-family-checkin">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">12</span>
+          <h3 class="card__title" id="t-family-checkin" data-ko="가족 안부 확인 카드">Family check-in card</h3>
+          <span class="badge badge--pro"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Pro</span>
+        </div>
+        <p class="card__desc" data-ko="한 번 눌러 '저는 괜찮아요'를 보내고, 가족 쪽에는 마지막 확인 시각이 남습니다.">
+          One press sends “I’m okay”, and the family side keeps the last-seen time.
+        </p>
+        <div class="pro" aria-label="Static preview of the Pro component">
+          <div class="pro__frame">
+            <div class="fc">
+              <div class="fc__avatar" aria-hidden="true">M</div>
+              <p class="fc__name" data-ko="어머니 · 마지막 확인 오전 8시 12분">Mother · checked in 8:12 AM</p>
+              <div class="fc__row">
+                <span class="fc__pill fc__pill--ok">I’m okay</span>
+                <span class="fc__pill">Need a call</span>
+                <span class="fc__pill">Later</span>
+              </div>
+              <p class="fc__meta" data-ko="3일 연속 확인 · 오늘 알림 1회">3 days in a row · 1 reminder today</p>
+            </div>
+          </div>
+          <p class="pro__lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="미리보기만 열려 있습니다">Preview only — source and MCP access are Pro</span></p>
+        </div>
+        <ul class="prospec">
+          <li data-ko="1탭 응답, 큰 상태 문구, 실패 시 재전송">One-tap reply with large status text and retry on failure</li>
+          <li data-ko="가족 알림은 Web Push·문자 핸드오프 설계 포함">Web Push and SMS handoff documented, no vendor lock-in</li>
+          <li>WCAG 2.5.5 AAA · 3.3.4 AAA · 4.1.3</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm btn--prompt" type="button" data-open-waitlist data-plan="founding">
+            <svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="Pro 대기 신청">Join the Pro list</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 13 -->
+      <article class="card card--pro" data-tier="pro" id="c-hospital-timeslot" aria-labelledby="t-hospital-timeslot">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">13</span>
+          <h3 class="card__title" id="t-hospital-timeslot" data-ko="병원 예약 타임슬롯">Hospital timeslots</h3>
+          <span class="badge badge--pro"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Pro</span>
+        </div>
+        <p class="card__desc" data-ko="오전·오후로 나뉜 60px 시간 슬롯, 의사·진료실 표시, 길게 눌러 예약 확정.">
+          60px slots grouped by morning and afternoon, with doctor and room, confirmed by a press-and-hold.
+        </p>
+        <div class="pro" aria-label="Static preview of the Pro component">
+          <div class="pro__frame">
+            <div class="ts">
+              <p class="ts__group" data-ko="오전">Morning</p>
+              <div class="ts__row"><span class="ts__slot">9:00</span><span class="ts__slot ts__slot--on">9:30</span><span class="ts__slot">10:00</span></div>
+              <p class="ts__group" data-ko="오후">Afternoon</p>
+              <div class="ts__row"><span class="ts__slot">13:30</span><span class="ts__slot">14:00</span><span class="ts__slot">14:30</span></div>
+              <p class="ts__meta" data-ko="박 선생님 · 302호 · 30분">Dr. Park · room 302 · 30 min</p>
+            </div>
+          </div>
+          <p class="pro__lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="미리보기만 열려 있습니다">Preview only — source and MCP access are Pro</span></p>
+        </div>
+        <ul class="prospec">
+          <li data-ko="슬롯 60px, 선택 상태 아이콘+굵기 동시 표시">60px slots; selection shown by icon and weight, not colour alone</li>
+          <li data-ko="길게 눌러 확정(1.2초)으로 오예약 방지">1.2 s hold-to-confirm stops mis-taps</li>
+          <li>WCAG 2.5.5 AAA · 2.5.2 · 1.4.1</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm btn--prompt" type="button" data-open-waitlist data-plan="founding">
+            <svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="Pro 대기 신청">Join the Pro list</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 14 -->
+      <article class="card card--pro" data-tier="pro" id="c-large-receipt" aria-labelledby="t-large-receipt">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">14</span>
+          <h3 class="card__title" id="t-large-receipt" data-ko="큰 글씨 영수증 인쇄 뷰">Large-print receipt</h3>
+          <span class="badge badge--pro"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Pro</span>
+        </div>
+        <p class="card__desc" data-ko="80mm 영수증과 A4 모두에서 18pt 이상, 품목·부가세·총액이 한눈에. 인쇄 전용 CSS 포함.">
+          18pt or larger on both 80 mm receipt paper and A4, with items, tax and total. Print CSS included.
+        </p>
+        <div class="pro" aria-label="Static preview of the Pro component">
+          <div class="pro__frame">
+            <div class="rc">
+              <p class="rc__shop">Wando Pharmacy</p>
+              <p class="rc__line"><span>Blood pressure 5 mg</span><span>₩8,400</span></p>
+              <p class="rc__line"><span>Vitamin D</span><span>₩6,600</span></p>
+              <p class="rc__line rc__line--total"><span>Total</span><span>₩15,000</span></p>
+              <p class="rc__foot">18 Nov 2026 · 8:41 AM</p>
+            </div>
+          </div>
+          <p class="pro__lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="미리보기만 열려 있습니다">Preview only — source and MCP access are Pro</span></p>
+        </div>
+        <ul class="prospec">
+          <li data-ko="@media print로 80mm·A4 자동 맞춤, 18pt 하한">@media print layouts for 80 mm and A4 with an 18pt floor</li>
+          <li data-ko="금액은 우측 정렬·자릿수 구분, 총액 강조">Right-aligned amounts with grouped digits and an emphasised total</li>
+          <li>WCAG 1.4.8 AAA · 1.4.6 AAA · 1.3.1</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm btn--prompt" type="button" data-open-waitlist data-plan="founding">
+            <svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="Pro 대기 신청">Join the Pro list</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 15 -->
+      <article class="card card--pro" data-tier="pro" id="c-tts-phrase-pack" aria-labelledby="t-tts-phrase-pack">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">15</span>
+          <h3 class="card__title" id="t-tts-phrase-pack" data-ko="다국어 음성 안내 팩">Multilingual TTS pack</h3>
+          <span class="badge badge--pro"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Pro</span>
+        </div>
+        <p class="card__desc" data-ko="한국어·영어·일본어·중국어 고정 문구를 기기 음성으로 읽어줍니다. 목소리가 없으면 문구만 크게 표시.">
+          Fixed phrases in Korean, English, Japanese and Chinese read by the device voice, with a large-text fallback when no voice exists.
+        </p>
+        <div class="pro" aria-label="Static preview of the Pro component">
+          <div class="pro__frame">
+            <div class="tts">
+              <p class="tts__row"><span class="tts__lang">KO</span><span class="tts__text">줄을 서 주세요</span><span class="tts__play" aria-hidden="true"><svg class="ic"><use href="#i-play"/></svg></span></p>
+              <p class="tts__row"><span class="tts__lang">EN</span><span class="tts__text">Please form a line</span><span class="tts__play" aria-hidden="true"><svg class="ic"><use href="#i-play"/></svg></span></p>
+              <p class="tts__row"><span class="tts__lang">JA</span><span class="tts__text">列にお並びください</span><span class="tts__play" aria-hidden="true"><svg class="ic"><use href="#i-play"/></svg></span></p>
+              <p class="tts__row"><span class="tts__lang">ZH</span><span class="tts__text">请排队</span><span class="tts__play" aria-hidden="true"><svg class="ic"><use href="#i-play"/></svg></span></p>
+            </div>
+          </div>
+          <p class="pro__lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="미리보기만 열려 있습니다">Preview only — source and MCP access are Pro</span></p>
+        </div>
+        <ul class="prospec">
+          <li data-ko="40개 고정 문구 · 언어 자동 선택 · 속도/음높이 프리셋">40 phrases, language auto-selection, rate and pitch presets</li>
+          <li data-ko="음성 미지원 기기 감지 및 큰 글씨 대체">Voice availability check with a large-text fallback</li>
+          <li>WCAG 3.1.2 · 1.2.1 · 4.1.2</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm btn--prompt" type="button" data-open-waitlist data-plan="founding">
+            <svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="Pro 대기 신청">Join the Pro list</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 16 -->
+      <article class="card card--pro" data-tier="pro" id="c-memory-gallery" aria-labelledby="t-memory-gallery">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">16</span>
+          <h3 class="card__title" id="t-memory-gallery" data-ko="회상 갤러리">Reminiscence gallery</h3>
+          <span class="badge badge--pro"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Pro</span>
+        </div>
+        <p class="card__desc" data-ko="큰 사진 타일과 큰 설명, 키보드로 여는 라이트박스, 선택형 음성 메모.">
+          Large photo tiles with large captions, a keyboard-only lightbox and optional audio notes.
+        </p>
+        <div class="pro" aria-label="Static preview of the Pro component">
+          <div class="pro__frame">
+            <div class="mg">
+              <div class="mg__tile mg__tile--a"><span data-ko="1979 · 고향 집">1979 · hometown</span></div>
+              <div class="mg__tile mg__tile--b"><span data-ko="1991 · 결혼식">1991 · wedding</span></div>
+              <div class="mg__tile mg__tile--c"><span data-ko="2018 · 첫 손주">2018 · first grandchild</span></div>
+            </div>
+          </div>
+          <p class="pro__lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="미리보기만 열려 있습니다">Preview only — source and MCP access are Pro</span></p>
+        </div>
+        <ul class="prospec">
+          <li data-ko="3×2 타일, 160px 최소 터치 영역, 캡션 20pt">3×2 tiles, 160px minimum touch area, 20pt captions</li>
+          <li data-ko="라이트박스 포커스 트랩 · 화살표 이동 · ESC 닫기">Lightbox with focus trap, arrow navigation and Escape</li>
+          <li>WCAG 2.4.3 · 1.1.1 · 2.5.5 AAA</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm btn--prompt" type="button" data-open-waitlist data-plan="founding">
+            <svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="Pro 대기 신청">Join the Pro list</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 17 -->
+      <article class="card card--pro" data-tier="pro" id="c-vitals-trend" aria-labelledby="t-vitals-trend">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">17</span>
+          <h3 class="card__title" id="t-vitals-trend" data-ko="큰 글씨 활력징후 추이">Vitals trend</h3>
+          <span class="badge badge--pro"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Pro</span>
+        </div>
+        <p class="card__desc" data-ko="혈압·맥박·체중을 큰 숫자와 7일 추이로. 수치와 함께 '높음/보통' 문장을 붙여 색 없이도 읽힙니다.">
+          Blood pressure, pulse and weight as large numbers with a 7-day trend, and a plain word beside each value so colour is never the only cue.
+        </p>
+        <div class="pro" aria-label="Static preview of the Pro component">
+          <div class="pro__frame">
+            <div class="vt">
+              <p class="vt__row"><span class="vt__label" data-ko="혈압">Blood pressure</span><span class="vt__val">128/82</span><span class="vt__tag" data-ko="보통">Normal</span></p>
+              <svg class="vt__spark" viewBox="0 0 220 48" aria-hidden="true">
+                <polyline points="0,30 30,26 60,34 90,22 120,28 150,18 180,24 220,20" fill="none" stroke="currentColor" stroke-width="2.4"/>
+              </svg>
+              <p class="vt__meta" data-ko="7일 평균 126/80 · 어제보다 2 낮음">7-day average 126/80 · 2 lower than yesterday</p>
+            </div>
+          </div>
+          <p class="pro__lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="미리보기만 열려 있습니다">Preview only — source and MCP access are Pro</span></p>
+        </div>
+        <ul class="prospec">
+          <li data-ko="숫자 40pt, 상태 단어 병기, 표로도 제공">40pt numbers, a status word beside each, plus the same data as a table</li>
+          <li data-ko="7·30일 스파크라인, 값이 없을 때 빈 상태 문구">7- and 30-day sparklines with honest empty states</li>
+          <li>WCAG 1.4.1 · 1.1.1 · 1.4.8 AAA</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm btn--prompt" type="button" data-open-waitlist data-plan="founding">
+            <svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="Pro 대기 신청">Join the Pro list</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- 18 -->
+      <article class="card card--pro" data-tier="pro" id="c-hold-to-pay" aria-labelledby="t-hold-to-pay">
+        <div class="card__head">
+          <span class="card__num" aria-hidden="true">18</span>
+          <h3 class="card__title" id="t-hold-to-pay" data-ko="길게 눌러 결제">Hold to pay</h3>
+          <span class="badge badge--pro"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Pro</span>
+        </div>
+        <p class="card__desc" data-ko="금액을 소리로 읽어주고, 3초간 눌러야 결제가 진행됩니다. 손을 떼면 즉시 취소.">
+          The amount is spoken aloud, and payment proceeds only after a 3-second hold; lifting the finger cancels.
+        </p>
+        <div class="pro" aria-label="Static preview of the Pro component">
+          <div class="pro__frame">
+            <div class="hp">
+              <p class="hp__amount">₩12,000</p>
+              <p class="hp__desc" data-ko="진료비 · 카드 결제">Clinic fee · card</p>
+              <div class="hp__bar"><span class="hp__fill"></span><span class="hp__label" data-ko="3초간 누르세요">Hold for 3 seconds</span></div>
+            </div>
+          </div>
+          <p class="pro__lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="미리보기만 열려 있습니다">Preview only — source and MCP access are Pro</span></p>
+        </div>
+        <ul class="prospec">
+          <li data-ko="keydown·pointer 이벤트 모두 지원, 떼면 취소">Pointer and keyboard hold, cancel on release or Escape</li>
+          <li data-ko="금액 음성 안내, 결제 중 중복 입력 차단">Amount spoken aloud, input locked while paying</li>
+          <li>WCAG 2.5.2 · 3.3.4 AAA · 2.5.5 AAA</li>
+        </ul>
+        <div class="card__actions">
+          <button class="btn btn--sm btn--prompt" type="button" data-open-waitlist data-plan="founding">
+            <svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-ko="Pro 대기 신청">Join the Pro list</span>
+          </button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ MCP ============ -->
+  <section class="section section--mcp" id="mcp" aria-labelledby="mcp-title">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow"><span class="dot" aria-hidden="true"></span><span data-ko="로컬 stdio · 네트워크 전송 없음">local stdio · nothing leaves your machine</span></p>
+        <h2 id="mcp-title" class="h2" data-ko="PDF 말고, MCP 서버.">An MCP server, not a PDF.</h2>
+        <p class="sub" data-ko="에이전트가 컴포넌트 코드와 구현 프롬프트, WCAG 점검표를 직접 조회합니다. 네트워크 호출도, API 키도 없습니다.">
+          Your agent asks for the code, the implementation prompt or the WCAG checklist and gets it — no network calls, no API keys.
+        </p>
+      </div>
+      <a class="btn btn--ghost" href="https://github.com/doggonug-cpu/doggonug-cpu.github.io/tree/main/a11y-ui-kit/mcp" target="_blank" rel="noopener">
+        <svg class="ic" aria-hidden="true"><use href="#i-github"/></svg>
+        <span data-ko="서버 소스 보기">Server source</span>
+      </a>
+    </div>
+
+    <div class="mcp__grid">
+      <div class="mcp__tools">
+        <h3 class="h3" data-ko="제공하는 도구 4개">Four tools</h3>
+        <dl class="tools">
+          <div class="tools__row">
+            <dt><code>list_components</code></dt>
+            <dd data-ko="18종 목록을 티어·태그·검색어로 거릅니다. 각 항목에 WCAG 기준과 상태가 붙습니다.">Filter all 18 by tier, tag or keyword. Each row carries its WCAG criteria and status.</dd>
+          </div>
+          <div class="tools__row">
+            <dt><code>get_component</code></dt>
+            <dd data-ko="한 컴포넌트의 HTML+CSS+JS, React 코드, 접근성 노트를 돌려줍니다. Pro 항목은 잠금 안내와 스펙만 돌려줍니다.">Returns HTML+CSS+JS, React source and accessibility notes for one id. Pro ids return the spec and a lock notice, never the source.</dd>
+          </div>
+          <div class="tools__row">
+            <dt><code>get_ai_prompt</code></dt>
+            <dd data-ko="Claude Code·Cursor·Lovable에 붙여넣을 구현 프롬프트를 대상별로 만듭니다.">Builds a paste-ready prompt for Claude Code, Cursor or Lovable.</dd>
+          </div>
+          <div class="tools__row">
+            <dt><code>check_wcag_checklist</code></dt>
+            <dd data-ko="해당 컴포넌트에 걸린 WCAG 항목과 사람이 직접 확인할 점검 절차를 돌려줍니다.">Returns the criteria that apply, with the manual check a human must run for each.</dd>
+          </div>
+        </dl>
+        <p class="mcp__note" data-ko="Node 18 이상. 서버는 표준 입출력으로만 통신하고 파일을 읽기만 합니다.">
+          Needs Node 18+. The server talks over stdio only and only reads its own data file.
+        </p>
+      </div>
+
+      <div class="mcp__config">
+        <h3 class="h3" data-ko="연결하기">Connect it</h3>
+
+        <div class="codecard">
+          <div class="codecard__head"><span class="codecard__name">Claude Code</span>
+            <button class="btn btn--sm" type="button" data-copy-text="claude-code">
+              <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
+            </button>
+          </div>
+          <pre class="code" tabindex="0" aria-label="Claude Code command" data-code-text="claude-code"><code>claude mcp add a11y-kit -- node /absolute/path/a11y-ui-kit/mcp/server.mjs</code></pre>
+        </div>
+
+        <div class="codecard">
+          <div class="codecard__head"><span class="codecard__name">Cursor · .mcp.json</span>
+            <button class="btn btn--sm" type="button" data-copy-text="mcp-json">
+              <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
+            </button>
+          </div>
+          <pre class="code" tabindex="0" aria-label="mcp.json configuration" data-code-text="mcp-json"><code>{
+  "mcpServers": {
+    "a11y-kit": {
+      "command": "node",
+      "args": ["/absolute/path/a11y-ui-kit/mcp/server.mjs"]
+    }
+  }
+}</code></pre>
+        </div>
+
+        <div class="codecard">
+          <div class="codecard__head"><span class="codecard__name" data-ko="30초 자체 점검">30-second self-test</span>
+            <button class="btn btn--sm" type="button" data-copy-text="self-test">
+              <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
+            </button>
+          </div>
+          <pre class="code" tabindex="0" aria-label="Self test command" data-code-text="self-test"><code>printf '%s\n' \
+  '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl-test","version":"1"}}}' \
+  '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+  | node mcp/server.mjs</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="section section--pricing" id="pricing" aria-labelledby="pricing-title">
+    <div class="section__head">
+      <h2 id="pricing-title" class="h2" data-ko="가격">Pricing</h2>
+      <p class="sub" data-ko="결제는 아직 열지 않았습니다. 지금 버튼은 대기 명단 신청이며, 카드 정보를 받지 않습니다.">
+        Checkout is not open yet. These buttons add you to the early-access list — no card details are collected.
+      </p>
+    </div>
+
+    <div class="plans">
+      <article class="plan">
+        <h3 class="plan__name" data-ko="무료">Free</h3>
+        <p class="plan__price"><span class="plan__amount">$0</span><span class="plan__per" data-ko="영구">forever</span></p>
+        <p class="plan__desc" data-ko="지금 바로 복사해서 쓰는 10종. 출처 표기는 필요 없고, 상업적 사용도 됩니다.">
+          Ten components, ready to copy today. Commercial use allowed; attribution appreciated but not required.
+        </p>
+        <ul class="plan__list">
+          <li data-ko="무료 10종 · MIT 라이선스">10 components · MIT licence</li>
+          <li data-ko="HTML+CSS+JS · React 코드">HTML+CSS+JS and React source</li>
+          <li data-ko="AI 구현 프롬프트">AI implementation prompts</li>
+          <li data-ko="MCP 서버의 무료 컴포넌트 접근">MCP access to free components</li>
+          <li data-ko="WCAG 점검표">WCAG checklists</li>
+        </ul>
+        <a class="btn btn--ghost btn--block" href="#components" data-ko="무료로 시작">Start free</a>
+      </article>
+
+      <article class="plan plan--featured">
+        <p class="plan__flag" data-ko="가장 많이 기다리는">Most requested</p>
+        <h3 class="plan__name" data-ko="Pro 연간">Pro Annual</h3>
+        <p class="plan__price"><span class="plan__amount">$49</span><span class="plan__per" data-ko="/ 년">/ year</span></p>
+        <p class="plan__desc" data-ko="Pro 8종 전체와 앞으로 추가되는 컴포넌트, 그리고 MCP가 Pro 코드까지 돌려줍니다.">
+          All eight Pro components, everything added later, and an MCP server that returns Pro source too.
+        </p>
+        <ul class="plan__list">
+          <li data-ko="Pro 8종 + 이후 추가분">8 Pro components + future additions</li>
+          <li data-ko="MCP가 Pro 코드·프롬프트 반환">MCP returns Pro code and prompts</li>
+          <li data-ko="키오스크·요양·공공 흐름 패턴">Kiosk, care and public-sector flow patterns</li>
+          <li data-ko="우선 요청 2건/분기">Two priority requests per quarter</li>
+          <li data-ko="대기 명단 첫해 40% 할인 ($29.40)">40% off the first year for the list ($29.40)</li>
+        </ul>
+        <button class="btn btn--primary btn--block" type="button" data-open-waitlist data-plan="pro">
+          <span data-ko="Pro 얼리 액세스 신청">Join Pro early access</span>
+        </button>
+        <p class="plan__fine" data-ko="가격은 달라지기 전에 명단에 안내합니다. 지금은 결제가 일어나지 않습니다.">
+          Prices are announced to the list before any change. Nothing is charged today.
+        </p>
+      </article>
+
+      <article class="plan">
+        <p class="plan__flag plan__flag--quiet" data-ko="선착순 200명">First 200 seats</p>
+        <h3 class="plan__name" data-ko="파운딩 포에버">Founding Forever</h3>
+        <p class="plan__price"><span class="plan__amount">$79</span><span class="plan__per" data-ko="1회">one-time</span></p>
+        <p class="plan__desc" data-ko="한 번 결제로 Pro 전체를 계속 씁니다. 200명이 차면 닫습니다.">
+          Pay once and keep every Pro component, including later releases. Closed at 200 seats.
+        </p>
+        <ul class="plan__list">
+          <li data-ko="Pro 전체 · 기간 제한 없음">All Pro components, no expiry</li>
+          <li data-ko="이후 추가 컴포넌트 포함">Future components included</li>
+          <li data-ko="이름·로고 없이 조용히 쓰기">No logo wall, no public customer list</li>
+          <li data-ko="200명 한정">Limited to 200 seats</li>
+        </ul>
+        <button class="btn btn--ghost btn--block" type="button" data-open-waitlist data-plan="founding">
+          <span data-ko="파운딩 자리 신청">Reserve a founding seat</span>
+        </button>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section section--faq" id="faq" aria-labelledby="faq-title">
+    <div class="section__head">
+      <h2 id="faq-title" class="h2" data-ko="자주 묻는 질문">Questions</h2>
+    </div>
+    <div class="faq">
+      <details class="faq__item">
+        <summary><span data-ko="무료 10종은 정말 MIT인가요?">Is the free tier really MIT?</span></summary>
+        <p data-ko="네. 이 페이지의 무료 10종 코드는 MIT로 배포합니다. 복사해서 상업 제품에 넣어도 되고 출처 표기도 요구하지 않습니다. Pro 코드는 별도 라이선스이며 구매자에게만 제공됩니다.">
+          Yes. The ten free components are published under MIT — copy them into commercial products, no attribution required. Pro source is separately licensed and only released to buyers.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary><span data-ko="빌드 도구가 필요한가요?">Do I need a build step?</span></summary>
+        <p data-ko="아니요. HTML+CSS+JS는 파일 하나로 동작하고 React 코드는 단일 파일 컴포넌트입니다. 이 사이트도 프레임워크·번들러·외부 스크립트 없이 만들어졌습니다.">
+          No. The HTML+CSS+JS version runs as one file, and the React version is a single-file component. This site itself ships with no framework, bundler or external script.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary><span data-ko="이 사이트 자체가 WCAG AAA인가요?">Is this site itself WGAC AAA?</span></summary>
+        <p data-ko="본문 대비는 18.4:1, 보조문 10.6:1로 AAA 기준 7:1을 넘고, 모든 조작 요소는 48px 이상이며 포커스 링은 4px입니다. 다만 페이지 전체의 AAA 적합성을 자동으로 보증하지는 않습니다. AAA에는 이미지 대체 텍스트 수준, 수어, 맥락에 따른 세부 기준이 있어 사람의 검토가 필요합니다.">
+          Body text measures 18.4:1 and secondary text 10.6:1, past the 7:1 AAA bar; every control is at least 48px with a 4px focus ring. We do not claim automated AAA conformance for the whole page — AAA includes criteria such as sign-language and image-text levels that need a human review.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary><span data-ko="MCP 서버는 안전한가요?">Is the MCP server safe to run?</span></summary>
+        <p data-ko="서버는 표준 입출력으로만 통신하고, 같은 폴더의 catalog.json 한 개를 읽습니다. 네트워크 요청·파일 쓰기·API 키가 없습니다. 소스는 공개되어 있어 직접 확인할 수 있습니다.">
+          It speaks over stdio only, reads one local `catalog.json` beside it, and makes no network requests, writes no files and needs no API keys. The source is public so you can read it first.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary><span data-ko="한국어 지원은 어떻게 되나요?">What about Korean?</span></summary>
+        <p data-ko="모든 컴포넌트가 한국어·영어 문구 세트를 함께 제공하고, 이 페이지도 EN/KO를 전환할 수 있습니다. 다국어 음성 팩은 Pro에 포함됩니다.">
+          Every component ships Korean and English label sets, and this page switches between EN and KO. The multilingual voice pack is part of Pro.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary><span data-ko="소리 없이도 쓸 수 있나요?">Does it work without sound?</span></summary>
+        <p data-ko="모든 소리는 선택 사항입니다. 상단 스위치로 끄면 저장되고, 같은 정보가 화면 문구와 화면 낭독기 알림으로 전달됩니다. 소리는 보조 수단일 뿐입니다.">
+          All sound is optional. The switch in the header turns it off and remembers the choice; the same information is always carried by visible text and a screen-reader announcement.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary><span data-ko="지금 결제할 수 있나요?">Can I pay now?</span></summary>
+        <p data-ko="아직 아닙니다. 정산 계좌 연결 전이라 결제 대신 대기 명단을 받고 있습니다. 결제가 열리면 명단에 먼저 알리고, 그전에는 어떤 금액도 청구되지 않습니다.">
+          Not yet. Until settlement is connected the buttons collect an early-access request instead. The list hears first when checkout opens, and nothing is charged before that.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary><span data-ko="에이전시·요양기관에서 쓸 수 있나요?">Can agencies and care providers use it?</span></summary>
+        <p data-ko="무료 10종은 지금도 가능합니다. 여러 사이트에 반복 적용하거나 키오스크·요양 흐름이 필요하면 Pro가 맞습니다. 팀 단위 라이선스는 대기 명단의 역할 항목에 적어 주세요.">
+          The free ten already are. If you apply these across client sites or need kiosk and care flows, Pro fits; note your team size in the list form and a team licence will be offered when checkout opens.
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="final" aria-labelledby="final-title">
+    <div class="final__inner">
+      <h2 class="h2" id="final-title" data-ko="오늘 복사하고, 내일 배포하세요.">Copy it today, ship it tomorrow.</h2>
+      <p class="sub" data-ko="무료 10종은 지금 코드와 프롬프트까지 열려 있습니다.">
+        The ten free components are open right now — code, prompts and checklists included.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn--primary btn--lg" href="#components"><span data-ko="카탈로그 열기">Open the catalog</span><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <button class="btn btn--ghost btn--lg" type="button" data-open-waitlist data-plan="pro"><span data-ko="Pro 명단 신청">Join the Pro list</span></button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div>
+      <p class="footer__brand"><span aria-hidden="true">a11y</span> A11yKit</p>
+      <p class="footer__note" data-ko="시니어·접근성 우선 UI 컴포넌트와 MCP 서버. 무료 10종은 MIT 라이선스입니다.">
+        Senior-first UI components and an MCP server. The free ten are MIT licensed.
+      </p>
+    </div>
+    <nav class="footer__nav" aria-label="Footer">
+      <a href="#components" data-ko="컴포넌트">Components</a>
+      <a href="#mcp" data-ko="MCP">MCP</a>
+      <a href="#pricing" data-ko="가격">Pricing</a>
+      <a href="#faq" data-ko="FAQ">FAQ</a>
+      <a href="https://github.com/doggonug-cpu/doggonug-cpu.github.io/tree/main/a11y-ui-kit" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <p class="footer__legal">© 2026 A11yKit · <span data-ko="독립 프로젝트">independent project</span> · <span data-ko="무료 티어 MIT">free tier MIT</span></p>
+  </div>
+</footer>
+
+<!-- ============ WAITLIST DIALOG ============ -->
+<dialog class="modal" id="waitlist" aria-labelledby="wl-title">
+  <form class="modal__form" method="dialog" data-waitlist-form novalidate>
+    <div class="modal__head">
+      <h2 class="modal__title" id="wl-title" data-ko="Pro 얼리 액세스 신청">Join Pro early access</h2>
+      <button class="modal__close" type="button" data-close-waitlist aria-label="Close dialog">
+        <svg class="ic" aria-hidden="true"><use href="#i-x"/></svg>
+      </button>
+    </div>
+    <p class="modal__desc" data-ko="결제가 열리면 가장 먼저 알려드립니다. 명단 등록은 무료이고, 카드 정보는 받지 않습니다.">
+      We write once when checkout opens. Joining is free and no card details are collected.
+    </p>
+    <p class="modal__badge"><span data-ko="대기 명단 혜택 · 첫해 40% 할인">List benefit · 40% off the first year</span></p>
+
+    <div class="field">
+      <label class="field__label" for="wl-email" data-ko="이메일">Email</label>
+      <input class="field__input" id="wl-email" name="email" type="email" inputmode="email" autocomplete="email" required aria-describedby="wl-email-err">
+      <p class="field__err" id="wl-email-err" hidden></p>
+    </div>
+    <div class="field">
+      <label class="field__label" for="wl-role" data-ko="어떤 일을 하시나요?">What do you build?</label>
+      <select class="field__input" id="wl-role" name="role">
+        <option value="developer" data-ko="개발자 · 개인">Developer, solo</option>
+        <option value="agency" data-ko="에이전시 · 팀">Agency or team</option>
+        <option value="care" data-ko="요양 · 의료 · 복지">Care, clinic or welfare</option>
+        <option value="public" data-ko="공공 · 키오스크">Public sector or kiosk</option>
+        <option value="other" data-ko="그 외">Something else</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field__label" for="wl-plan" data-ko="관심 상품">Plan of interest</label>
+      <select class="field__input" id="wl-plan" name="plan">
+        <option value="pro" data-ko="Pro 연간 $49">Pro Annual $49</option>
+        <option value="founding" data-ko="파운딩 포에버 $79 (1회)">Founding Forever $79 one-time</option>
+        <option value="undecided" data-ko="아직 모름">Not sure yet</option>
+      </select>
+    </div>
+    <label class="checkline">
+      <input type="checkbox" name="updates" value="yes" checked>
+      <span data-ko="새 컴포넌트 소식도 받겠습니다 (월 1회 이하)">Also send new-component notes (at most one a month)</span>
+    </label>
+
+    <div class="modal__actions">
+      <button class="btn btn--primary btn--block" type="submit" data-waitlist-submit>
+        <span data-ko="명단에 등록">Add me to the list</span>
+      </button>
+      <button class="btn btn--ghost btn--block" type="button" data-close-waitlist data-ko="나중에">Not now</button>
+    </div>
+    <p class="modal__status" role="status" aria-live="polite" data-waitlist-status></p>
+    <p class="modal__fine" data-ko="이메일은 이 신청에만 쓰고 다른 곳에 넘기지 않습니다.">
+      Your address is used for this request only and is never sold or shared.
+    </p>
+  </form>
+</dialog>
+
+<div class="toast" role="status" aria-live="polite" data-toast hidden></div>
+<noscript>
+  <div class="noscript">
+    <p dir="auto"><strong>JavaScript is off.</strong> The components below are static HTML, but copy buttons, sound and the demo interactions need JavaScript. Everything that matters is also written in text.</p>
+  </div>
+</noscript>
+
+<script src="app.js" defer></script>
+</body>
+</html>

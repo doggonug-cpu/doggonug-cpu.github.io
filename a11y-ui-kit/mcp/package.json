@@ -1,0 +1,40 @@
+{
+  "name": "a11y-ui-kit-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for A11yKit — senior-first, WCAG AAA-minded UI components. Local stdio, zero dependencies, read-only.",
+  "type": "module",
+  "main": "server.mjs",
+  "bin": {
+    "a11y-ui-kit-mcp": "./server.mjs"
+  },
+  "files": [
+    "server.mjs",
+    "components.json",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node server.mjs --selftest"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "accessibility",
+    "wcag",
+    "senior",
+    "a11y",
+    "ui-kit",
+    "claude-code",
+    "cursor"
+  ],
+  "license": "MIT",
+  "homepage": "https://doggonug-cpu.github.io/a11y-ui-kit/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/doggonug-cpu/doggonug-cpu.github.io.git",
+    "directory": "a11y-ui-kit/mcp"
+  }
+}
