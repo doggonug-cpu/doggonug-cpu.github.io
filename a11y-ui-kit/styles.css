@@ -72,6 +72,7 @@ body{
 }
 
 img,svg{max-width:100%}
+[hidden]{display:none !important}
 h1,h2,h3,h4,p,ul,ol,dl,blockquote,fieldset{margin:0}
 ul,ol{padding:0;list-style:none}
 a{color:var(--info)}
@@ -108,10 +109,10 @@ html[data-theme="hc"] .top{background:#000;backdrop-filter:none;border-bottom:2p
 .top__row--main{display:flex;align-items:center;gap:18px;min-height:66px;flex-wrap:wrap}
 .brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);flex:0 0 auto}
 .brand__mark{
-  display:inline-grid;place-items:center;
+  display:inline-flex;align-items:center;
   border:2px solid var(--accent);color:var(--accent);
-  border-radius:10px;padding:.1em .42em;
-  font-family:var(--mono);font-weight:700;font-size:.95rem;letter-spacing:.02em;
+  border-radius:9px;padding:.06em .42em;
+  font-family:var(--mono);font-weight:700;font-size:.9rem;line-height:1.35;letter-spacing:-.02em;
 }
 .brand__name{font-weight:800;font-size:1.15rem;letter-spacing:-.015em}
 .brand__tag{color:var(--muted);font-size:.78rem;border-left:1px solid var(--line);padding-left:12px;margin-left:2px}
@@ -671,8 +672,8 @@ html[data-theme="hc"] .plan--featured{background:#000}
   font-weight:700;font-size:1rem;
 }
 .faq__item summary::-webkit-details-marker{display:none}
-.faq__item summary::after{content:"+";margin-left:auto;color:var(--accent);font-size:1.45rem;font-weight:700;line-height:1}
-.faq__item[open] summary::after{content:"–"}
+.faq__item summary::after{content:"";flex:0 0 auto;width:12px;height:12px;margin-left:auto;margin-top:-4px;border-right:2.5px solid var(--accent);border-bottom:2.5px solid var(--accent);transform:rotate(45deg)}
+.faq__item[open] summary::after{transform:rotate(225deg);margin-top:6px}
 .faq__item p{padding:0 18px 18px;color:var(--muted);font-size:.95rem}
 
 /* ============ FINAL ============ */
