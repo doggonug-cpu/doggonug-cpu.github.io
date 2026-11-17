@@ -534,6 +534,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 @media (max-width: 760px) {
   body { font-size: 16px; }
   .sec { padding: 68px 0; }
+  .eyebrow { font-size: 12.5px; padding: 6px 12px; gap: 7px; line-height: 1.5; }
   .sec-situ { padding-top: 8px; }
   .wrap { padding: 0 18px; }
   .head-in { min-height: 60px; gap: 12px; }
