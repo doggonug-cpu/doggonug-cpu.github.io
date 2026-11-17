@@ -12,6 +12,7 @@ robots.txt를 자동 생성합니다. 외부 의존성 없음(표준 라이브�
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import json
 import math
@@ -411,9 +412,17 @@ def comparison_row(ch: Channel, price, cost, overrides=None) -> str:
 
 
 # ---------------------------------------------------------------- layout
+def asset_version(name: str) -> str:
+    path = SRC / "assets" / name
+    if not path.exists():
+        return "0"
+    return hashlib.sha1(path.read_bytes()).hexdigest()[:8]
+
+
 def layout(page: dict) -> str:
     tpl = (SRC / "templates" / "layout.html").read_text(encoding="utf-8")
     base = page["base"]
+    cssv, jsv, ogv = asset_version("style.css"), asset_version("calc.js"), asset_version("og.png")
     nav_items = [
         (f"{base}/", "전체 계산기", page["slug"] == ""),
         (f"{base}/about/", "계산 방법과 출처", page["slug"] == "about"),
@@ -435,7 +444,10 @@ def layout(page: dict) -> str:
               .replace("__JSONLD__", page["jsonld"])
               .replace("__UPDATED__", SITE["updated_ko"])
               .replace("__SITE__", esc(SITE["name"]))
-              .replace("__TAGLINE__", esc(SITE["tagline"])))
+              .replace("__TAGLINE__", esc(SITE["tagline"]))
+              .replace("__CSSV__", cssv)
+              .replace("__JSV__", jsv)
+              .replace("__OGV__", ogv))
     return out
 
 
@@ -613,7 +625,7 @@ def build_channel(ch: Channel, channels, base) -> dict:
       <div class="stat"><span class="stat-label">건당 순수익</span><strong class="{'neg' if r['net'] < 0 else 'pos'}">{won(r["net"])}</strong><span class="stat-sub">마진율 {pct(r["margin"])}</span></div>
       <div class="stat"><span class="stat-label">손익분기 판매가</span><strong>{be_txt}</strong><span class="stat-sub">목표 {target}% 판매가 {tp_txt}</span></div>
     </div>
-    <p class="section-note">기본 조건에서 이 채널의 수수료·고정비는 결제액의 <strong>{pct(r["platform_rate"])}</strong>, 부가세·원천징수는 <strong>{won(r["vat"] + r["withholding"])}</strong>입니다. 정산 예정금은 수수료만 뺀 금액이고, 여기서 원가·배송비·광고비·세금을 빼야 실제 남는 돈이 됩니다.</p>
+    <p class="section-note">기본 조건에서 이 채널의 수수료·고정비는 결제액의 <strong>{pct(r["platform_rate"])}</strong>, 부가세·원천징수는 <strong>{won(r["vat"] + r["withholding"])}</strong>입니다. 정산 예정금은 수수료·고정비를 뺀 금액이고, 여기서 원가·배송비·광고비·세금을 빼야 실제 남는 돈이 됩니다.</p>
   </section>
 
   <section class="fees" aria-labelledby="fees-title">
