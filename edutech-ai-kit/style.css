@@ -275,6 +275,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .sec-kit .btn-solid:hover { background: #FF7440; }
 .sec-kit .btn-line { background: transparent; color: #E8EDF5; border-color: rgba(232,237,245,.32); }
 .sec-kit .btn-line:hover { border-color: #fff; background: rgba(255,255,255,.06); }
+.sec-kit .preview-note { color: #A9B6C8; margin: 18px 0 6px; max-width: 64em; }
+.sec-kit .preview-note a { color: #FFB08A; border-bottom-color: rgba(255,176,138,.42); }
+.sec-kit .preview-note a:hover { border-bottom-color: #FFB08A; }
 
 .kit-list {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));

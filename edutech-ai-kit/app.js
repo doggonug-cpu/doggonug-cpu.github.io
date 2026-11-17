@@ -131,7 +131,7 @@
       var accepted = result && (result.success === 'true' || result.success === true);
       if (!accepted) throw new Error('not accepted');
       form.reset();
-      say('신청되었습니다. 4차시 전체 목차 PDF를 곧 보내드릴게요. 무료 키트는 위에서 바로 받으실 수 있습니다.', 'ok');
+      say('신청되었습니다. 새 자료가 나올 때만 보내드리겠습니다. 무료 키트와 4차시 전체 목차는 위에서 바로 받으실 수 있습니다.', 'ok');
       submit.textContent = '신청 완료';
       window.setTimeout(function () {
         submit.disabled = false;
