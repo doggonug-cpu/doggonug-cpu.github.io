@@ -371,6 +371,10 @@ section + section { border-top: 1px solid var(--line); }
   .channel-list, .mini-grid { grid-template-columns: 1fr; }
   .site-nav { gap: 12px; font-size: 13.5px; }
   .data-table { min-width: 480px; font-size: 13px; }
+  .vs-table { min-width: 0; width: 100%; font-size: 12.5px; }
+  .vs-table th, .vs-table td { padding: 8px 6px; }
+  .vs-table thead th:first-child { width: 40%; }
+  .vs-table tbody th { white-space: normal; }
   .data-table th, .data-table td { padding: 9px 10px; }
   .footer-grid { grid-template-columns: 1fr; gap: 16px; padding-top: 26px; }
 }
