@@ -5,7 +5,11 @@
   "base_url": "https://doggonug-cpu.github.io/seller-margin-pseo",
   "updated": "2026-11-17",
   "updated_ko": "2026년 11월 17일",
-  "group_order": ["shop", "food", "service"],
+  "group_order": [
+    "shop",
+    "food",
+    "service"
+  ],
   "groups": {
     "shop": "상품 마켓플레이스",
     "food": "배달·외식 플랫폼",
@@ -36,5 +40,6 @@
       "요율은 언제 기준인가요?",
       "각 플랫폼이 공개한 판매자 안내와 약관을 2026년 11월에 확인해 정리했습니다. 스마트스토어는 2025년 6월 개편과 2025년 10월 네이버페이 인하, 배달 3사는 2025년 상생요금제, 지그재그는 2026년 6월 인상이 반영되어 있습니다. 요율은 예고 없이 바뀌므로 계약 전 판매자센터의 내 계정 요율표를 확인하세요."
     ]
-  ]
+  ],
+  "auto_rebuild": false
 }
