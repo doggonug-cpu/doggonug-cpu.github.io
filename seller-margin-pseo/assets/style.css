@@ -142,9 +142,9 @@ section + section { border-top: 1px solid var(--line); }
 .calc-head p { margin: 0 0 18px; color: var(--ink-3); font-size: 14.5px; }
 .calc-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 26px; align-items: start; }
 
-.calc-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; margin: 0; }
-.field { display: flex; flex-direction: column; gap: 5px; }
-.field label { font-size: 13.5px; font-weight: 600; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+.calc-inputs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 14px; margin: 0; }
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.field label { font-size: 13.5px; font-weight: 600; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; min-width: 0; overflow-wrap: anywhere; }
 .hint { font-weight: 400; font-size: 12px; color: var(--ink-3); }
 .input-wrap {
   display: flex; align-items: center; gap: 2px;
@@ -203,7 +203,7 @@ section + section { border-top: 1px solid var(--line); }
 .neg { color: var(--danger); }
 
 /* ---------- tables ---------- */
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius-sm); }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius-sm); max-width: 100%; }
 .table-scroll + .table-scroll { margin-top: 18px; }
 .data-table {
   width: 100%; border-collapse: collapse; background: var(--card);
@@ -227,14 +227,17 @@ section + section { border-top: 1px solid var(--line); }
 .table-pair { display: grid; gap: 18px; }
 
 /* ---------- 실전 비교 카드 (허브) ---------- */
-.vs-grid { display: grid; gap: 16px; }
+.vs-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 .vs-card {
-  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--card);
+  min-width: 0; border: 1px solid var(--line); border-radius: var(--radius);
   padding: 18px 18px 16px; box-shadow: var(--shadow);
 }
 .vs-card h3 { font-size: 1.02rem; margin: 0 0 6px; letter-spacing: -.01em; }
 .vs-condition { margin: 0 0 12px; font-size: 13px; color: var(--ink-3); }
+.vs-card .table-scroll { max-width: 100%; }
 .vs-table { min-width: 460px; }
+.vs-table caption { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .vs-table thead th:nth-child(n+2) { text-align: right; }
 .vs-table tbody td { text-align: right; }
 .vs-table thead th a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line-2); }
@@ -361,7 +364,7 @@ section + section { border-top: 1px solid var(--line); }
   .hero, .page-head { padding-top: 30px; }
   section { padding: 24px 16px; }
   .calc { padding: 18px 16px; margin-top: 16px; }
-  .calc-inputs { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .calc-inputs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
   .field label { font-size: 12.5px; }
   .hint { flex-basis: 100%; }
   .fit-grid { grid-template-columns: 1fr; }
