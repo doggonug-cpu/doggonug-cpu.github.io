@@ -603,10 +603,10 @@ def build_hub(channels, base) -> dict:
     vs_specs = [
         ("coupang-rocketgrowth", "coupang-marketplace",
          "쿠팡 로켓그로스 vs 직접 발송(마켓플레이스)",
-         "판매가 30,000원 · 원가 12,000원 · 광고 3% · 반품 3% · 월 100건을 양쪽에 같게 넣고, 배송·포장·물류비는 각 채널 구조 그대로 두었습니다.",
+         "판매가 30,000원 · 원가 12,000원 · 광고 3% · 반품 2% · 월 100건을 양쪽에 같게 넣고, 배송·포장·물류비는 각 채널 구조 그대로 두었습니다. 바로 아래 상품 채널 비교표와 같은 조건입니다.",
          30000, 12000,
-         {"ship_received": 0, "ad_pct": 3, "return_pct": 3, "monthly_qty": 100},
-         {"ship_received": 0, "ad_pct": 3, "return_pct": 3, "monthly_qty": 100},
+         {"ship_received": 0, "ad_pct": 3, "return_pct": 2, "monthly_qty": 100},
+         {"ship_received": 0, "ad_pct": 3, "return_pct": 2, "monthly_qty": 100},
          "로켓그로스는 판매수수료에 결제 수수료가 포함된 대신 건당 물류비(입출고·배송)가 붙고, 마켓플레이스는 배송비와 포장비를 직접 부담한다. 월 서비스 이용료 5만 5,000원은 양쪽이 같다. 판매량과 상품 크기에 따라 유리한 쪽이 바뀐다."),
         ("freelance", "cafe24",
          "프리랜서 3.3% vs 개인사업자(자사몰)",
