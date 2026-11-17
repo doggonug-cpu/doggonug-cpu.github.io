@@ -562,6 +562,29 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .mail-form { padding: 22px 18px; }
   .compare table { font-size: 13.5px; }
   .compare th, .compare td { padding: 11px 12px; }
+
+  /* 비교표 — 모바일에서는 카드 목록으로 */
+  .cmp-scroll { overflow: visible; }
+  .compare table, .compare tbody, .compare tr, .compare th, .compare td { display: block; width: 100%; }
+  .compare table { min-width: 0; border: 0; background: none; border-radius: 0; }
+  .compare thead { display: none; }
+  .compare tbody tr {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    margin-bottom: 10px; overflow: hidden;
+  }
+  .compare tbody th {
+    background: var(--paper-2); border-bottom: 1px solid var(--line);
+    font-size: 13px; letter-spacing: .04em; padding: 8px 14px; width: auto;
+  }
+  .compare tbody td {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding: 9px 14px; border-bottom: 1px dashed var(--line);
+  }
+  .compare tbody td:last-child { border-bottom: 0; }
+  .compare tbody td::before {
+    content: attr(data-label); flex: none; color: var(--muted); font-size: 12.5px;
+  }
+  .compare tbody td:nth-child(3) { font-weight: 700; }
 }
 
 @media (max-width: 400px) {
