@@ -108,7 +108,7 @@ input,select,textarea{font-family:inherit}
 /* ------------------------------- layout ---------------------------------- */
 .app-body{display:block}
 .panel{
-  padding:14px 14px calc(96px + env(safe-area-inset-bottom));
+  padding:14px 14px 14px;
 }
 .panel-inner{display:flex;flex-direction:column;gap:12px;max-width:560px;margin:0 auto}
 
