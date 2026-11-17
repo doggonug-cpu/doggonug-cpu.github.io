@@ -58,3 +58,19 @@ python3 seller-margin-pseo/_src/build.py --out /tmp/out --base-url https://examp
 3. 빌드 → 커밋. GitHub Actions가 매주 월요일 09:00 KST에 자동 재생성합니다.
 
 요율을 추정으로 넣는 경우(예: 비공개 플랫폼) 반드시 `fee_basis`와 페이지 문안에 추정임을 적습니다.
+
+## GitHub Actions 자동 재생성 (활성화 필요)
+
+`_src/workflow/seller-margin-pseo.yml` 이 워크플로 정의입니다. 매주 월요일 09:00 KST(00:00 UTC)와 수동 실행(`workflow_dispatch`), `_src` 변경 push 시 페이지를 다시 만들고, 결과가 바뀌었을 때만 커밋합니다.
+
+이 파일은 **Pickle의 GitHub 연동이 `workflows` 권한을 갖고 있지 않아** `.github/workflows/` 로 올리지 못했습니다(푸시 거부: `refusing to allow a GitHub App to create or update workflow ... without workflows permission`). 활성화하려면 다음 중 하나를 하면 됩니다.
+
+1. github.com/apps/pickle 설치 설정에서 **Workflows 권한을 허용**한 뒤 파일을 옮기고 푸시
+2. GitHub 웹에서 `.github/workflows/seller-margin-pseo.yml` 파일을 직접 만들고 아래 내용을 붙여넣기
+
+```bash
+# 파일 내용 확인
+cat seller-margin-pseo/_src/workflow/seller-margin-pseo.yml
+```
+
+그 전까지 페이지는 지금 커밋된 정적 결과물로 그대로 서비스되고, 요율 데이터를 고칠 때는 로컬에서 `build.py --check` 를 실행해 결과를 커밋하면 됩니다.

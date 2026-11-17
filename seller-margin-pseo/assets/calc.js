@@ -98,7 +98,9 @@
       costTotal: totalCost, net: net,
       margin: gross ? net / gross * 100 : 0,
       feeRate: gross ? fees / gross * 100 : 0,
-      settlement: gross - fees - cfg.fixed_per_order - wh
+      settlement: gross - fees - cfg.fixed_per_order - wh - monthlyAlloc,
+      platformTotal: fees + cfg.fixed_per_order + monthlyAlloc,
+      platformRate: gross ? (fees + cfg.fixed_per_order + monthlyAlloc) / gross * 100 : 0
     };
   }
 
@@ -168,7 +170,7 @@
     netEl.classList.toggle("neg", r.net < 0);
 
     var marginEl = $("out-margin");
-    marginEl.textContent = "마진율 " + pct(r.margin) + " · 수수료 " + pct(r.feeRate);
+    marginEl.textContent = "마진율 " + pct(r.margin) + " · 수수료 " + pct(r.platformRate);
     marginEl.classList.toggle("neg", r.margin < 0);
 
     if ($("out-gross")) $("out-gross").textContent = won(r.gross);
@@ -178,7 +180,7 @@
     if ($("out-var")) $("out-var").textContent = "-" + won(r.ad + r.returns);
     if ($("out-base")) $("out-base").textContent = "-" + won(r.base);
     if ($("out-settlement")) $("out-settlement").textContent = won(r.settlement);
-    if ($("out-monthly")) $("out-monthly").textContent = won(r.net * inp.qty - cfg.monthly_fee);
+    if ($("out-monthly")) $("out-monthly").textContent = won(Math.round((r.net * inp.qty - cfg.monthly_fee) / 100) * 100);
     if ($("out-breakeven")) {
       $("out-breakeven").textContent = be === null
         ? (netAt(50000000, inp) < 0 ? "어떤 가격에서도 흑자 불가" : "0원에서도 흑자")

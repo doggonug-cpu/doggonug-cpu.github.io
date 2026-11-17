@@ -139,7 +139,9 @@ class Channel:
             "net": net,
             "margin": (net / gross * 100.0) if gross else 0.0,
             "fee_rate": (fees / gross * 100.0) if gross else 0.0,
-            "settlement": gross - fees - self.fixed_per_order - withholding,
+            "settlement": gross - fees - self.fixed_per_order - withholding - monthly,
+            "platform_total": fees + self.fixed_per_order + monthly,
+            "platform_rate": ((fees + self.fixed_per_order + monthly) / gross * 100.0) if gross else 0.0,
         }
 
     def compute_default(self) -> dict:
@@ -388,20 +390,20 @@ def related_cards(ch: Channel, channels, base: str) -> str:
     return "\n".join(cards)
 
 
-def comparison_row(ch: Channel, price, cost, flat=True) -> str:
+def comparison_row(ch: Channel, price, cost, overrides=None) -> str:
     d = ch.defaults
     kw = dict(ship_received=d.get("ship_received", 0), ship_cost=d.get("ship_cost", 0),
               packaging=d.get("packaging", 0), ad_pct=d.get("ad_pct", 0),
               return_pct=d.get("return_pct", 0), monthly_qty=d.get("monthly_qty", 100))
-    if flat:
-        kw.update(ship_received=0, ship_cost=2500, packaging=300, ad_pct=3, return_pct=2)
+    if overrides:
+        kw.update(overrides)
     r = ch.compute(price, cost, **kw)
     cls = "neg" if r["net"] < 0 else "pos"
     return f"""        <tr>
           <th scope="row"><a href="./{ch.slug}/">{esc(ch.name)}</a></th>
           <td data-label="판매가">{won(price)}</td>
-          <td data-label="총 수수료">{won(r["fees"])}</td>
-          <td data-label="수수료율">{pct(r["fee_rate"])}</td>
+          <td data-label="총 수수료">{won(r["platform_total"])}</td>
+          <td data-label="수수료율">{pct(r["platform_rate"])}</td>
           <td data-label="세금">{won(r["vat"] + r["withholding"])}</td>
           <td data-label="순수익" class="{cls}">{won(r["net"])}</td>
           <td data-label="마진율" class="{cls}">{pct(r["margin"])}</td>
@@ -448,11 +450,21 @@ def build_hub(channels, base) -> dict:
     food = [c for c in channels if c.group == "food"]
     service = [c for c in channels if c.group == "service"]
 
-    # 상품 채널은 동일 조건(3만원/원가 40%)으로 비교
+    # 상품 채널은 동일 조건(3만원/원가 40%), 배달 채널은 외식 조건으로 비교
     price, cost = 30000, 12000
-    shop_rows = "\n".join(comparison_row(c, price, cost) for c in shop + food)
+    shop_rows = "\n".join(
+        comparison_row(c, price, cost,
+                       {"ship_received": 0, "ad_pct": 3, "return_pct": 2,
+                        "monthly_qty": 100})
+        for c in shop)
+    food_price, food_cost = 25000, 8000
+    food_rows = "\n".join(
+        comparison_row(c, food_price, food_cost,
+                       {"ship_received": 0, "packaging": 500,
+                        "ad_pct": 0, "return_pct": 1, "monthly_qty": 300})
+        for c in food)
     service_rows = "\n".join(
-        comparison_row(c, c.defaults["price"], c.defaults["cost"], flat=False)
+        comparison_row(c, c.defaults["price"], c.defaults["cost"])
         for c in service)
 
     cards = []
@@ -486,13 +498,27 @@ def build_hub(channels, base) -> dict:
 
   <section class="compare" id="compare" aria-labelledby="compare-title">
     <h2 id="compare-title">상품 판매 채널 비교</h2>
-    <p class="section-note">아래 표는 모든 채널에 같은 조건을 넣은 결과입니다 — 판매가 {won(price)}, 원가 {won(cost)}, 배송비 지출 2,500원, 포장 300원, 광고비 매출의 3%, 반품 충당 2%. 실제 요율은 카테고리·계약에 따라 다르므로 각 채널 페이지에서 직접 조정하세요.</p>
+    <p class="section-note">아래 표는 판매가 {won(price)}, 원가 {won(cost)}, 광고비 매출의 3%, 반품 충당 2%를 모든 채널에 같게 넣은 결과입니다. 배송비·포장비와 월 고정비는 채널 구조가 달라 각 채널 기본값을 그대로 썼습니다(예: 쿠팡 로켓그로스는 쿠팡이 발송해 배송비 0원, 대신 물류비 2,200원). 실제 요율은 카테고리·계약에 따라 다르므로 각 채널 페이지에서 직접 조정하세요.</p>
     <div class="table-scroll">
       <table class="data-table compare-table">
         <caption>상품 채널 순수익 비교 (동일 조건)</caption>
         <thead><tr><th scope="col">채널</th><th scope="col">판매가</th><th scope="col">총 수수료</th><th scope="col">수수료율</th><th scope="col">세금</th><th scope="col">순수익</th><th scope="col">마진율</th></tr></thead>
         <tbody>
 {shop_rows}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="compare" aria-labelledby="compare-food-title">
+    <h2 id="compare-food-title">배달·외식 채널 비교</h2>
+    <p class="section-note">배달은 상품 판매와 비용 구조가 달라 외식 기준으로 계산했습니다 — 주문 금액 {won(food_price)}, 재료 원가 {won(food_cost)}(32%), 포장 500원, 광고비 0%, 반품 충당 1%. 배달비는 채널별 업주 부담액을 그대로 넣었습니다(배민·쿠팡이츠·요기요 2,900원, 땡겨요 2,500원, 포장 0원). 배달비를 빼고 수수료율만 보면 실제 마진을 알 수 없습니다.</p>
+    <div class="table-scroll">
+      <table class="data-table compare-table">
+        <caption>배달 채널 순수익 비교 (외식 기준)</caption>
+        <thead><tr><th scope="col">채널</th><th scope="col">주문금액</th><th scope="col">총 수수료</th><th scope="col">수수료율</th><th scope="col">세금</th><th scope="col">순수익</th><th scope="col">마진율</th></tr></thead>
+        <tbody>
+{food_rows}
         </tbody>
       </table>
     </div>
@@ -583,11 +609,11 @@ def build_channel(ch: Channel, channels, base) -> dict:
     <h2 id="summary-title">기본 조건 요약</h2>
     <div class="stat-grid">
       <div class="stat"><span class="stat-label">판매가</span><strong>{won(d["price"])}</strong><span class="stat-sub">원가 {won(d["cost"])} · 광고 {pct(d.get("ad_pct", 0))}</span></div>
-      <div class="stat"><span class="stat-label">정산 예정금</span><strong>{won(r["settlement"])}</strong><span class="stat-sub">수수료 {won(r["fees"])} 차감</span></div>
+      <div class="stat"><span class="stat-label">정산 예정금</span><strong>{won(r["settlement"])}</strong><span class="stat-sub">수수료·고정비 {won(r["platform_total"])} 차감</span></div>
       <div class="stat"><span class="stat-label">건당 순수익</span><strong class="{'neg' if r['net'] < 0 else 'pos'}">{won(r["net"])}</strong><span class="stat-sub">마진율 {pct(r["margin"])}</span></div>
       <div class="stat"><span class="stat-label">손익분기 판매가</span><strong>{be_txt}</strong><span class="stat-sub">목표 {target}% 판매가 {tp_txt}</span></div>
     </div>
-    <p class="section-note">기본 조건에서 이 채널의 수수료는 결제액의 <strong>{pct(r["fee_rate"])}</strong>, 부가세·원천징수는 <strong>{won(r["vat"] + r["withholding"])}</strong>입니다. 정산 예정금은 수수료만 뺀 금액이고, 여기서 원가·배송비·광고비·세금을 빼야 실제 남는 돈이 됩니다.</p>
+    <p class="section-note">기본 조건에서 이 채널의 수수료·고정비는 결제액의 <strong>{pct(r["platform_rate"])}</strong>, 부가세·원천징수는 <strong>{won(r["vat"] + r["withholding"])}</strong>입니다. 정산 예정금은 수수료만 뺀 금액이고, 여기서 원가·배송비·광고비·세금을 빼야 실제 남는 돈이 됩니다.</p>
   </section>
 
   <section class="fees" aria-labelledby="fees-title">
