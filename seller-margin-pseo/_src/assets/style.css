@@ -226,6 +226,22 @@ section + section { border-top: 1px solid var(--line); }
 
 .table-pair { display: grid; gap: 18px; }
 
+/* ---------- 실전 비교 카드 (허브) ---------- */
+.vs-grid { display: grid; gap: 16px; }
+.vs-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px 18px 16px; box-shadow: var(--shadow);
+}
+.vs-card h3 { font-size: 1.02rem; margin: 0 0 6px; letter-spacing: -.01em; }
+.vs-condition { margin: 0 0 12px; font-size: 13px; color: var(--ink-3); }
+.vs-table { min-width: 460px; }
+.vs-table thead th:nth-child(n+2) { text-align: right; }
+.vs-table tbody td { text-align: right; }
+.vs-table thead th a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line-2); }
+.vs-table thead th a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.vs-verdict { margin: 12px 0 0; font-size: 14.5px; color: var(--ink); }
+.vs-note { margin: 8px 0 0; font-size: 13px; color: var(--ink-3); max-width: 80ch; }
+
 /* ---------- prose ---------- */
 .prose { max-width: 74ch; }
 .prose p { margin: 0 0 12px; color: var(--ink-2); }

@@ -442,14 +442,18 @@ def related_cards(ch: Channel, channels, base: str) -> str:
     return "\n".join(cards)
 
 
-def comparison_row(ch: Channel, price, cost, overrides=None) -> str:
+def compute_with(ch: Channel, price, cost, overrides=None) -> dict:
     d = ch.defaults
     kw = dict(ship_received=d.get("ship_received", 0), ship_cost=d.get("ship_cost", 0),
               packaging=d.get("packaging", 0), ad_pct=d.get("ad_pct", 0),
               return_pct=d.get("return_pct", 0), monthly_qty=d.get("monthly_qty", 100))
     if overrides:
         kw.update(overrides)
-    r = ch.compute(price, cost, **kw)
+    return ch.compute(price, cost, **kw)
+
+
+def comparison_row(ch: Channel, price, cost, overrides=None) -> str:
+    r = compute_with(ch, price, cost, overrides)
     cls = "neg" if r["net"] < 0 else "pos"
     return f"""        <tr>
           <th scope="row"><a href="./{ch.slug}/">{esc(ch.name)}</a></th>
@@ -460,6 +464,51 @@ def comparison_row(ch: Channel, price, cost, overrides=None) -> str:
           <td data-label="순수익" class="{cls}">{won(r["net"])}</td>
           <td data-label="마진율" class="{cls}">{pct(r["margin"])}</td>
         </tr>"""
+
+
+def vs_card(title: str, note: str, left: Channel, right: Channel,
+            price: float, cost: float, ov_left: dict, ov_right: dict,
+            condition: str) -> str:
+    """두 채널을 같은 판매가·원가·광고/반품 조건으로 놓고 나란히 비교하는 카드."""
+    l = compute_with(left, price, cost, ov_left)
+    r = compute_with(right, price, cost, ov_right)
+    diff = l["net"] - r["net"]
+    if abs(diff) < 1:
+        verdict = "두 구조의 건당 순수익이 사실상 같습니다."
+    else:
+        win, lose = (left, right) if diff > 0 else (right, left)
+        verdict = (f"같은 조건에서 <strong>{esc(win.name)}</strong> 쪽이 1건당 "
+                   f"<strong>{won(abs(diff))}</strong> 더 남습니다.")
+
+    def row(label, lv, rv, cls=""):
+        return (f"<tr><th scope=\"row\">{label}</th>"
+                f"<td class=\"{cls}\">{lv}</td><td class=\"{cls}\">{rv}</td></tr>")
+
+    rows = "\n          ".join([
+        row("고객 결제액", won(l["gross"]), won(r["gross"])),
+        row("총 수수료·고정비", f"{won(l['platform_total'])} ({pct(l['platform_rate'])})",
+            f"{won(r['platform_total'])} ({pct(r['platform_rate'])})"),
+        row("부가세·원천징수", won(l["vat"] + l["withholding"]), won(r["vat"] + r["withholding"])),
+        row("원가·배송·포장", won(l["cost"] + l["ship_cost"] + l["packaging"]),
+            won(r["cost"] + r["ship_cost"] + r["packaging"])),
+        row("건당 순수익", won(l["net"]), won(r["net"]), "neg" if (l["net"] < 0 or r["net"] < 0) else "pos"),
+        row("마진율", pct(l["margin"]), pct(r["margin"])),
+    ])
+    return f"""      <article class="vs-card">
+        <h3>{esc(title)}</h3>
+        <p class="vs-condition">{esc(condition)}</p>
+        <div class="table-scroll">
+          <table class="data-table vs-table">
+            <caption>{esc(title)}</caption>
+            <thead><tr><th scope="col">항목</th><th scope="col"><a href="./{left.slug}/">{esc(left.name)}</a></th><th scope="col"><a href="./{right.slug}/">{esc(right.name)}</a></th></tr></thead>
+            <tbody>
+          {rows}
+            </tbody>
+          </table>
+        </div>
+        <p class="vs-verdict">{verdict}</p>
+        <p class="vs-note">{esc(note)}</p>
+      </article>"""
 
 
 # ---------------------------------------------------------------- layout
@@ -549,6 +598,35 @@ def build_hub(channels, base) -> dict:
       </details>""" for i, (q, a) in enumerate(SITE["hub_faq"]))
 
     hub_calc = calc_widget(channels[0], channels)
+
+    by_slug = {c.slug: c for c in channels}
+    vs_specs = [
+        ("coupang-rocketgrowth", "coupang-marketplace",
+         "쿠팡 로켓그로스 vs 직접 발송(마켓플레이스)",
+         "판매가 30,000원 · 원가 12,000원 · 광고 3% · 반품 3% · 월 100건을 양쪽에 같게 넣고, 배송·포장·물류비는 각 채널 구조 그대로 두었습니다.",
+         30000, 12000,
+         {"ship_received": 0, "ad_pct": 3, "return_pct": 3, "monthly_qty": 100},
+         {"ship_received": 0, "ad_pct": 3, "return_pct": 3, "monthly_qty": 100},
+         "로켓그로스는 판매수수료에 결제 수수료가 포함된 대신 건당 물류비(입출고·배송)가 붙고, 마켓플레이스는 배송비와 포장비를 직접 부담한다. 월 서비스 이용료 5만 5,000원은 양쪽이 같다. 판매량과 상품 크기에 따라 유리한 쪽이 바뀐다."),
+        ("freelance", "cafe24",
+         "프리랜서 3.3% vs 개인사업자(자사몰)",
+         "용역 1건 1,000,000원 · 경비 200,000원 · 광고·반품 0 · 월 10건 기준. 프리랜서는 3.3% 원천징수, 사업자는 부가세 일반과세로 계산했습니다.",
+         1000000, 200000,
+         {"ship_received": 0, "ship_cost": 0, "packaging": 0, "ad_pct": 0, "return_pct": 0, "monthly_qty": 10},
+         {"ship_received": 0, "ship_cost": 0, "packaging": 0, "ad_pct": 0, "return_pct": 0, "monthly_qty": 10},
+         "프리랜서는 원천징수 3.3%만 떼이고 부가세 계산이 없으며, 사업자는 PG 수수료와 부가세를 함께 부담한다. 대신 사업자는 매입세액 공제와 비용 처리를 받을 수 있어, 이 표는 지급 시점의 현금 흐름만 비교한 값이다."),
+        ("kmong", "smartstore",
+         "크몽 vs 스마트스토어 수수료 한눈 비교",
+         "결제액 30,000원 · 원가 12,000원 · 광고·반품·배송 0 · 월 10건 기준. 플랫폼 수수료 구조만 떼어 본 값입니다.",
+         30000, 12000,
+         {"ship_received": 0, "ship_cost": 0, "packaging": 0, "ad_pct": 0, "return_pct": 0, "monthly_qty": 10},
+         {"ship_received": 0, "ship_cost": 0, "packaging": 0, "ad_pct": 0, "return_pct": 0, "monthly_qty": 10},
+         "크몽은 판매금액 구간에 따라 이용료가 16.4%에서 4.4%로 내려가고 결제망 이용료 3.3%가 전액에 붙는다. 스마트스토어는 판매수수료 2.73%와 네이버페이 1.77%가 붙지만, 유입을 만들 광고비를 따로 써야 한다."),
+    ]
+    vs_cards = [vs_card(title, note, by_slug[a], by_slug[b], p, c, ov_a, ov_b, cond)
+                for a, b, title, cond, p, c, ov_a, ov_b, note in vs_specs
+                if a in by_slug and b in by_slug]
+    vs_html = "\n".join(vs_cards)
     body = f"""<main id="main">
   <section class="hero">
     <p class="eyebrow">셀러·프리랜서 마진 계산기</p>
@@ -556,11 +634,20 @@ def build_hub(channels, base) -> dict:
     <p class="lede">스마트스토어, 쿠팡, 배달앱, 패션 플랫폼, 크몽·숨고 같은 서비스 마켓, 자사몰까지 — 채널마다 수수료 항목과 부과 기준이 달라 정산금이 매출의 80% 아래로 떨어지는 일이 흔합니다. 채널을 고르고 숫자를 넣으면 수수료·부가세·광고비·반품 충당을 모두 뺀 건당 순수익과 마진율, 손익분기 판매가까지 바로 나옵니다.</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="#compare">채널별 순수익 비교표 보기</a>
+      <a class="btn" href="#vs">실전 비교 3가지</a>
       <a class="btn" href="{base}/about/">계산 방법과 출처</a>
     </div>
   </section>
 
 {hub_calc}
+
+  <section class="compare vs-section" id="vs" aria-labelledby="vs-title">
+    <h2 id="vs-title">실전 비교 — 자주 갈리는 세 가지</h2>
+    <p class="section-note">수수료율만 보면 답이 나오지 않는 조합을 같은 조건으로 놓고 계산했습니다. 두 채널 이름을 누르면 각 계산기로 이동해 내 숫자로 다시 볼 수 있습니다. 모든 값은 아래 채널 데이터로 계산한 추정치입니다.</p>
+    <div class="vs-grid">
+{vs_html}
+    </div>
+  </section>
 
   <section class="compare" id="compare" aria-labelledby="compare-title">
     <h2 id="compare-title">상품 판매 채널 비교</h2>
