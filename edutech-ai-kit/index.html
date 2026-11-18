@@ -97,6 +97,7 @@
       <a href="#kit">무료 키트</a>
       <a href="#preview">40분 미리보기</a>
       <a href="#pack">4차시 패키지</a>
+      <a href="#inquiry">기관·강사 도입</a>
       <a href="#faq">자주 묻는 질문</a>
     </nav>
     <a class="btn btn-sm btn-solid" href="files/hanul-ai-play-lesson1-kit.pdf" download>무료 키트 받기</a>
@@ -484,6 +485,10 @@
             4차시 전체 목차 먼저 보기
             <span class="btn-sub">PDF 2쪽 · 신청 없이</span>
           </a>
+          <a class="btn btn-line" href="#inquiry">
+            기관·단체는 견적 문의
+            <span class="btn-sub">반 수·차시 맞춤</span>
+          </a>
         </div>
       </div>
 
@@ -508,6 +513,66 @@
           </table>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ 기관·강사 도입 ============ -->
+  <section class="sec sec-inquiry" id="inquiry">
+    <div class="wrap mail-in">
+      <div class="mail-copy">
+        <p class="sec-kicker">기관·강사 도입</p>
+        <h2>학급 수만큼,<br>맞춰서 드립니다</h2>
+        <p>
+          4차시 패키지를 여러 반에 쓰시거나, 우리 원·학교 교육과정에 맞춰 차시를 더하거나 빼야 할 때가 있습니다.
+          그럴 때는 크몽 승인을 기다리지 않고 바로 견적을 받으실 수 있습니다.
+        </p>
+        <ul class="mail-points">
+          <li>단체 구매 — 반 수에 맞춘 견적</li>
+          <li>차시·학년 맞춤 수정 — 지도안과 활동지를 다시 만듭니다</li>
+          <li>교사 연수·수업 시연 — 방문 일정은 협의해 정합니다</li>
+          <li>결제는 계좌이체로 진행하고, 입금 안내는 회신 메일로 드립니다</li>
+        </ul>
+        <p class="preview-note" style="margin-top:18px">
+          4차시 전체 목차는 신청 없이 바로 내려받을 수 있습니다.
+          <a href="files/hanul-ai-play-curriculum-overview.pdf" download>4차시 전체 목차 PDF(2쪽) 내려받기 →</a>
+        </p>
+      </div>
+
+      <form class="mail-form" id="inquiryForm" action="https://formsubmit.co/ajax/0e95d93c687b1b0b2346af06319b0a58" method="POST" novalidate>
+        <h3>기관·강사 도입 문의</h3>
+        <div class="field">
+          <label for="q-org">기관·학교명</label>
+          <input id="q-org" name="기관명" type="text" autocomplete="organization" required placeholder="완도중앙초등학교">
+        </div>
+        <div class="field">
+          <label for="q-name">담당자 성함 <span class="opt">(선택)</span></label>
+          <input id="q-name" name="담당자" type="text" autocomplete="name" placeholder="김선생">
+        </div>
+        <div class="field">
+          <label for="q-email">회신 받을 이메일</label>
+          <input id="q-email" name="email" type="email" inputmode="email" autocomplete="email" required placeholder="teacher@example.com">
+        </div>
+        <div class="field">
+          <label for="q-kind">필요한 것</label>
+          <select id="q-kind" name="필요한 것">
+            <option>4차시 패키지 단체 구매</option>
+            <option>학급·학년 맞춤 수정</option>
+            <option>교사 연수·수업 시연</option>
+            <option>무료 키트 관련 질문</option>
+            <option>기타</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="q-msg">내용 <span class="opt">(선택)</span></label>
+          <textarea id="q-msg" name="문의 내용" rows="4" placeholder="예: 1학년 4반, 5월 중 2차시만 필요합니다."></textarea>
+        </div>
+        <input type="hidden" name="_subject" value="[한울에듀테크] 기관·강사 도입 문의">
+        <input type="hidden" name="_template" value="table">
+        <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn btn-solid btn-block" type="submit">견적 문의 보내기</button>
+        <p class="form-note" id="inquiry-msg" role="status" aria-live="polite"></p>
+        <p class="form-note">이 폼으로 결제가 일어나지 않습니다. 폼이 막히면 크몽 프로필의 메시지로 보내셔도 됩니다.</p>
+      </form>
     </div>
   </section>
 
@@ -615,7 +680,10 @@
       <a href="#kit">무료 키트</a>
       <a href="#preview">40분 미리보기</a>
       <a href="#pack">4차시 패키지</a>
+      <a href="#inquiry">기관·강사 도입</a>
       <a href="https://kmong.com/@%ED%95%9C%EC%9A%B8%EC%97%90%EB%93%80%ED%85%8C%ED%81%AC" target="_blank" rel="noopener">크몽</a>
+      <a href="https://doggonug-cpu.github.io/a11y-ui-kit/" target="_blank" rel="noopener">어르신·키오스크 UI 킷</a>
+      <a href="https://doggonug-cpu.github.io/quick-quote-pwa/" target="_blank" rel="noopener">견적서 발급기</a>
     </div>
     <p class="foot-legal">
       이 페이지의 자료는 한울에듀테크가 직접 제작했습니다. 무료 체험 키트는 자유롭게 인쇄해 쓰실 수 있으며, 재판매·재배포는 안 됩니다.

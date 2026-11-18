@@ -69,6 +69,86 @@
 
   /* ---------- 4. 자료 소식 신청 ---------- */
   var form = document.getElementById('signup');
+
+  // FormSubmit AJAX는 JSON 본문이 CORS 사전요청에서 막히는 경우가 있어
+  // form-urlencoded로 보내고, 응답이 늦으면 실패로 처리한다.
+  function sendFormSubmit(formEl, onOk, onFail) {
+    var endpoint = formEl.getAttribute('action');
+    var submit = formEl.querySelector('button[type="submit"]');
+    var label = submit.textContent;
+    var data = new URLSearchParams();
+    new FormData(formEl).forEach(function (value, key) {
+      if (key === '_honey' || key === '동의' || key === '_captcha') return;
+      data.append(key, value);
+    });
+    data.append('_captcha', 'false');
+
+    submit.disabled = true;
+    submit.textContent = '보내는 중…';
+
+    var timer = null;
+    var guard = new Promise(function (_, reject) {
+      timer = window.setTimeout(function () { reject(new Error('timeout')); }, 12000);
+    });
+
+    Promise.race([
+      fetch(endpoint, { method: 'POST', headers: { 'Accept': 'application/json' }, body: data })
+        .then(function (res) { return res.json().catch(function () { return {}; }); }),
+      guard
+    ]).then(function (result) {
+      window.clearTimeout(timer);
+      var accepted = result && (result.success === 'true' || result.success === true);
+      if (!accepted) throw new Error('not accepted');
+      formEl.reset();
+      submit.textContent = '접수 완료';
+      onOk();
+      window.setTimeout(function () {
+        submit.disabled = false;
+        submit.textContent = label;
+      }, 4000);
+    }).catch(function () {
+      window.clearTimeout(timer);
+      submit.disabled = false;
+      submit.textContent = label;
+      onFail();
+    });
+  }
+
+  /* ---------- 5. 기관·강사 도입 문의 ---------- */
+  var inquiry = document.getElementById('inquiryForm');
+  if (inquiry) {
+    var qMsg = document.getElementById('inquiry-msg');
+    inquiry.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var org = inquiry.elements['기관명'];
+      var email = inquiry.elements.email;
+      qMsg.className = 'form-note';
+      if (!org.value.trim()) {
+        qMsg.textContent = '기관·학교명을 적어 주세요.';
+        qMsg.className = 'form-note err';
+        org.focus();
+        return;
+      }
+      if (!email.value || !email.checkValidity()) {
+        qMsg.textContent = '회신 받을 이메일 주소를 확인해 주세요.';
+        qMsg.className = 'form-note err';
+        email.focus();
+        return;
+      }
+      qMsg.textContent = '';
+      sendFormSubmit(inquiry,
+        function () {
+          qMsg.textContent = '문의를 접수했습니다. 영업일 1일 안에 회신드립니다. 무료 키트와 4차시 목차는 위에서 바로 받으실 수 있습니다.';
+          qMsg.className = 'form-note ok';
+        },
+        function () {
+          qMsg.textContent = '지금은 문의를 받지 못했습니다. 잠시 뒤 다시 시도하시거나 크몽 프로필 메시지로 보내 주세요.';
+          qMsg.className = 'form-note err';
+        }
+      );
+    });
+  }
+
   if (!form) return;
 
   var msg = document.getElementById('form-msg');
