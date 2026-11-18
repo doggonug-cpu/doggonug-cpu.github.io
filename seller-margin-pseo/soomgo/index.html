@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://doggonug-cpu.github.io/seller-margin-pseo/assets/og.png?v=fbe9a54f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111827'/%3E%3Cpath d='M8 22V13M13 22V9M18 22V16M23 22V11' stroke='%2334d399' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://doggonug-cpu.github.io/seller-margin-pseo/assets/style.css?v=187029a4">
+<link rel="stylesheet" href="https://doggonug-cpu.github.io/seller-margin-pseo/assets/style.css?v=046220c5">
 </head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>
@@ -295,6 +295,46 @@
     <p class="source-note">숨고 고수 안내(2026년 10월 확인) 기준입니다. 요율과 정산 조건은 계약·카테고리·프로모션에 따라 달라질 수 있어, 실제 정산금은 판매자센터의 정산 내역으로 확인하셔야 합니다. 이 페이지의 계산 결과는 참고용 추정치입니다.</p>
   </section>
 </main>
+<section class="cta-band" aria-labelledby="cta-band-title">
+  <div class="wrap cta-band-in">
+    <div class="cta-band-copy">
+      <h2 id="cta-band-title">계산은 무료입니다. 세팅은 대신 해 드립니다.</h2>
+      <p>채널이 바뀌거나 품목이 늘면 요율·광고비·반품 충당 구조를 다시 맞춰야 합니다. 이 계산기에 우리 조건을 넣어 둔 파일이 필요하거나, 견적서·거래명세서까지 이어지는 흐름을 만들고 싶다면 그 작업을 맡아 드립니다.</p>
+      <ul class="cta-band-list">
+        <li>채널 조합별 마진 시트 맞춤 제작</li>
+        <li>견적서·거래명세서 발행 흐름 연결</li>
+        <li>정산 점검표(수수료·부가세·반품) 정리</li>
+      </ul>
+      <p class="cta-band-note">견적은 폼으로 받고 이메일로 회신합니다. 이 폼으로 결제가 일어나지 않습니다. 함께 쓰는 무료 도구 — <a href="https://doggonug-cpu.github.io/quick-quote-pwa/">견적서·거래명세서 발급기</a></p>
+    </div>
+    <form class="cta-band-form" id="pseoInquiry" action="https://formsubmit.co/ajax/0e95d93c687b1b0b2346af06319b0a58" method="POST" novalidate>
+      <h3>맞춤 세팅 · 도입 문의</h3>
+      <label class="cta-field">
+        <span>이메일</span>
+        <input type="email" name="email" inputmode="email" autocomplete="email" required placeholder="seller@example.com">
+      </label>
+      <label class="cta-field">
+        <span>무엇이 필요한가요</span>
+        <select name="필요한 것">
+          <option>채널 조합별 마진 시트</option>
+          <option>견적서·거래명세서 흐름</option>
+          <option>정산 점검표</option>
+          <option>기타 문의</option>
+        </select>
+      </label>
+      <label class="cta-field">
+        <span>내용 <em>(선택)</em></span>
+        <textarea name="문의 내용" rows="3" placeholder="예: 스마트스토어와 크몽을 같이 합니다."></textarea>
+      </label>
+      <input type="hidden" name="_subject" value="[마진계산기] 맞춤 세팅·도입 문의">
+      <input type="hidden" name="_template" value="table">
+      <input type="text" name="_honey" class="cta-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn btn-primary" type="submit">문의 보내기</button>
+      <p class="cta-status" id="pseoInquiryStatus" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
@@ -318,6 +358,7 @@
   </div>
 </footer>
 <script src="https://doggonug-cpu.github.io/seller-margin-pseo/assets/calc.js?v=2b2e4838" defer></script>
+<script src="https://doggonug-cpu.github.io/seller-margin-pseo/assets/inquiry.js?v=e2e2a35b" defer></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "숨고 마진 계산기", "url": "https://doggonug-cpu.github.io/seller-margin-pseo/soomgo/", "applicationCategory": "FinanceApplication", "operatingSystem": "Any", "inLanguage": "ko", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"}, "description": "숨고는 고용이 성사돼도 거래 금액에서 수수료를 떼지 않습니다. 대신 견적을 보낼 때마다 숨고캐시가 차감되고, 숨고페이 결제 시 고객이 3.5%를 부담합니다. 그래서 마진은 수수료율이 아니라 견적 대비 성사율로 결정됩니다."}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "숨고는 수수료가 정말 없나요?", "acceptedAnswer": {"@type": "Answer", "text": "고용이 성사된 거래 금액에서 떼는 수수료는 없습니다. 대신 견적을 보낼 때마다 숨고캐시가 차감되고, 숨고페이 결제 시 고객이 3.5%를 부담합니다."}}, {"@type": "Question", "name": "실제로 얼마가 남나요?", "acceptedAnswer": {"@type": "Answer", "text": "15만원 서비스, 재료비 1만원, 견적 비용 3,000원, 원천징수 3.3% 조건이면 약 12만 4천원이 남습니다. 견적 대비 성사율이 낮으면 이 금액이 더 줄어듭니다."}}, {"@type": "Question", "name": "원천징수는 왜 떼나요?", "acceptedAnswer": {"@type": "Answer", "text": "개인(사업자 미등록) 고수에게 용역 대금을 지급할 때 소득세 3%와 지방소득세 0.3%를 원천징수합니다. 사업자등록이 있으면 부가세를 더해 받고 세금계산서를 발행하는 구조로 바뀝니다."}}, {"@type": "Question", "name": "숨고캐시는 얼마인가요?", "acceptedAnswer": {"@type": "Answer", "text": "서비스 종류, 지역, 요청서 밀집도에 따라 다르고 견적 발송 화면에 표시됩니다. 공개된 고정 단가가 없어 이 계산기는 3,000원을 가정값으로 두었으니 실제 단가로 수정하세요."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "전체 계산기", "item": "https://doggonug-cpu.github.io/seller-margin-pseo/"}, {"@type": "ListItem", "position": 2, "name": "숨고", "item": "https://doggonug-cpu.github.io/seller-margin-pseo/soomgo/"}]}</script>

@@ -523,6 +523,7 @@ def layout(page: dict) -> str:
     tpl = (SRC / "templates" / "layout.html").read_text(encoding="utf-8")
     base = page["base"]
     cssv, jsv, ogv = asset_version("style.css"), asset_version("calc.js"), asset_version("og.png")
+    inqv = asset_version("inquiry.js")
     nav_items = [
         (f"{base}/", "전체 계산기", page["slug"] == ""),
         (f"{base}/about/", "계산 방법과 출처", page["slug"] == "about"),
@@ -547,6 +548,7 @@ def layout(page: dict) -> str:
               .replace("__TAGLINE__", esc(SITE["tagline"]))
               .replace("__CSSV__", cssv)
               .replace("__JSV__", jsv)
+              .replace("__INQV__", inqv)
               .replace("__OGV__", ogv))
     return out
 

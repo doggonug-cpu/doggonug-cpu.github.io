@@ -36,6 +36,46 @@ __NAV__
   </div>
 </header>
 __BODY__
+<section class="cta-band" aria-labelledby="cta-band-title">
+  <div class="wrap cta-band-in">
+    <div class="cta-band-copy">
+      <h2 id="cta-band-title">계산은 무료입니다. 세팅은 대신 해 드립니다.</h2>
+      <p>채널이 바뀌거나 품목이 늘면 요율·광고비·반품 충당 구조를 다시 맞춰야 합니다. 이 계산기에 우리 조건을 넣어 둔 파일이 필요하거나, 견적서·거래명세서까지 이어지는 흐름을 만들고 싶다면 그 작업을 맡아 드립니다.</p>
+      <ul class="cta-band-list">
+        <li>채널 조합별 마진 시트 맞춤 제작</li>
+        <li>견적서·거래명세서 발행 흐름 연결</li>
+        <li>정산 점검표(수수료·부가세·반품) 정리</li>
+      </ul>
+      <p class="cta-band-note">견적은 폼으로 받고 이메일로 회신합니다. 이 폼으로 결제가 일어나지 않습니다. 함께 쓰는 무료 도구 — <a href="https://doggonug-cpu.github.io/quick-quote-pwa/">견적서·거래명세서 발급기</a></p>
+    </div>
+    <form class="cta-band-form" id="pseoInquiry" action="https://formsubmit.co/ajax/0e95d93c687b1b0b2346af06319b0a58" method="POST" novalidate>
+      <h3>맞춤 세팅 · 도입 문의</h3>
+      <label class="cta-field">
+        <span>이메일</span>
+        <input type="email" name="email" inputmode="email" autocomplete="email" required placeholder="seller@example.com">
+      </label>
+      <label class="cta-field">
+        <span>무엇이 필요한가요</span>
+        <select name="필요한 것">
+          <option>채널 조합별 마진 시트</option>
+          <option>견적서·거래명세서 흐름</option>
+          <option>정산 점검표</option>
+          <option>기타 문의</option>
+        </select>
+      </label>
+      <label class="cta-field">
+        <span>내용 <em>(선택)</em></span>
+        <textarea name="문의 내용" rows="3" placeholder="예: 스마트스토어와 크몽을 같이 합니다."></textarea>
+      </label>
+      <input type="hidden" name="_subject" value="[마진계산기] 맞춤 세팅·도입 문의">
+      <input type="hidden" name="_template" value="table">
+      <input type="text" name="_honey" class="cta-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn btn-primary" type="submit">문의 보내기</button>
+      <p class="cta-status" id="pseoInquiryStatus" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
@@ -59,6 +99,7 @@ __BODY__
   </div>
 </footer>
 <script src="__BASE__/assets/calc.js?v=__JSV__" defer></script>
+<script src="__BASE__/assets/inquiry.js?v=__INQV__" defer></script>
 __JSONLD__
 </body>
 </html>

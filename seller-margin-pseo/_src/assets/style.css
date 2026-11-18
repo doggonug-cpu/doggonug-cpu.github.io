@@ -336,6 +336,44 @@ section + section { border-top: 1px solid var(--line); }
 .how-list strong { color: var(--ink); }
 
 /* ---------- footer ---------- */
+/* ---------- 문의 밴드 ---------- */
+.cta-band { background: var(--accent-soft); border-top: 1px solid var(--accent-line); }
+.cta-band-in {
+  display: grid; grid-template-columns: 1.15fr 1fr; gap: 30px; align-items: start;
+  padding: 34px 20px;
+}
+.cta-band-copy h2 { font-size: 21px; line-height: 1.35; margin: 0 0 10px; letter-spacing: -.01em; }
+.cta-band-copy p { margin: 0 0 10px; font-size: 14.5px; color: var(--ink-2); max-width: 52ch; }
+.cta-band-list { margin: 0 0 10px; padding-left: 0; list-style: none; display: grid; gap: 5px; }
+.cta-band-list li { position: relative; padding-left: 18px; font-size: 14px; color: var(--ink-2); }
+.cta-band-list li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+.cta-band-note { font-size: 12.8px; color: var(--ink-3); }
+.cta-band-note a { color: var(--accent); }
+
+.cta-band-form {
+  background: #fff; border: 1px solid var(--accent-line); border-radius: var(--radius);
+  padding: 18px 18px 16px; box-shadow: var(--shadow); display: grid; gap: 10px;
+}
+.cta-band-form h3 { font-size: 15.5px; margin: 0 0 2px; }
+.cta-field { display: grid; gap: 4px; font-size: 12.8px; color: var(--ink-3); font-weight: 600; }
+.cta-field em { font-style: normal; font-weight: 400; }
+.cta-field input, .cta-field select, .cta-field textarea {
+  font-family: inherit; font-size: 14.5px; color: var(--ink); font-weight: 400;
+  padding: 9px 11px; border: 1px solid var(--line-2); border-radius: var(--radius-sm);
+  background: #fff; width: 100%; min-height: 40px;
+}
+.cta-field input:focus, .cta-field select:focus, .cta-field textarea:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(4, 120, 87, .14);
+}
+.cta-band-form .btn { justify-self: start; }
+.cta-status { margin: 0; min-height: 1.2em; font-size: 12.8px; color: var(--accent); font-weight: 600; }
+.cta-status.is-err { color: var(--danger); }
+.cta-honey { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
+
+@media (max-width: 860px) {
+  .cta-band-in { grid-template-columns: 1fr; padding: 28px 20px; }
+}
+
 .site-footer { margin-top: 30px; border-top: 1px solid var(--line); background: #fff; }
 .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 22px; padding: 34px 0 18px; }
 .footer-grid strong { display: block; font-size: 14px; margin-bottom: 6px; }

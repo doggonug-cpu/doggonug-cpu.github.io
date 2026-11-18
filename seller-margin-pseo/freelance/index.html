@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://doggonug-cpu.github.io/seller-margin-pseo/assets/og.png?v=fbe9a54f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111827'/%3E%3Cpath d='M8 22V13M13 22V9M18 22V16M23 22V11' stroke='%2334d399' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://doggonug-cpu.github.io/seller-margin-pseo/assets/style.css?v=187029a4">
+<link rel="stylesheet" href="https://doggonug-cpu.github.io/seller-margin-pseo/assets/style.css?v=046220c5">
 </head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>
@@ -294,6 +294,46 @@
     <p class="source-note">소득세법상 기타소득·사업소득 원천징수(소득세 3% + 지방소득세 0.3%) 기준입니다. 요율과 정산 조건은 계약·카테고리·프로모션에 따라 달라질 수 있어, 실제 정산금은 판매자센터의 정산 내역으로 확인하셔야 합니다. 이 페이지의 계산 결과는 참고용 추정치입니다.</p>
   </section>
 </main>
+<section class="cta-band" aria-labelledby="cta-band-title">
+  <div class="wrap cta-band-in">
+    <div class="cta-band-copy">
+      <h2 id="cta-band-title">계산은 무료입니다. 세팅은 대신 해 드립니다.</h2>
+      <p>채널이 바뀌거나 품목이 늘면 요율·광고비·반품 충당 구조를 다시 맞춰야 합니다. 이 계산기에 우리 조건을 넣어 둔 파일이 필요하거나, 견적서·거래명세서까지 이어지는 흐름을 만들고 싶다면 그 작업을 맡아 드립니다.</p>
+      <ul class="cta-band-list">
+        <li>채널 조합별 마진 시트 맞춤 제작</li>
+        <li>견적서·거래명세서 발행 흐름 연결</li>
+        <li>정산 점검표(수수료·부가세·반품) 정리</li>
+      </ul>
+      <p class="cta-band-note">견적은 폼으로 받고 이메일로 회신합니다. 이 폼으로 결제가 일어나지 않습니다. 함께 쓰는 무료 도구 — <a href="https://doggonug-cpu.github.io/quick-quote-pwa/">견적서·거래명세서 발급기</a></p>
+    </div>
+    <form class="cta-band-form" id="pseoInquiry" action="https://formsubmit.co/ajax/0e95d93c687b1b0b2346af06319b0a58" method="POST" novalidate>
+      <h3>맞춤 세팅 · 도입 문의</h3>
+      <label class="cta-field">
+        <span>이메일</span>
+        <input type="email" name="email" inputmode="email" autocomplete="email" required placeholder="seller@example.com">
+      </label>
+      <label class="cta-field">
+        <span>무엇이 필요한가요</span>
+        <select name="필요한 것">
+          <option>채널 조합별 마진 시트</option>
+          <option>견적서·거래명세서 흐름</option>
+          <option>정산 점검표</option>
+          <option>기타 문의</option>
+        </select>
+      </label>
+      <label class="cta-field">
+        <span>내용 <em>(선택)</em></span>
+        <textarea name="문의 내용" rows="3" placeholder="예: 스마트스토어와 크몽을 같이 합니다."></textarea>
+      </label>
+      <input type="hidden" name="_subject" value="[마진계산기] 맞춤 세팅·도입 문의">
+      <input type="hidden" name="_template" value="table">
+      <input type="text" name="_honey" class="cta-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn btn-primary" type="submit">문의 보내기</button>
+      <p class="cta-status" id="pseoInquiryStatus" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
@@ -317,6 +357,7 @@
   </div>
 </footer>
 <script src="https://doggonug-cpu.github.io/seller-margin-pseo/assets/calc.js?v=2b2e4838" defer></script>
+<script src="https://doggonug-cpu.github.io/seller-margin-pseo/assets/inquiry.js?v=e2e2a35b" defer></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "프리랜서 3.3% 마진 계산기", "url": "https://doggonug-cpu.github.io/seller-margin-pseo/freelance/", "applicationCategory": "FinanceApplication", "operatingSystem": "Any", "inLanguage": "ko", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"}, "description": "플랫폼을 거치지 않고 직접 계약하면 중개 수수료가 없지만, 개인에게 지급되는 용역 대금에는 3.3% 원천징수가 붙습니다. 실제로 통장에 들어오는 금액과 그중 남는 돈을 계산합니다."}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "3.3%는 어떤 세금인가요?", "acceptedAnswer": {"@type": "Answer", "text": "소득세 3%와 지방소득세 0.3%를 합한 원천징수입니다. 최종 세금이 아니라 미리 낸 세금이라, 5월 종합소득세 신고에서 정산됩니다."}}, {"@type": "Question", "name": "300만원 계약이면 얼마를 받나요?", "acceptedAnswer": {"@type": "Answer", "text": "원천징수 3.3%인 99,000원을 뺀 2,901,000원을 받습니다. 여기서 외주비·장비비 같은 경비를 빼면 실제 남는 금액이 됩니다."}}, {"@type": "Question", "name": "사업자등록을 하면 달라지나요?", "acceptedAnswer": {"@type": "Answer", "text": "부가세를 별도로 청구하고 세금계산서를 발행합니다. 원천징수는 없어지지만 부가세 신고·납부 의무가 생기고, 매출 부가세에서 매입세액을 뺀 금액을 납부합니다."}}, {"@type": "Question", "name": "환급을 많이 받으려면?", "acceptedAnswer": {"@type": "Answer", "text": "경비 증빙을 남기는 것이 핵심입니다. 외주비, 장비·소프트웨어 구입, 업무용 교통비의 적격증빙을 모으면 소득이 줄어 환급 폭이 커집니다."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "전체 계산기", "item": "https://doggonug-cpu.github.io/seller-margin-pseo/"}, {"@type": "ListItem", "position": 2, "name": "프리랜서 3.3%", "item": "https://doggonug-cpu.github.io/seller-margin-pseo/freelance/"}]}</script>

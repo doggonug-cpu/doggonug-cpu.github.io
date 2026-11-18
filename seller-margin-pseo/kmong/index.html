@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://doggonug-cpu.github.io/seller-margin-pseo/assets/og.png?v=fbe9a54f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111827'/%3E%3Cpath d='M8 22V13M13 22V9M18 22V16M23 22V11' stroke='%2334d399' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://doggonug-cpu.github.io/seller-margin-pseo/assets/style.css?v=187029a4">
+<link rel="stylesheet" href="https://doggonug-cpu.github.io/seller-margin-pseo/assets/style.css?v=046220c5">
 </head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>
@@ -296,6 +296,46 @@
     <p class="source-note">크몽 판매 이용약관·판매 수수료 계산 예시(2025년 개정판) 기준입니다. 요율과 정산 조건은 계약·카테고리·프로모션에 따라 달라질 수 있어, 실제 정산금은 판매자센터의 정산 내역으로 확인하셔야 합니다. 이 페이지의 계산 결과는 참고용 추정치입니다.</p>
   </section>
 </main>
+<section class="cta-band" aria-labelledby="cta-band-title">
+  <div class="wrap cta-band-in">
+    <div class="cta-band-copy">
+      <h2 id="cta-band-title">계산은 무료입니다. 세팅은 대신 해 드립니다.</h2>
+      <p>채널이 바뀌거나 품목이 늘면 요율·광고비·반품 충당 구조를 다시 맞춰야 합니다. 이 계산기에 우리 조건을 넣어 둔 파일이 필요하거나, 견적서·거래명세서까지 이어지는 흐름을 만들고 싶다면 그 작업을 맡아 드립니다.</p>
+      <ul class="cta-band-list">
+        <li>채널 조합별 마진 시트 맞춤 제작</li>
+        <li>견적서·거래명세서 발행 흐름 연결</li>
+        <li>정산 점검표(수수료·부가세·반품) 정리</li>
+      </ul>
+      <p class="cta-band-note">견적은 폼으로 받고 이메일로 회신합니다. 이 폼으로 결제가 일어나지 않습니다. 함께 쓰는 무료 도구 — <a href="https://doggonug-cpu.github.io/quick-quote-pwa/">견적서·거래명세서 발급기</a></p>
+    </div>
+    <form class="cta-band-form" id="pseoInquiry" action="https://formsubmit.co/ajax/0e95d93c687b1b0b2346af06319b0a58" method="POST" novalidate>
+      <h3>맞춤 세팅 · 도입 문의</h3>
+      <label class="cta-field">
+        <span>이메일</span>
+        <input type="email" name="email" inputmode="email" autocomplete="email" required placeholder="seller@example.com">
+      </label>
+      <label class="cta-field">
+        <span>무엇이 필요한가요</span>
+        <select name="필요한 것">
+          <option>채널 조합별 마진 시트</option>
+          <option>견적서·거래명세서 흐름</option>
+          <option>정산 점검표</option>
+          <option>기타 문의</option>
+        </select>
+      </label>
+      <label class="cta-field">
+        <span>내용 <em>(선택)</em></span>
+        <textarea name="문의 내용" rows="3" placeholder="예: 스마트스토어와 크몽을 같이 합니다."></textarea>
+      </label>
+      <input type="hidden" name="_subject" value="[마진계산기] 맞춤 세팅·도입 문의">
+      <input type="hidden" name="_template" value="table">
+      <input type="text" name="_honey" class="cta-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn btn-primary" type="submit">문의 보내기</button>
+      <p class="cta-status" id="pseoInquiryStatus" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
@@ -319,6 +359,7 @@
   </div>
 </footer>
 <script src="https://doggonug-cpu.github.io/seller-margin-pseo/assets/calc.js?v=2b2e4838" defer></script>
+<script src="https://doggonug-cpu.github.io/seller-margin-pseo/assets/inquiry.js?v=e2e2a35b" defer></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "크몽 마진 계산기", "url": "https://doggonug-cpu.github.io/seller-margin-pseo/kmong/", "applicationCategory": "FinanceApplication", "operatingSystem": "Any", "inLanguage": "ko", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"}, "description": "크몽 수수료는 단일 요율이 아니라 판매 금액 구간을 나눠 매기는 누진 구조입니다. 70만원까지는 16.4%, 70만원 초과 200만원까지는 9.4%, 그 위는 4.4%가 적용되고, 여기에 결제망 이용료 3.3%와 두 항목의 부가세 10%가 더해집니다."}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "크몽 수수료는 몇 퍼센트인가요?", "acceptedAnswer": {"@type": "Answer", "text": "판매금액 구간별로 16.4%(70만원 이하), 9.4%(70만원 초과~200만원), 4.4%(200만원 초과)가 적용되고, 결제망 이용료 3.3%와 두 항목의 부가세 10%가 더해집니다. 350만원 판매 시 총 460,350원(13.2%)입니다."}}, {"@type": "Question", "name": "왜 판매가가 높을수록 유리한가요?", "acceptedAnswer": {"@type": "Answer", "text": "구간이 누진 구조라 높은 금액 구간에 낮은 요율이 적용되기 때문입니다. 20만원 판매는 16.4% 구간만 적용되고, 300만원 판매는 16.4%·9.4%·4.4%가 나눠 적용됩니다."}}, {"@type": "Question", "name": "부가세는 어떻게 계산되나요?", "acceptedAnswer": {"@type": "Answer", "text": "서비스 이용료와 결제망 이용료를 합한 금액의 10%가 수수료로 함께 차감됩니다. 판매금액에 대한 부가세는 사업자 전문가가 세금계산서를 발행해 별도로 처리합니다."}}, {"@type": "Question", "name": "세금계산서는 누가 발행하나요?", "acceptedAnswer": {"@type": "Answer", "text": "주문 금액은 전문가가 의뢰인에게 발행하고, 수수료는 크몽이 전문가에게 발행합니다. 개인 전문가는 세금계산서를 발행할 수 없어 요청이 오면 발행 불가를 안내해야 합니다."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "전체 계산기", "item": "https://doggonug-cpu.github.io/seller-margin-pseo/"}, {"@type": "ListItem", "position": 2, "name": "크몽", "item": "https://doggonug-cpu.github.io/seller-margin-pseo/kmong/"}]}</script>
