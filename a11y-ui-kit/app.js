@@ -62,6 +62,8 @@
       sending: 'Sending…',
       sent: 'You are on the list. We will write when checkout opens.',
       sendFail: 'Sending failed. Check your connection and try again.',
+      hireSent: 'Sent. A reply follows by email, usually within one business day.',
+      hireFail: 'Could not send. Try again, or write to doggonug@gmail.com.',
       close: 'Close',
       soundOn: 'On',
       soundOff: 'Off',
@@ -108,6 +110,8 @@
       sending: '보내는 중…',
       sent: '명단에 올렸습니다. 결제가 열리면 이메일로 알려드립니다.',
       sendFail: '보내지 못했습니다. 연결을 확인하고 다시 시도해 주세요.',
+      hireSent: '접수했습니다. 보통 영업일 1일 안에 메일로 회신드립니다.',
+      hireFail: '보내지 못했습니다. 다시 시도하시거나 doggonug@gmail.com 으로 보내 주세요.',
       close: '닫기',
       soundOn: '켜짐',
       soundOff: '꺼짐',
@@ -944,9 +948,119 @@
     });
   }
 
+  /* ---------- hire / quote request ---------- */
+  var hire = document.getElementById('hireDialog');
+  var hireForm = document.querySelector('[data-hire-form]');
+  var hireStatus = document.querySelector('[data-hire-status]');
+  var hireSubmit = document.querySelector('[data-hire-submit]');
+  var FORM_ENDPOINT = 'https://formsubmit.co/ajax/0e95d93c687b1b0b2346af06319b0a58';
+
+  function openHire(kind) {
+    if (!hire) { return; }
+    var sel = document.getElementById('hq-kind');
+    if (sel && kind) {
+      var match = Array.prototype.some.call(sel.options, function (o) { return o.value === kind; });
+      if (match) { sel.value = kind; }
+    }
+    if (hireStatus) { hireStatus.textContent = ''; hireStatus.classList.remove('is-err'); }
+    if (hireSubmit) { hireSubmit.disabled = false; }
+    if (!hire.open) { hire.showModal(); }
+    S.tap();
+    var name = document.getElementById('hq-name');
+    if (name) { setTimeout(function () { name.focus(); }, 40); }
+  }
+  document.addEventListener('click', function (e) {
+    var opener = e.target.closest('[data-open-hire]');
+    if (opener) {
+      e.preventDefault();
+      openHire(opener.getAttribute('data-type'));
+      return;
+    }
+    if (e.target.closest('[data-close-hire]')) {
+      e.preventDefault();
+      if (hire) { hire.close(); }
+    }
+  });
+  if (hire) {
+    hire.addEventListener('click', function (e) {
+      var r = hire.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+        hire.close();
+      }
+    });
+  }
+  if (hireForm) {
+    hireForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = document.getElementById('hq-email');
+      var emailErr = document.getElementById('hq-email-err');
+      var nameField = document.getElementById('hq-name');
+      var value = email.value.trim();
+      function fail(msg) {
+        hireStatus.textContent = msg;
+        hireStatus.classList.add('is-err');
+        email.setAttribute('aria-invalid', 'true');
+        emailErr.hidden = false;
+        emailErr.textContent = msg;
+        email.focus();
+        S.err();
+      }
+      emailErr.hidden = true;
+      email.removeAttribute('aria-invalid');
+      if (!nameField.value.trim()) { hireStatus.textContent = t().formName; hireStatus.classList.add('is-err'); nameField.focus(); S.err(); return; }
+      if (!value) { fail(t().emailEmpty); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) { fail(t().emailBad); return; }
+
+      var kindSel = document.getElementById('hq-kind');
+      var org = document.getElementById('hq-org');
+      var msg = document.getElementById('hq-msg');
+      hireStatus.classList.remove('is-err');
+      hireStatus.textContent = t().sending;
+      hireSubmit.disabled = true;
+      S.tap();
+
+      var payload = {
+        name: nameField.value.trim(),
+        email: value,
+        org: org ? org.value.trim() : '',
+        kind: kindSel ? kindSel.value : '',
+        kind_label: kindSel ? kindSel.options[kindSel.selectedIndex].textContent.trim() : '',
+        message: msg ? msg.value.trim() : '',
+        product: 'a11y-ui-kit',
+        _subject: 'A11yKit — 견적·도입 문의',
+        _template: 'table',
+        _captcha: 'false'
+      };
+
+      fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (body) {
+          var ok = res.ok && (body.success === 'true' || body.success === true);
+          if (!ok) { throw new Error('http ' + res.status); }
+          hireStatus.textContent = t().hireSent;
+          hireStatus.classList.remove('is-err');
+          hireSubmit.disabled = true;
+          hireSubmit.querySelector('span').textContent = state.lang === 'ko' ? '접수 완료' : 'Sent';
+          S.ok();
+        });
+      }).catch(function () {
+        hireStatus.textContent = t().hireFail;
+        hireStatus.classList.add('is-err');
+        hireSubmit.disabled = false;
+        S.err();
+      });
+    });
+  }
+
   /* ---------- keyboard: Escape returns focus ---------- */
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && waitlist && waitlist.open) { waitlist.close(); }
+    if (e.key === 'Escape') {
+      if (waitlist && waitlist.open) { waitlist.close(); }
+      if (hire && hire.open) { hire.close(); }
+    }
   });
 
   /* ---------- init ---------- */
