@@ -15,8 +15,10 @@
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   };
 
+  var storedLang = store.get('a11ykit.lang');
+  var browserLang = (typeof navigator !== 'undefined' && navigator.language ? navigator.language : '').toLowerCase();
   var state = {
-    lang: store.get('a11ykit.lang') === 'ko' ? 'ko' : 'en',
+    lang: storedLang === 'ko' || storedLang === 'en' ? storedLang : (browserLang.indexOf('ko') === 0 ? 'ko' : 'en'),
     sound: store.get('a11ykit.sound') !== 'off',
     textsize: store.get('a11ykit.textsize') || '100',
     contrast: store.get('a11ykit.contrast') === 'hc'
