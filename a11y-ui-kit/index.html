@@ -207,7 +207,7 @@
                 <strong data-ko="혈압약 1정">Blood pressure · 1 tablet</strong>
                 <small data-ko="오전 8시 30분 · 아직 안 드셨어요">8:30 AM · not taken yet</small>
               </span>
-              <span class="hd__check" aria-hidden="true">Take</span>
+              <span class="hd__check" data-ko="먹기" aria-hidden="true">Take</span>
             </button>
             <button class="hd__action" type="button" data-hero-call>
               <svg class="ic ic--lg" aria-hidden="true"><use href="#i-phone"/></svg>
@@ -574,7 +574,6 @@
                 <button class="ax-btn ax-btn--primary" type="button" data-confirm-next data-ko="계속">Continue</button>
               </div>
               <div class="dlg__step2" data-confirm-step2 hidden>
-                <p class="dlg__step"><span data-ko="2단계 / 2">Step 2 of 2</span></p>
                 <p class="dlg__title2" data-ko="정말 지우시려면 아래 스위치를 켜 주세요.">To go ahead, switch this on.</p>
                 <button class="switchrow" type="button" role="switch" aria-checked="false" data-confirm-switch>
                   <span class="switchrow__track" aria-hidden="true"><span class="switchrow__knob"></span></span>
@@ -616,7 +615,7 @@
         </p>
         <div class="demo" data-demo="number-keypad">
           <div class="kp">
-            <output class="kp__display" aria-live="polite" data-kp-display>••••</output>
+            <output class="kp__display" aria-label="No digits entered" data-kp-display>— — — —</output>
             <div class="kp__grid">
               <button class="kp__key" type="button" data-kp="1">1</button>
               <button class="kp__key" type="button" data-kp="2">2</button>

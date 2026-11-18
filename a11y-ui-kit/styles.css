@@ -141,7 +141,7 @@ html[data-theme="hc"] .top{background:#000;backdrop-filter:none;border-bottom:2p
 .tool[aria-checked="true"]{border-color:var(--accent)}
 .tool__text{font-weight:650}
 .tool__state{font-weight:800;color:var(--accent);font-size:.78rem}
-html[data-theme="hc"] .tool__state{color:#fff;text-decoration:underline}
+html[data-theme="hc"] .tool__state{color:#fff}
 
 .seg{display:inline-flex;border:1.5px solid var(--line-strong);border-radius:999px;overflow:hidden;background:transparent}
 .seg__btn{
@@ -423,8 +423,9 @@ html[data-theme="hc"] .demo{background:#000;border:2px solid #fff}
 }
 .kiosk__opt:hover{border-color:var(--accent)}
 .kiosk__n{font-family:var(--mono);font-size:.78rem;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:.1em .4em}
-.kiosk__opt[aria-checked="true"]{border-color:var(--accent);background:#26200A}
-.kiosk__opt[aria-checked="true"]::after{content:"✓";margin-left:auto;color:var(--accent);font-weight:900;font-size:1.15rem}
+.kiosk__opt[aria-checked="true"]{border-color:var(--accent);background:#26200A;position:relative}
+.kiosk__opt[aria-checked="true"]::after{content:"";position:absolute;right:16px;top:50%;width:10px;height:18px;margin-top:-11px;border-right:3px solid var(--accent);border-bottom:3px solid var(--accent);transform:rotate(45deg)}
+
 .kiosk__opt[aria-checked="true"] .kiosk__n{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
 
 /* 05 read aloud */

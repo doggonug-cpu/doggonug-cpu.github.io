@@ -65,6 +65,7 @@
       close: 'Close',
       soundOn: 'On',
       soundOff: 'Off',
+      muted: 'Sound cues off',
       hcOn: 'On',
       hcOff: 'Off'
     },
@@ -110,6 +111,7 @@
       close: '닫기',
       soundOn: '켜짐',
       soundOff: '꺼짐',
+      muted: '소리 안내를 껐습니다',
       hcOn: '켜짐',
       hcOff: '꺼짐'
     }
@@ -280,7 +282,7 @@
       state.sound = !state.sound;
       store.set('a11ykit.sound', state.sound ? 'on' : 'off');
       applySound();
-      if (state.sound) { S.ok(); } else { toast(t().soundOff); }
+      if (state.sound) { S.ok(); } else { toast(t().muted); }
       return;
     }
     var ts = e.target.closest('[data-textsize-set]');
@@ -341,6 +343,7 @@
     applyContrast();
     resetLive();
     syncMedLabels();
+    syncHeroLabels();
     updateFilterStatus(currentFilter);
   }
   function setLang(lang) {
@@ -358,6 +361,13 @@
   function setLive(key, text) {
     var el = liveEl(key);
     if (el) { el.textContent = text; }
+  }
+  function syncHeroLabels() {
+    var chip = document.querySelector('.hd__check');
+    if (chip) {
+      var done = heroMed && heroMed.classList.contains('is-done');
+      chip.textContent = state.lang === 'ko' ? (done ? '완료' : '먹기') : (done ? 'Taken' : 'Take');
+    }
   }
   function resetLive() {
     var d = t();
@@ -488,9 +498,11 @@
       if (on) {
         S.ok();
         if (count) {
+          var total = medItems.length;
+          var done = document.querySelectorAll('[data-med][aria-pressed="true"]').length;
           count.setAttribute('aria-label', state.lang === 'ko'
-            ? item.querySelector('.med__name').textContent + ' 복용 완료'
-            : item.querySelector('.med__name').textContent + ' marked as taken');
+            ? item.querySelector('.med__name').textContent + ' 복용 완료. ' + t().medCount(done, total)
+            : item.querySelector('.med__name').textContent + ' marked as taken. ' + t().medCount(done, total));
         }
       } else { S.tap(); }
     });
