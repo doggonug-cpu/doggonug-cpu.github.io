@@ -297,7 +297,7 @@ html[data-theme="hc"] .device{background:#000;box-shadow:none}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .chip__n{font-family:var(--mono);font-size:.74rem;opacity:.8}
 .catalog__hint{color:var(--muted);font-size:.84rem;min-height:1.4em;margin-bottom:14px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:20px;align-items:start}
 .cards>[hidden]{display:none}
 
 .card{
