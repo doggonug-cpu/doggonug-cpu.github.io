@@ -1,7 +1,7 @@
 /* QuickQuote service worker — offline-first shell
    캐시 버전을 올리면 activate에서 예전 캐시를 지우고 새 파일로 다시 채웁니다.
    (파일을 고칠 때는 아래 VERSION 문자열을 반드시 함께 올리세요.) */
-const VERSION = 'v1.1.0';
+const VERSION = 'v1.2.0';
 const CACHE = 'quickquote-' + VERSION;
 const SHELL = [
   './',

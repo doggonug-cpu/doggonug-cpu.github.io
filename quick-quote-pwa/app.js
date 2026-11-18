@@ -53,12 +53,24 @@
       pro1: '로고·상호·계좌를 한 번만 등록해 자동 입력',
       pro2: '템플릿 20종 · 세금계산서 양식',
       pro3: '기기 간 자동 백업',
-      proCta: '출시 알림 받기',
-      proNote: '결제 연동 전이라 지금은 모든 핵심 기능을 무료로 사용할 수 있습니다.',
+      proCta: '맞춤 세팅 · 출시 알림 신청',
+      proNote: '결제 연동 전이라 카드 결제는 받지 않습니다. 필요한 기능을 적어 보내 주시면 계좌이체로 진행하고, Pro가 열리면 먼저 알려 드립니다.',
+      proTitle2: 'Pro · 맞춤 세팅 신청',
+      proIntro: '브랜드 프로필·템플릿·자동 백업을 먼저 쓰고 싶거나, 지금 쓰는 견적서 양식에 맞춰 세팅이 필요하면 필요한 것만 적어 보내 주세요. 영업일 1일 안에 메일로 회신합니다. 이 폼으로 결제가 일어나지 않습니다.',
+      proName: '이름 / 상호', proEmail: '이메일', proKind: '무엇이 필요한가요',
+      proKind1: 'Pro 출시 알림만', proKind2: '지금 쓰는 양식으로 맞춤 세팅',
+      proKind3: '견적서·세금계산서 템플릿 세트', proKind4: '기타',
+      proMsg: '내용 (선택)', proSend: '신청 보내기',
+      proFine: '이메일은 이 요청에만 쓰고 다른 곳에 넘기지 않습니다.',
+      proSent: '접수했습니다. 영업일 1일 안에 메일로 회신드립니다.',
+      proFail: '보내지 못했습니다. 잠시 뒤 다시 시도해 주세요.',
+      proNeedName: '이름이나 상호를 적어 주세요.', proNeedEmail: '이메일을 입력해 주세요.', proBadEmail: '이메일 형식이 아닙니다.',
+      proSending: '보내는 중…',
       preview: '미리보기', share: '공유', print: '인쇄 / PDF 저장',
       printHint: '인쇄 창에서 ‘PDF로 저장’을 선택하면 파일로 보관할 수 있습니다.',
       alsoUse: '함께 쓰면 좋은 도구',
       alsoUseLink: '셀러·프리랜서 판매 마진 계산기(21개 채널)',
+      alsoUseA11y: '어르신·키오스크용 접근성 UI 킷(A11yKit)', alsoUseKmong: '강사용 수업 자료(한울에듀테크)',
       total: '합계', libEmpty: '저장된 문서가 없습니다. ‘저장’을 누르면 여기에 쌓입니다.',
       docTitle: { quote: '견적서', statement: '거래명세서', receipt: '영수증' },
       docIntro: {
@@ -115,12 +127,24 @@
       pro1: 'Save your logo, details and bank info once',
       pro2: '20 templates · tax-invoice layout',
       pro3: 'Automatic backup across devices',
-      proCta: 'Notify me at launch',
-      proNote: 'No checkout is connected yet — every core feature is free today.',
+      proCta: 'Custom setup · launch alert',
+      proNote: 'No card checkout yet. Tell us what you need and we set it up over a bank transfer; the list hears first when Pro opens.',
+      proTitle2: 'Pro · custom setup request',
+      proIntro: 'If you want the brand profile, templates and backup first, or the quote to match the form you already use, write what you need. A reply comes by email within one business day. This form never charges anything.',
+      proName: 'Name or business', proEmail: 'Email', proKind: 'What do you need',
+      proKind1: 'Just tell me when Pro opens', proKind2: 'Set it up to match my current form',
+      proKind3: 'Quote and tax-invoice template set', proKind4: 'Something else',
+      proMsg: 'Details (optional)', proSend: 'Send request',
+      proFine: 'Your address is used for this request only and never shared.',
+      proSent: 'Received. A reply follows by email within one business day.',
+      proFail: 'Could not send. Please try again in a moment.',
+      proNeedName: 'Enter your name or business.', proNeedEmail: 'Enter your email address.', proBadEmail: 'That does not look like an email address.',
+      proSending: 'Sending…',
       preview: 'Preview', share: 'Share', print: 'Print / Save PDF',
       printHint: 'Choose “Save as PDF” in the print dialog to keep a file.',
       alsoUse: 'Also useful',
       alsoUseLink: 'Seller & freelancer margin calculator (21 sales channels)',
+      alsoUseA11y: 'Senior & kiosk accessible UI kit (A11yKit)', alsoUseKmong: 'Classroom material for teachers (creator profile)',
       total: 'Total', libEmpty: 'No saved documents yet. Press Save to keep one here.',
       docTitle: { quote: 'QUOTATION', statement: 'STATEMENT', receipt: 'RECEIPT' },
       docIntro: {
@@ -956,8 +980,75 @@
         window.location.href = 'mailto:' + CONFIG.proWaitlistEmail + '?subject=' + subj + '&body=' + body;
         return;
       }
-      toast(t('toastPro'));
+      // 결제 링크가 없는 지금은 메일 폼으로 받는다(계좌이체·맞춤 세팅 모두 같은 창구).
+      var modal = document.getElementById('proModal');
+      if (!modal) { toast(t('toastPro')); return; }
+      var status = document.getElementById('proStatus');
+      if (status) { status.textContent = ''; }
+      modal.hidden = false;
+      var nameInput = document.getElementById('pro-name');
+      if (nameInput) { setTimeout(function () { nameInput.focus(); }, 40); }
     });
+
+    /* ---------- Pro / 맞춤 세팅 신청 모달 ---------- */
+    (function initProModal() {
+      var modal = document.getElementById('proModal');
+      var form = document.getElementById('proForm');
+      if (!modal || !form) return;
+      function closeModal() { modal.hidden = true; }
+      modal.addEventListener('click', function (e) {
+        if (e.target.closest('[data-close-pro]')) { closeModal(); }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.hidden) { closeModal(); }
+      });
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var name = document.getElementById('pro-name');
+        var email = document.getElementById('pro-email');
+        var kind = document.getElementById('pro-kind');
+        var msg = document.getElementById('pro-msg');
+        var status = document.getElementById('proStatus');
+        var submit = document.getElementById('proSubmit');
+        var value = email.value.trim();
+        function fail(text, field) {
+          status.textContent = text;
+          if (field) field.focus();
+        }
+        if (!name.value.trim()) { fail(t('proNeedName'), name); return; }
+        if (!value) { fail(t('proNeedEmail'), email); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) { fail(t('proBadEmail'), email); return; }
+        status.textContent = t('proSending');
+        submit.disabled = true;
+        fetch('https://formsubmit.co/ajax/0e95d93c687b1b0b2346af06319b0a58', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            product: 'quick-quote-pwa',
+            name: name.value.trim(),
+            email: value,
+            kind: kind ? kind.value : '',
+            kind_label: kind ? kind.options[kind.selectedIndex].textContent.trim() : '',
+            message: msg ? msg.value.trim() : '',
+            app_version: CONFIG.version,
+            _subject: 'QuickQuote — Pro·맞춤 세팅 신청',
+            _template: 'table',
+            _captcha: 'false'
+          })
+        }).then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (body) {
+            if (!(res.ok && (body.success === 'true' || body.success === true))) {
+              throw new Error('http ' + res.status);
+            }
+            status.textContent = t('proSent');
+            submit.disabled = true;
+          });
+        }).catch(function () {
+          status.textContent = t('proFail');
+          submit.disabled = false;
+        });
+      });
+    })();
 
     // 설치 프롬프트
     var deferredPrompt = null;
