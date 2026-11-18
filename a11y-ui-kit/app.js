@@ -638,7 +638,6 @@
     var kpValue = '';
     var renderKp = function () {
       keypad.textContent = kpValue ? new Array(kpValue.length + 1).join('\u2022') : '\u2014 \u2014 \u2014 \u2014';
-      keypad.setAttribute('aria-label', t().digits(kpValue.length));
       setLive('keypad', t().digits(kpValue.length));
     };
     document.querySelectorAll('[data-kp]').forEach(function (key) {
