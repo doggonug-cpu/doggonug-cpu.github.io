@@ -71,7 +71,15 @@
       soundOff: 'Off',
       muted: 'Sound cues off',
       hcOn: 'On',
-      hcOff: 'Off'
+      hcOff: 'Off',
+      ruleCopied: 'Rule file copied',
+      ruleSaved: 'Saved',
+      builderSummary: function (n, free, pro) {
+        return n + ' components for this screen · ' + free + ' free' + (pro ? ' · ' + pro + ' Pro' : '') + '.';
+      },
+      builderNoTarget: 'Choose a user group to put its constraints into the prompt.',
+      builderCopied: 'Prompt copied',
+      builderSaved: 'Prompt saved as a .md file'
     },
     ko: {
       copied: '클립보드에 복사했습니다',
@@ -119,7 +127,15 @@
       soundOff: '꺼짐',
       muted: '소리 안내를 껐습니다',
       hcOn: '켜짐',
-      hcOff: '꺼짐'
+      hcOff: '꺼짐',
+      ruleCopied: '룰 파일을 복사했습니다',
+      ruleSaved: '저장했습니다',
+      builderSummary: function (n, free, pro) {
+        return '이 화면에 컴포넌트 ' + n + '개 · 무료 ' + free + (pro ? ' · Pro ' + pro : '') + '개.';
+      },
+      builderNoTarget: '사용자군을 고르면 그 제약이 프롬프트에 들어갑니다.',
+      builderCopied: '프롬프트를 복사했습니다',
+      builderSaved: '프롬프트 파일(.md)로 저장했습니다'
     }
   };
   function t() { return T[state.lang]; }
@@ -351,6 +367,7 @@
     syncMedLabels();
     syncHeroLabels();
     updateFilterStatus(currentFilter);
+    if (typeof renderBuilder === 'function') { renderBuilder(); }
   }
   function setLang(lang) {
     if (lang !== 'en' && lang !== 'ko') { return; }
@@ -1057,6 +1074,451 @@
     });
   }
 
+  /* ---------- tabs (rule pack + MCP clients) ---------- */
+  function initTabs() {
+    document.querySelectorAll('[role="tablist"][data-tabs]').forEach(function (list) {
+      var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+      if (!tabs.length) { return; }
+      function panelOf(tab) { return document.getElementById(tab.getAttribute('aria-controls')); }
+      function select(tab, moveFocus) {
+        tabs.forEach(function (t) {
+          var on = t === tab;
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+          t.tabIndex = on ? 0 : -1;
+          var panel = panelOf(t);
+          if (panel) { panel.hidden = !on; }
+        });
+        if (moveFocus) { tab.focus(); }
+        if (list.getAttribute('data-tabs') === 'rules') { ensureRules(); }
+      }
+      tabs.forEach(function (tab, i) {
+        tab.addEventListener('click', function () { select(tab, false); S.tap(); });
+        tab.addEventListener('keydown', function (e) {
+          var next = null;
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { next = (i + 1) % tabs.length; }
+          else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { next = (i - 1 + tabs.length) % tabs.length; }
+          else if (e.key === 'Home') { next = 0; }
+          else if (e.key === 'End') { next = tabs.length - 1; }
+          if (next !== null) {
+            e.preventDefault();
+            select(tabs[next], true);
+            S.tap();
+          }
+        });
+      });
+    });
+  }
+
+  /* ---------- AI rules pack ---------- */
+  var rulesPromise = null;
+  var RULE_FILES = {
+    cursor: 'a11y-senior-ui.mdc',
+    'claude-code': 'CLAUDE.md',
+    windsurf: '.windsurfrules',
+    copilot: 'copilot-instructions.md',
+    agents: 'AGENTS.md'
+  };
+  function ruleStatus(msg, kind) {
+    var el = document.querySelector('[data-rule-status]');
+    if (!el) { return; }
+    el.textContent = msg;
+    el.classList.remove('is-ok', 'is-err');
+    if (kind) { el.classList.add(kind === 'ok' ? 'is-ok' : 'is-err'); }
+  }
+  function ensureRules() {
+    if (!rulesPromise) {
+      rulesPromise = fetch('ai-rules.json').then(function (r) {
+        if (!r.ok) { throw new Error('rules ' + r.status); }
+        return r.json();
+      }).then(function (data) {
+        Object.keys(data.packs || {}).forEach(function (key) {
+          var body = document.querySelector('[data-rule-body="' + key + '"]');
+          if (body) { body.textContent = data.packs[key].body; }
+        });
+        return data;
+      }).catch(function (err) {
+        ruleStatus(state.lang === 'ko'
+          ? '룰 파일을 불러오지 못했습니다. GitHub의 rules 폴더에서 바로 볼 수 있습니다.'
+          : 'The rule files did not load. They are readable in the rules folder on GitHub.', 'err');
+        throw err;
+      });
+    }
+    return rulesPromise;
+  }
+  function downloadText(filename, text) {
+    try {
+      var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+      return true;
+    } catch (err) { return false; }
+  }
+  document.addEventListener('click', function (e) {
+    var copyBtn = e.target.closest('[data-rule-copy]');
+    if (copyBtn) {
+      e.preventDefault();
+      var id = copyBtn.getAttribute('data-rule-copy');
+      ensureRules().then(function (data) {
+        var pack = data.packs[id];
+        if (!pack) { throw new Error('missing pack'); }
+        return writeClipboard(pack.body).then(function () {
+          ruleStatus(t().ruleCopied, 'ok');
+          toast(t().ruleCopied + ' · ' + pack.target);
+          S.ok();
+        });
+      }).catch(function () { S.err(); });
+      return;
+    }
+    var dlBtn = e.target.closest('[data-rule-download]');
+    if (dlBtn) {
+      e.preventDefault();
+      var dlId = dlBtn.getAttribute('data-rule-download');
+      ensureRules().then(function (data) {
+        var pack = data.packs[dlId];
+        if (!pack) { throw new Error('missing pack'); }
+        var name = RULE_FILES[dlId] || (dlId + '.md');
+        if (downloadText(name, pack.body)) {
+          ruleStatus(t().ruleSaved + ' ' + name, 'ok');
+          toast(t().ruleSaved);
+          S.ok();
+        } else {
+          ruleStatus(t().copyFail, 'err');
+          S.err();
+        }
+      }).catch(function () { S.err(); });
+    }
+  });
+
+  /* ---------- screen + target prompt builder ---------- */
+  var BUILDER_SCREENS = {
+    'kiosk-order': {
+      ko: '키오스크 주문·발권', en: 'Kiosk ordering or ticketing',
+      koGoal: '매장 입구나 창구에서 5초 안에 메뉴를 고르고 결제까지 끝내는 무인 주문·발권 화면',
+      enGoal: 'an unattended ordering or ticketing screen where a choice is made in about five seconds and payment finishes without staff',
+      free: ['kiosk-choice-list', 'big-action-button', 'number-keypad', 'status-banner', 'step-progress', 'confirm-switch'],
+      pro: []
+    },
+    welfare: {
+      ko: '복지·민원 신청', en: 'Welfare or civil application',
+      koGoal: '읽고 쓰는 부담이 큰 신청서를 단계별로 채우고 마지막에 한 번 더 확인하는 화면',
+      enGoal: 'a staged application form for people who find reading and typing hard, with one deliberate review before submitting',
+      free: ['step-progress', 'senior-form', 'status-banner', 'text-scale-switch', 'confirm-switch', 'read-aloud'],
+      pro: []
+    },
+    hospital: {
+      ko: '병원 예약·접수', en: 'Hospital booking or reception',
+      koGoal: '증상을 고르고 진료 시간을 확인해 접수하는 병원 예약·현장 접수 화면',
+      enGoal: 'a booking and check-in screen where a patient picks a reason, sees doctor and room, and confirms a time',
+      free: ['step-progress', 'senior-form', 'kiosk-choice-list', 'big-action-button', 'status-banner', 'read-aloud'],
+      pro: ['hospital-timeslot']
+    },
+    commerce: {
+      ko: '시니어 커머스·결제', en: 'Senior commerce and payment',
+      koGoal: '상품을 고르고 금액을 소리로 확인한 뒤 결제하는 시니어용 구매 화면',
+      enGoal: 'a purchase flow for older buyers: choose, hear the amount read aloud, then confirm the payment',
+      free: ['big-action-button', 'kiosk-choice-list', 'confirm-switch', 'text-scale-switch', 'status-banner'],
+      pro: ['hold-to-pay', 'large-receipt']
+    },
+    care: {
+      ko: '요양·복약 기록', en: 'Care and medication record',
+      koGoal: '요양보호사와 가족이 복약·활력징후를 큰 글씨로 확인하고 기록하는 화면',
+      enGoal: 'a care screen where a caregiver and family read medication and vitals in large type and record them with one tap',
+      free: ['medication-card', 'text-scale-switch', 'status-banner', 'read-aloud'],
+      pro: ['vitals-trend', 'memory-gallery']
+    },
+    banking: {
+      ko: '은행 ATM·앱', en: 'Banking: ATM or app',
+      koGoal: '금액을 직접 입력하고 확인 후 이체하는 금융 단말·앱 화면',
+      enGoal: 'a banking screen where an amount is typed on a large keypad and a transfer is confirmed with a deliberate second step',
+      free: ['number-keypad', 'kiosk-choice-list', 'big-action-button', 'status-banner', 'confirm-switch', 'read-aloud'],
+      pro: []
+    }
+  };
+  var BUILDER_TARGETS = {
+    senior70: {
+      ko: '70대 이상 고령 사용자', en: 'users aged 70 and over',
+      koRule: '본문 19px 이상, 줄 간격 1.6. 한 화면에 결정 하나. 전문용어 대신 쉬운 말로, 버튼 글자는 동사로 시작한다(예: "예약하기").',
+      enRule: 'body 19px or larger with 1.6 line height; one decision per screen; plain words, not jargon; button labels start with a verb.'
+    },
+    lowvision: {
+      ko: '저시력·백내장 사용자', en: 'users with low vision or cataracts',
+      koRule: '본문 대비 18:1 수준, 보조문도 10:1 이상. 글자 크기 3단계(100/125/150%)와 고대비 모드를 제공하고 선택을 저장한다. 정보를 아이콘만으로 전달하지 않는다.',
+      enRule: 'body contrast near 18:1 and secondary text above 10:1; offer three text sizes (100/125/150%) and a high-contrast mode, and remember the choice; never carry meaning in an icon alone.'
+    },
+    tremor: {
+      ko: '손 떨림·터치 미숙 사용자', en: 'users with a tremor or uncertain touch',
+      koRule: '타깃 56px 이상, 간격 12px 이상, 실수로 눌러도 되돌릴 수 있게. 파괴적 동작은 길게 누르기나 2단계 확인으로 막는다. 스와이프·드래그에만 있는 기능을 만들지 않는다.',
+      enRule: 'targets 56px or larger with 12px or more between them, and every mis-tap reversible; destructive actions need a hold or a two-step confirm; never put a function only on swipe or drag.'
+    },
+    hearing: {
+      ko: '난청 사용자', en: 'users with hearing loss',
+      koRule: '소리로만 알리는 정보 금지. 음성 안내는 화면 글자와 낭독기 알림으로 반드시 함께 전달한다. 소리 끄기 스위치를 두고 선택을 기억한다.',
+      enRule: 'no information carried by sound alone; every audio cue also appears as text and a screen-reader announcement; provide a mute switch that remembers the choice.'
+    },
+    cognitive: {
+      ko: '인지 지원이 필요한 사용자', en: 'users who need cognitive support',
+      koRule: '한 번에 한 단계, 진행 위치를 항상 숫자와 이름으로 보여준다(aria-current). 입력 내용은 되돌아가 수정할 수 있게 하고, 오류는 무엇을 어떻게 고칠지 문장으로 쓴다.',
+      enRule: 'one step at a time with the position always in numbers and words (aria-current); let people go back and edit; write errors as sentences that say what to fix and how.'
+    }
+  };
+  var COMBO_FALLBACK = {
+    'big-action-button': { ko: '큰 동작 버튼 + 합성 탭 사운드', en: 'Big action buttons + tap sound' },
+    'text-scale-switch': { ko: '글자 크기 3단계 · 고대비 스위치', en: 'Text scale + contrast switch' },
+    'medication-card': { ko: '큰 글씨 복약 체크 카드', en: 'Medication checklist' },
+    'kiosk-choice-list': { ko: '키오스크 1열 대형 선택', en: 'Kiosk choice list' },
+    'read-aloud': { ko: '음성 읽어주기 버튼', en: 'Read aloud button' },
+    'confirm-switch': { ko: '2단계 확인 · 슬라이드 스위치', en: 'Two-step confirm switch' },
+    'number-keypad': { ko: '대형 숫자 키패드', en: 'Big number keypad' },
+    'status-banner': { ko: '오류 · 성공 안내 배너', en: 'Success and error banners' },
+    'step-progress': { ko: '대형 단계 진행 표시', en: 'Step progress' },
+    'senior-form': { ko: '시니어 친화 입력 폼', en: 'Senior-friendly form' },
+    'voice-search': { ko: '음성 인식 검색바', en: 'Voice search bar' },
+    'family-checkin': { ko: '가족 안부 확인 카드', en: 'Family check-in card' },
+    'hospital-timeslot': { ko: '병원 예약 타임슬롯', en: 'Hospital timeslots' },
+    'large-receipt': { ko: '큰 글씨 영수증 인쇄 뷰', en: 'Large-print receipt' },
+    'tts-phrase-pack': { ko: '다국어 음성 안내 팩', en: 'Multilingual TTS pack' },
+    'memory-gallery': { ko: '회상 갤러리', en: 'Reminiscence gallery' },
+    'vitals-trend': { ko: '큰 글씨 활력징후 추이', en: 'Vitals trend' },
+    'hold-to-pay': { ko: '길게 눌러 결제', en: 'Hold to pay' }
+  };
+  var catalogCache = null;
+  var catalogAsked = false;
+  function loadCatalogForBuilder() {
+    if (catalogAsked) { return; }
+    catalogAsked = true;
+    loadCatalog().then(function (data) { catalogCache = data; renderBuilder(); }).catch(function () {});
+  }
+
+  function builderInputs() {
+    var screenSel = document.querySelector('[data-builder-screen]');
+    var langSel = document.querySelector('[data-builder-lang]');
+    var targets = Array.prototype.slice.call(document.querySelectorAll('[data-builder-target]:checked')).map(function (c) { return c.value; });
+    return {
+      screen: screenSel ? screenSel.value : 'kiosk-order',
+      lang: langSel ? langSel.value : 'ko',
+      targets: targets
+    };
+  }
+  function compInfo(id, lang) {
+    var item = catalogCache && catalogCache.components ? catalogCache.components[id] : null;
+    if (item) {
+      return {
+        name: (item.name && (item.name[lang] || item.name.en)) || id,
+        tier: item.tier,
+        summary: (item.summary && (item.summary[lang] || item.summary.en)) || ''
+      };
+    }
+    var fb = COMBO_FALLBACK[id];
+    return { name: fb ? (fb[lang] || fb.en) : id, tier: 'free', summary: '' };
+  }
+  function firstSentence(text, max) {
+    if (!text) { return ''; }
+    var cut = text.split(/(?<=[.!?。])\s/)[0] || text;
+    if (cut.length > (max || 150)) { cut = cut.slice(0, (max || 150) - 1).trim() + '…'; }
+    return cut;
+  }
+  function buildPromptKo(screen, targets, lang) {
+    var sc = BUILDER_SCREENS[screen] || BUILDER_SCREENS['kiosk-order'];
+    var all = sc.free.concat(sc.pro || []);
+    var lines = [];
+    lines.push('# 화면: ' + sc.ko);
+    lines.push('');
+    lines.push('## 무엇을 만드나');
+    lines.push('한국어 ' + sc.koGoal + '. 아래 규칙과 컴포넌트를 그대로 써서 HTML·CSS·바닐라 JS 한 벌로 만들어 주세요. 프레임워크·번들러·CDN·외부 요청은 넣지 않습니다.');
+    lines.push('');
+    lines.push('## 누가 쓰나 (이 제약이 디자인을 결정합니다)');
+    if (!targets.length) {
+      lines.push('- 일반 성인 사용자 (사용자군을 선택하지 않았습니다. 가능하면 위쪽 빌더에서 타깃을 골라 다시 생성하세요.)');
+    } else {
+      targets.forEach(function (k) {
+        var tg = BUILDER_TARGETS[k];
+        if (tg) { lines.push('- ' + tg.ko + ': ' + tg.koRule); }
+      });
+    }
+    lines.push('');
+    lines.push('## 반드시 지킬 규칙 (WCAG 2.2 AA 최소, 대비·타깃·포커스는 AAA)');
+    lines.push('- 모든 조작 요소 48px 이상, 주요 동작 56–64px, 인접 간격 12px 이상. 확대는 padding으로, transform: scale() 금지.');
+    lines.push('- 본문 대비 7:1 이상(AAA). 기준값 #F3F6F9 / #06090F = 18.4:1, 보조문 4.5:1 이상.');
+    lines.push('- 포커스 링 4px #FFE066, 3px 오프셋, :focus-visible에서만, overflow에 잘리지 않게.');
+    lines.push('- 상태를 색으로만 알리지 않기: 아이콘·단어·굵기·밑줄을 함께.');
+    lines.push('- 상태 변화는 role="status" aria-live="polite", 오류만 role="alert". 포커스를 옮기지 않는다.');
+    lines.push('- 실제 button·a·input·select·dialog 사용. 라벨은 입력칸 위에 for/id로 연결, 플레이스홀더는 라벨이 아님.');
+    lines.push('- 한국어: word-break: keep-all. 200% 확대와 320px 폭에서 가로 스크롤 없이 동작.');
+    lines.push('- prefers-reduced-motion 존중, 메시지가 나타나도 레이아웃이 밀리지 않게 min-height 확보.');
+    lines.push('- 소리는 선택 사항: Web Audio 합성만, 80ms에 1회, 끄기 스위치와 선택 저장, 모든 소리는 글자로도 전달.');
+    lines.push('');
+    lines.push('## 쓸 컴포넌트 (A11yKit)');
+    all.forEach(function (id, i) {
+      var info = compInfo(id, 'ko');
+      var note = info.summary ? ' — ' + firstSentence(info.summary, 130) : '';
+      var pro = info.tier === 'pro' ? ' [Pro — 코드 대신 스펙을 참고해 같은 동작을 직접 구현]' : '';
+      lines.push((i + 1) + '. ' + info.name + ' (' + id + ')' + note + pro);
+    });
+    lines.push('');
+    lines.push('## 하지 말 것');
+    lines.push('- div에 click만 붙인 버튼, 플레이스홀더만 있는 입력칸, outline:none, 색만으로 성공/오류 구분.');
+    lines.push('- 자동 재생 오디오, 파일 기반 효과음, 외부 아이콘 폰트, 추적 스크립트.');
+    lines.push('- 한 화면에 결정 여러 개, 의미 없는 애니메이션.');
+    lines.push('');
+    lines.push('## 완료 기준');
+    lines.push('- Tab·Shift+Tab·방향키·Space·Enter·Escape만으로 전체 흐름 완주.');
+    lines.push('- 화면 낭독기로 이름·역할·상태·안내 문구 확인.');
+    lines.push('- 200% 확대와 320px 폭에서 가로 스크롤·잘림 없음, 대비 측정 완료, 콘솔 오류 0, 실패한 요청 0.');
+    lines.push('- 마지막에 재사용한 A11yKit 컴포넌트 id를 목록으로 보고.');
+    lines.push('');
+    lines.push('## 참고');
+    lines.push('- 무료 10종 소스와 데모: https://doggonug-cpu.github.io/a11y-ui-kit/#components');
+    lines.push('- 에이전트용 규칙 파일: https://doggonug-cpu.github.io/a11y-ui-kit/llms.txt');
+    lines.push('- MCP가 연결되어 있다면 list_components → get_component → check_wcag_checklist 순서로 확인.');
+    return lines.join('\n');
+  }
+  function buildPromptEn(screen) {
+    var sc = BUILDER_SCREENS[screen] || BUILDER_SCREENS['kiosk-order'];
+    var inputs = builderInputs();
+    var targets = inputs.targets;
+    var all = sc.free.concat(sc.pro || []);
+    var lines = [];
+    lines.push('# Screen: ' + sc.en);
+    lines.push('');
+    lines.push('## What to build');
+    lines.push('Build ' + sc.enGoal + '. Use the rules and components below, as one set of HTML, CSS and vanilla JS. No framework, bundler, CDN or external request.');
+    lines.push('');
+    lines.push('## Who uses it (these constraints decide the design)');
+    if (!targets.length) {
+      lines.push('- General adult users (no target group selected; choose one in the builder above to regenerate).');
+    } else {
+      targets.forEach(function (k) {
+        var tg = BUILDER_TARGETS[k];
+        if (tg) { lines.push('- ' + tg.en + ': ' + tg.enRule); }
+      });
+    }
+    lines.push('');
+    lines.push('## Non-negotiable rules (WCAG 2.2 AA floor; contrast, targets and focus to AAA)');
+    lines.push('- Every target 48x48 CSS px or larger, primary actions 56-64px, 12px or more apart. Grow with padding, never transform: scale().');
+    lines.push('- Body contrast 7:1 or better (AAA). Reference #F3F6F9 on #06090F = 18.4:1; secondary text above 4.5:1.');
+    lines.push('- Focus ring 4px #FFE066, 3px offset, :focus-visible only, never clipped by overflow.');
+    lines.push('- State is never colour-only: icon, word, weight or underline joins the colour.');
+    lines.push('- Status changes go to role="status" aria-live="polite"; only errors use role="alert"; never move focus.');
+    lines.push('- Real button, a, input, select and dialog. Labels above fields tied with for/id; a placeholder is never a label.');
+    lines.push('- Korean text: word-break: keep-all. Works at 200% zoom and 320px width with no horizontal scroll.');
+    lines.push('- Respect prefers-reduced-motion; reserve min-height so messages never shift layout.');
+    lines.push('- Sound is optional: Web Audio tones only, one per 80ms at most, a mute switch that persists, every cue also in text.');
+    lines.push('');
+    lines.push('## Components to use (A11yKit)');
+    all.forEach(function (id, i) {
+      var info = compInfo(id, 'en');
+      var note = info.summary ? ' — ' + firstSentence(info.summary, 150) : '';
+      var pro = info.tier === 'pro' ? ' [Pro — implement the same behaviour from the spec; source is paid]' : '';
+      lines.push((i + 1) + '. ' + info.name + ' (' + id + ')' + note + pro);
+    });
+    lines.push('');
+    lines.push('## Do not');
+    lines.push('- Put a click handler on a div, use placeholder-only labels, write outline:none, or signal success/error by colour alone.');
+    lines.push('- Autoplay audio, use audio files, load an external icon font, or add a tracking script.');
+    lines.push('- Put several decisions on one screen or animate without meaning.');
+    lines.push('');
+    lines.push('## Done means');
+    lines.push('- The whole flow completes with Tab, Shift+Tab, arrows, Space, Enter and Escape only.');
+    lines.push('- A screen reader reports names, roles, states and announcements.');
+    lines.push('- 200% zoom and 320px width with no horizontal scroll or clipping, measured contrast, zero console errors, zero failed requests.');
+    lines.push('- Finish by listing the A11yKit component ids you reused.');
+    lines.push('');
+    lines.push('## Reference');
+    lines.push('- Free source and live demos: https://doggonug-cpu.github.io/a11y-ui-kit/#components');
+    lines.push('- Agent index: https://doggonug-cpu.github.io/a11y-ui-kit/llms.txt');
+    lines.push('- With MCP connected: list_components -> get_component -> check_wcag_checklist.');
+    return lines.join('\n');
+  }
+
+  var builderPromptText = '';
+  function renderBuilder() {
+    var chipsBox = document.querySelector('[data-builder-chips]');
+    if (!chipsBox) { return; }
+    var inputs = builderInputs();
+    var sc = BUILDER_SCREENS[inputs.screen] || BUILDER_SCREENS['kiosk-order'];
+    var all = sc.free.concat(sc.pro || []);
+    var freeCount = 0;
+    var proCount = 0;
+    chipsBox.innerHTML = '';
+    all.forEach(function (id, i) {
+      var info = compInfo(id, state.lang);
+      if (info.tier === 'pro') { proCount += 1; } else { freeCount += 1; }
+      var li = document.createElement('li');
+      var n = document.createElement('span');
+      n.className = 'combolist__n';
+      n.textContent = String(i + 1).padStart(2, '0');
+      var name = document.createElement(info.tier === 'pro' ? 'span' : 'a');
+      name.className = 'combolist__name';
+      if (name.tagName === 'A') { name.href = '#c-' + id; }
+      name.textContent = info.name;
+      var badge = document.createElement('span');
+      var isPro = info.tier === 'pro';
+      badge.className = 'badge ' + (isPro ? 'badge--pro' : 'badge--free');
+      badge.textContent = isPro ? 'Pro' : 'Free';
+      li.appendChild(n);
+      li.appendChild(name);
+      li.appendChild(badge);
+      chipsBox.appendChild(li);
+    });
+    var summary = document.querySelector('[data-builder-summary]');
+    if (summary) {
+      var base = t().builderSummary(all.length, freeCount, proCount);
+      summary.textContent = inputs.targets.length ? base : base + ' ' + t().builderNoTarget;
+    }
+    builderPromptText = inputs.lang === 'en' ? buildPromptEn(inputs.screen) : buildPromptKo(inputs.screen, inputs.targets, inputs.lang);
+    var pre = document.querySelector('[data-builder-prompt]');
+    if (pre) { pre.textContent = builderPromptText; }
+  }
+  function initBuilder() {
+    var screenSel = document.querySelector('[data-builder-screen]');
+    var langSel = document.querySelector('[data-builder-lang]');
+    if (!screenSel) { return; }
+    if (langSel) { langSel.value = state.lang === 'en' ? 'en' : 'ko'; }
+    screenSel.addEventListener('change', function () { renderBuilder(); S.tap(); });
+    if (langSel) { langSel.addEventListener('change', function () { renderBuilder(); S.tap(); }); }
+    document.querySelectorAll('[data-builder-target]').forEach(function (box) {
+      box.addEventListener('change', function () { renderBuilder(); S.tap(); });
+    });
+    var form = document.querySelector('[data-builder-form]');
+    if (form) { form.addEventListener('submit', function (e) { e.preventDefault(); }); }
+    document.addEventListener('click', function (e) {
+      var copy = e.target.closest('[data-builder-copy]');
+      if (copy) {
+        e.preventDefault();
+        writeClipboard(builderPromptText).then(function () {
+          toast(t().builderCopied); S.ok();
+        }).catch(function () { toast(t().copyFail); S.err(); });
+        return;
+      }
+      var save = e.target.closest('[data-builder-download]');
+      if (save) {
+        e.preventDefault();
+        var name = 'a11y-prompt-' + builderInputs().screen + '.md';
+        if (downloadText(name, builderPromptText)) { toast(t().builderSaved); S.ok(); }
+        else { toast(t().copyFail); S.err(); }
+      }
+    });
+    var section = document.getElementById('builder');
+    if (section && 'IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { loadCatalogForBuilder(); io.disconnect(); }
+        });
+      }, { rootMargin: '300px' });
+      io.observe(section);
+    } else {
+      loadCatalogForBuilder();
+    }
+    renderBuilder();
+  }
+
   /* ---------- keyboard: Escape returns focus ---------- */
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
@@ -1066,9 +1528,25 @@
   });
 
   /* ---------- init ---------- */
+  initTabs();
+  initBuilder();
   captureI18n();
   applyTextsize();
   applySound();
   applyContrast();
   applyLang();
+  var rulesSection = document.getElementById('ai-rules');
+  if (rulesSection && 'IntersectionObserver' in window) {
+    var rulesIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          ensureRules().catch(function () {});
+          rulesIo.disconnect();
+        }
+      });
+    }, { rootMargin: '400px' });
+    rulesIo.observe(rulesSection);
+  } else {
+    ensureRules().catch(function () {});
+  }
 })();

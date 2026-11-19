@@ -1,0 +1,61 @@
+---
+description: Senior-first, WCAG-minded UI rules for this project (A11yKit)
+globs: ["**/*.html", "**/*.css", "**/*.js", "**/*.jsx", "**/*.tsx", "**/*.vue"]
+alwaysApply: true
+---
+
+# Senior-first UI rules
+
+Apply these rules to every UI change in this project. They come from A11yKit, a
+component kit built for 70-year-old hands and low-vision eyes. Do not restyle the
+project to match a trend; match these constraints.
+
+## 1. Targets and focus
+- Interactive elements are at least 48x48 CSS px; primary actions 56-64px tall.
+- 12px or more between adjacent targets. Never place two actions closer than 8px.
+- Grow the hit area with padding, not transform: scale().
+- Focus ring: 4px solid #FFE066, 3px offset, :focus-visible only, never clipped by
+  overflow:hidden. Keyboard order follows visual order.
+
+## 2. Text and contrast
+- Body text at least 7:1 contrast (WCAG AAA). Reference pair: #F3F6F9 on #06090F = 18.4:1.
+- Secondary text at least 4.5:1; aim for 7:1.
+- Base font 19px, line-height 1.6, no justified text, about 72ch per line maximum.
+- Korean: word-break: keep-all. Use overflow-wrap: anywhere only for URLs and codes.
+- Survive 200% browser zoom and a 320px viewport: no horizontal scroll, no clipped text.
+- Never signal state with colour alone: add an icon, a word, weight or underline.
+
+## 3. Semantics and announcements
+- Use real <button>, <a>, <input>, <select>, <dialog>. A div with a click handler is a bug.
+- Labels sit above the field and are tied with for/id. A placeholder is never the label.
+- Every status change writes into an existing role="status" aria-live="polite" element.
+  Errors (and only errors) use role="alert".
+- Groups of choices use fieldset/legend or role="radiogroup" with aria-checked and
+  roving tabindex (one tab stop, arrows move).
+- Dialogs use <dialog>.showModal(), trap nothing by hand, close on Escape, and return
+  focus to the trigger.
+- Expose state with aria-pressed / aria-checked / aria-current / aria-expanded, not with
+  a CSS class alone.
+
+## 4. Sound and motion (optional, never required)
+- If sound is added, synthesize it with Web Audio inside the user's gesture. No audio
+  files, at most one tone per 80ms, and a mute switch whose choice persists.
+- Every sound cue is mirrored by visible text and a live-region announcement.
+- Respect prefers-reduced-motion: no transforms, autoplay, parallax or marquee.
+- Reserve space (min-height) so a status message never shifts the layout.
+
+## 5. Code shape
+- Ship plain HTML, CSS and one vanilla JS block per component unless the project already
+  has a framework. No CDN, no tracking script, no telemetry, no external requests.
+- Colours and spacing come from CSS custom properties; no repeated magic numbers.
+- Prefer native elements over ARIA. ARIA only fills gaps native HTML cannot.
+
+## 6. Before you say it is done
+- Tab through the whole flow: every control reachable and operable with the keyboard only.
+- Screen-reader pass: name, role, state and live announcements all present.
+- 200% zoom and 320px width: no horizontal scroll, nothing clipped.
+- Measure contrast for each text/background pair you introduced.
+- Zero console errors and zero failed network requests.
+- Name the A11yKit component ids you reused (list_components, get_component via MCP).
+
+Full component index: https://doggonug-cpu.github.io/a11y-ui-kit/llms.txt

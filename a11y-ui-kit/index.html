@@ -10,7 +10,7 @@
 <link rel="canonical" href="https://doggonug-cpu.github.io/a11y-ui-kit/">
 <link rel="sitemap" type="application/xml" href="https://doggonug-cpu.github.io/a11y-ui-kit/sitemap.xml">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="A11yKit">
 <meta property="og:url" content="https://doggonug-cpu.github.io/a11y-ui-kit/">
@@ -37,7 +37,7 @@
       "description": "18 senior-first UI components with live demos, copy-ready HTML/CSS/JS and React code, AI implementation prompts, and a local MCP server for Claude Code and Cursor.",
       "inLanguage": "en",
       "isPartOf": { "@id": "https://doggonug-cpu.github.io/a11y-ui-kit/#website" },
-      "dateModified": "2026-11-18"
+      "dateModified": "2026-11-19"
     },
     {
       "@type": "WebSite",
@@ -82,6 +82,123 @@
   ]
 }
 </script>
+<link rel="alternate" type="text/plain" title="LLMs.txt" href="llms.txt">
+<link rel="alternate" type="text/plain" title="LLMs full text" href="llms-full.txt">
+<link rel="alternate" type="application/json" title="AI rules pack (Cursor, Claude Code, Windsurf, Copilot, AGENTS.md)" href="ai-rules.json">
+<link rel="alternate" type="application/json" title="MCP server descriptor" href="mcp/server.json">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta name="author" content="한울에듀테크 (A11yKit)">
+<meta name="keywords" content="accessible UI components, senior UI, WCAG AAA, WCAG 2.2, kiosk UI, MCP server, Claude Code, Cursor, AI coding agent, Korean accessibility, KRDS, vibe coding, a11y">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "@id": "https://doggonug-cpu.github.io/a11y-ui-kit/#faq",
+      "inLanguage": "en",
+      "isPartOf": { "@id": "https://doggonug-cpu.github.io/a11y-ui-kit/#webpage" },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is the free tier really MIT?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The ten free components are published under MIT — copy them into commercial products, no attribution required. Pro source is separately licensed and only released to buyers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a build step?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The HTML+CSS+JS version runs as one file, and the React version is a single-file component. This site itself ships with no framework, bundler or external script."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this site itself WCAG AAA?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Body text measures 18.4:1 and secondary text 10.6:1, past the 7:1 AAA bar; every control is at least 48px with a 4px focus ring. We do not claim automated AAA conformance for the whole page — AAA includes criteria such as sign-language and image-text levels that need a human review."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the MCP server safe to run?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It speaks over stdio only, reads one local catalog.json beside it, and makes no network requests, writes no files and needs no API keys. The source is public so you can read it first."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What about Korean?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Every component ships Korean and English label sets, and this page switches between EN and KO. The multilingual voice pack is part of Pro."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it work without sound?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All sound is optional. The switch in the header turns it off and remembers the choice; the same information is always carried by visible text and a screen-reader announcement."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I pay now?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not yet. Until settlement is connected the buttons collect an early-access request instead. The list hears first when checkout opens, and nothing is charged before that."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can agencies and care providers use it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The free ten already are. If you apply these across client sites or need kiosk and care flows, Pro fits; note your team size in the list form and a team licence will be offered when checkout opens."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://doggonug-cpu.github.io/a11y-ui-kit/#howto-mcp",
+      "name": "Connect the A11yKit MCP server to an AI coding agent",
+      "description": "Give Claude Code, Cursor, Windsurf, Claude Desktop or VS Code the A11yKit component source, AI prompts and WCAG checklists over local stdio.",
+      "totalTime": "PT2M",
+      "tool": [{ "@type": "HowToTool", "name": "Node 18 or newer" }],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Clone the repository",
+          "text": "Run: git clone --depth 1 https://github.com/doggonug-cpu/doggonug-cpu.github.io.git",
+          "url": "https://doggonug-cpu.github.io/a11y-ui-kit/#mcp"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Point your client at server.mjs",
+          "text": "For Claude Code run: claude mcp add a11y-kit -- node /absolute/path/a11y-ui-kit/mcp/server.mjs. For Cursor, Windsurf, Claude Desktop or VS Code paste the mcpServers JSON shown in the MCP section.",
+          "url": "https://doggonug-cpu.github.io/a11y-ui-kit/#mcp"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Ask for a component",
+          "text": "Use list_components to find an id by tag such as kiosk or care, then get_component for the source or get_ai_prompt for a paste-ready prompt, and check_wcag_checklist before shipping.",
+          "url": "https://doggonug-cpu.github.io/a11y-ui-kit/#mcp"
+        }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body id="top">
 
@@ -115,10 +232,11 @@
       <span class="brand__tag" data-ko="시니어 우선 UI 킷">senior-first UI kit</span>
     </a>
     <nav class="top__nav" aria-label="Main">
+      <a href="#ai-rules" data-ko="AI 룰 팩">AI rules</a>
       <a href="#components" data-ko="컴포넌트">Components</a>
+      <a href="#builder" data-ko="화면 빌더">Builder</a>
       <a href="#mcp" data-ko="MCP 서버">MCP</a>
       <a href="#pricing" data-ko="가격">Pricing</a>
-      <a href="#hire" data-ko="맞춤 구축">Work with me</a>
       <a href="#faq" data-ko="자주 묻는 질문">FAQ</a>
     </nav>
     <div class="top__cta">
@@ -249,6 +367,112 @@
       <div class="strip__item">
         <span class="strip__k" data-ko="검증">Verify</span>
         <span class="strip__v" data-ko="MCP의 check_wcag_checklist가 항목별 수동 점검표를 돌려줍니다.">check_wcag_checklist returns the manual checks for each criterion.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AI RULES PACK ============ -->
+  <section class="section section--rules" id="ai-rules" aria-labelledby="rules-title">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow"><span class="dot" aria-hidden="true"></span><span data-ko="커서 · 클로드 코드 · 코파일럿 · 윈드서프 · AGENTS.md">Cursor · Claude Code · Copilot · Windsurf · AGENTS.md</span></p>
+        <h2 id="rules-title" class="h2" data-ko="AI가 시니어 화면을 엉망으로 짠 건, 룰을 안 줬기 때문입니다.">
+          AI ships bad senior UI because nobody gave it rules.
+        </h2>
+        <p class="sub" data-ko="아래 파일 하나를 저장소에 넣으면 48px 타깃과 18.4:1 대비가 에이전트의 '기억'이 아니라 '규칙'이 됩니다. 같은 내용을 다섯 도구의 형식에 맞춰 두었으니, 쓰는 도구의 탭을 열어 복사하거나 파일로 저장하세요.">
+          Drop one file into your repo and 48px targets and 18.4:1 contrast stop being a memory and start being a rule. The same content, formatted for five tools — open your tool's tab, copy it or save the file.
+        </p>
+      </div>
+      <a class="btn btn--ghost" href="https://github.com/doggonug-cpu/doggonug-cpu.github.io/tree/main/a11y-ui-kit/rules" target="_blank" rel="noopener">
+        <svg class="ic" aria-hidden="true"><use href="#i-github"/></svg>
+        <span data-ko="룰 파일 5종 보기">All five files</span>
+      </a>
+    </div>
+
+    <div class="rules__grid">
+      <div class="rules__core">
+        <h3 class="h3" data-ko="파일에 들어 있는 것">What is in the file</h3>
+        <ol class="rules__list">
+          <li data-ko="모든 조작 요소 48px 이상, 주요 동작 56–64px, 사이 간격 12px 이상. 확대는 padding으로.">Every target 48px or larger, primary actions 56–64px, 12px between neighbours. Grow hit areas with padding.</li>
+          <li data-ko="본문 대비 7:1 이상(AAA). 이 킷의 실제 값은 18.4:1. 보조문도 4.5:1 이상.">Body contrast 7:1 or better (AAA) — this kit measures 18.4:1. Secondary text stays above 4.5:1.</li>
+          <li data-ko="포커스 링 4px #FFE066, 3px 오프셋, 키보드 포커스에서만, 잘리지 않게.">Focus ring 4px #FFE066 with a 3px offset, keyboard focus only, never clipped.</li>
+          <li data-ko="상태를 색으로만 알리지 않기. 아이콘·단어·굵기·밑줄이 함께.">State is never colour-only — an icon, a word, weight or underline always joins it.</li>
+          <li data-ko="상태 변화는 role=status, 오류만 role=alert. 낭독기에 같은 사실이 전달되게.">Status changes go to role=status; only errors use role=alert, so a screen reader hears the same fact.</li>
+          <li data-ko="진짜 button·a·input·dialog. 라벨은 입력칸 위에, for/id로 연결. 플레이스홀더는 라벨이 아님.">Real button, a, input and dialog; labels above fields, tied with for/id; a placeholder is never the label.</li>
+          <li data-ko="소리는 선택. Web Audio 합성만, 80ms에 1회, 끄면 기억. 모든 소리는 글자로도.">Sound is optional: Web Audio only, one tone per 80ms, mute remembered, every cue also in text.</li>
+          <li data-ko="200% 확대와 320px 폭에서 가로 스크롤 없이. prefers-reduced-motion 존중.">Survives 200% zoom and 320px width with no horizontal scroll; prefers-reduced-motion respected.</li>
+        </ol>
+        <p class="rules__fine" data-ko="규칙은 WCAG 2.2 AA를 최소선으로, 대비·타깃·포커스는 AAA 수준으로 잡았습니다. 파일은 프로젝트 규칙을 덮어쓰지 않고 그 위에 얹히도록 짧게 썼습니다.">
+          The rules take WCAG 2.2 AA as the floor and push contrast, targets and focus to AAA. They are short on purpose so they sit on top of your project's own conventions.
+        </p>
+      </div>
+
+      <div class="rules__tabs">
+        <div class="tabbar" role="tablist" aria-label="Rule pack by tool" data-tabs="rules">
+          <button class="tab" type="button" role="tab" id="rtab-cursor" aria-controls="rpanel-cursor" aria-selected="true" data-tab="cursor">Cursor</button>
+          <button class="tab" type="button" role="tab" id="rtab-claude-code" aria-controls="rpanel-claude-code" aria-selected="false" tabindex="-1" data-tab="claude-code">Claude Code</button>
+          <button class="tab" type="button" role="tab" id="rtab-windsurf" aria-controls="rpanel-windsurf" aria-selected="false" tabindex="-1" data-tab="windsurf">Windsurf</button>
+          <button class="tab" type="button" role="tab" id="rtab-copilot" aria-controls="rpanel-copilot" aria-selected="false" tabindex="-1" data-tab="copilot">Copilot</button>
+          <button class="tab" type="button" role="tab" id="rtab-agents" aria-controls="rpanel-agents" aria-selected="false" tabindex="-1" data-tab="agents">AGENTS.md</button>
+        </div>
+
+        <div class="rulepanel" role="tabpanel" id="rpanel-cursor" aria-labelledby="rtab-cursor" tabindex="0" data-panel="cursor">
+          <div class="rulepanel__bar">
+            <p class="rulepanel__path"><span data-ko="저장 위치">Save as</span> <code>.cursor/rules/a11y-senior-ui.mdc</code></p>
+            <div class="rulepanel__acts">
+              <button class="btn btn--sm" type="button" data-rule-copy="cursor"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span></button>
+              <button class="btn btn--sm" type="button" data-rule-download="cursor"><span data-ko="파일로 저장">Download</span></button>
+            </div>
+          </div>
+          <pre class="code code--tall" tabindex="0" aria-label="Cursor rule file" data-rule-pre="cursor"><code data-rule-body="cursor"></code></pre>
+        </div>
+
+        <div class="rulepanel" role="tabpanel" id="rpanel-claude-code" aria-labelledby="rtab-claude-code" tabindex="0" data-panel="claude-code" hidden>
+          <div class="rulepanel__bar">
+            <p class="rulepanel__path"><span data-ko="프로젝트 루트에">At the project root</span> <code>CLAUDE.md</code></p>
+            <div class="rulepanel__acts">
+              <button class="btn btn--sm" type="button" data-rule-copy="claude-code"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span></button>
+              <button class="btn btn--sm" type="button" data-rule-download="claude-code"><span data-ko="파일로 저장">Download</span></button>
+            </div>
+          </div>
+          <pre class="code code--tall" tabindex="0" aria-label="Claude Code memory file" data-rule-pre="claude-code"><code data-rule-body="claude-code"></code></pre>
+        </div>
+
+        <div class="rulepanel" role="tabpanel" id="rpanel-windsurf" aria-labelledby="rtab-windsurf" tabindex="0" data-panel="windsurf" hidden>
+          <div class="rulepanel__bar">
+            <p class="rulepanel__path"><span data-ko="프로젝트 루트에">At the project root</span> <code>.windsurfrules</code></p>
+            <div class="rulepanel__acts">
+              <button class="btn btn--sm" type="button" data-rule-copy="windsurf"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span></button>
+              <button class="btn btn--sm" type="button" data-rule-download="windsurf"><span data-ko="파일로 저장">Download</span></button>
+            </div>
+          </div>
+          <pre class="code code--tall" tabindex="0" aria-label="Windsurf rules file" data-rule-pre="windsurf"><code data-rule-body="windsurf"></code></pre>
+        </div>
+
+        <div class="rulepanel" role="tabpanel" id="rpanel-copilot" aria-labelledby="rtab-copilot" tabindex="0" data-panel="copilot" hidden>
+          <div class="rulepanel__bar">
+            <p class="rulepanel__path"><span data-ko="저장 위치">Save as</span> <code>.github/copilot-instructions.md</code></p>
+            <div class="rulepanel__acts">
+              <button class="btn btn--sm" type="button" data-rule-copy="copilot"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span></button>
+              <button class="btn btn--sm" type="button" data-rule-download="copilot"><span data-ko="파일로 저장">Download</span></button>
+            </div>
+          </div>
+          <pre class="code code--tall" tabindex="0" aria-label="GitHub Copilot instructions" data-rule-pre="copilot"><code data-rule-body="copilot"></code></pre>
+        </div>
+
+        <div class="rulepanel" role="tabpanel" id="rpanel-agents" aria-labelledby="rtab-agents" tabindex="0" data-panel="agents" hidden>
+          <div class="rulepanel__bar">
+            <p class="rulepanel__path"><span data-ko="저장 위치">Save as</span> <code>AGENTS.md</code></p>
+            <div class="rulepanel__acts">
+              <button class="btn btn--sm" type="button" data-rule-copy="agents"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span></button>
+              <button class="btn btn--sm" type="button" data-rule-download="agents"><span data-ko="파일로 저장">Download</span></button>
+            </div>
+          </div>
+          <pre class="code code--tall" tabindex="0" aria-label="AGENTS.md rule file" data-rule-pre="agents"><code data-rule-body="agents"></code></pre>
+        </div>
+
+        <p class="rulepanel__status" role="status" aria-live="polite" data-rule-status></p>
+        <noscript><p class="rules__fine">JavaScript is off, so the file contents are not rendered here. Read them directly: <a href="rules/AGENTS.md">AGENTS.md</a>, <a href="ai-rules.json">ai-rules.json</a>.</p></noscript>
       </div>
     </div>
   </section>
@@ -1047,6 +1271,81 @@
     </div>
   </section>
 
+  <!-- ============ SCREEN BUILDER ============ -->
+  <section class="section section--builder" id="builder" aria-labelledby="builder-title">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow"><span class="dot" aria-hidden="true"></span><span data-ko="화면 × 사용자 → 컴포넌트 조합 + 프롬프트">screen × user → components + prompt</span></p>
+        <h2 id="builder-title" class="h2" data-ko="무엇을 만드는지 고르면, 조합과 프롬프트가 나옵니다.">
+          Pick the screen. The combination and the prompt follow.
+        </h2>
+        <p class="sub" data-ko="키오스크 주문부터 요양 기록까지, 화면과 사용자를 고르면 그 화면에 필요한 컴포넌트 조합과 그대로 붙여넣을 프롬프트를 만들어 드립니다. 프롬프트에는 타깃별 제약과 완료 기준이 함께 들어갑니다.">
+          From kiosk ordering to care records: choose a screen and who uses it, and this builds the component combination plus a prompt you can paste straight into Claude Code or Cursor, with the target's constraints and acceptance criteria baked in.
+        </p>
+      </div>
+    </div>
+
+    <div class="builder">
+      <form class="builder__form" data-builder-form novalidate>
+        <div class="builder__field">
+          <label class="field__label" for="b-screen" data-ko="1. 어떤 화면인가요?">1. Which screen is it?</label>
+          <select class="field__input" id="b-screen" data-builder-screen>
+            <option value="kiosk-order" data-ko="키오스크 주문·발권">Kiosk ordering or ticketing</option>
+            <option value="welfare" data-ko="복지·민원 신청">Welfare or civil application</option>
+            <option value="hospital" data-ko="병원 예약·접수">Hospital booking or reception</option>
+            <option value="commerce" data-ko="시니어 커머스·결제">Senior commerce and payment</option>
+            <option value="care" data-ko="요양·복약 기록">Care and medication record</option>
+            <option value="banking" data-ko="은행 ATM·앱">Banking: ATM or app</option>
+          </select>
+        </div>
+
+        <fieldset class="builder__field">
+          <legend class="field__label" data-ko="2. 누가 쓰나요? (복수 선택)">2. Who uses it? (choose any)</legend>
+          <div class="builder__targets">
+            <label class="checkrow"><input type="checkbox" value="senior70" data-builder-target checked><span data-ko="70대 이상 고령 사용자">Age 70 and over</span></label>
+            <label class="checkrow"><input type="checkbox" value="lowvision" data-builder-target><span data-ko="저시력·백내장">Low vision, cataracts</span></label>
+            <label class="checkrow"><input type="checkbox" value="tremor" data-builder-target><span data-ko="손 떨림·터치 미숙">Tremor, uncertain touch</span></label>
+            <label class="checkrow"><input type="checkbox" value="hearing" data-builder-target><span data-ko="난청">Hearing loss</span></label>
+            <label class="checkrow"><input type="checkbox" value="cognitive" data-builder-target><span data-ko="인지 지원 필요">Needs cognitive support</span></label>
+          </div>
+        </fieldset>
+
+        <div class="builder__field">
+          <label class="field__label" for="b-lang" data-ko="3. 프롬프트 언어">3. Prompt language</label>
+          <select class="field__input" id="b-lang" data-builder-lang>
+            <option value="ko">한국어</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </form>
+
+      <div class="builder__out">
+        <p class="builder__summary" role="status" aria-live="polite" data-builder-summary></p>
+        <h3 class="h3" data-ko="이 화면에 필요한 컴포넌트">This screen needs</h3>
+        <ul class="combolist" data-builder-chips></ul>
+        <div class="codecard codecard--stack">
+          <div class="codecard__head">
+            <span class="codecard__name" data-ko="복붙용 프롬프트">Paste-ready prompt</span>
+            <span class="codecard__acts">
+              <button class="btn btn--sm" type="button" data-builder-copy><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span></button>
+              <button class="btn btn--sm" type="button" data-builder-download><span data-ko=".md로 저장">Save .md</span></button>
+            </span>
+          </div>
+          <pre class="code code--tall" tabindex="0" aria-label="Generated prompt" data-builder-pre><code data-builder-prompt></code></pre>
+        </div>
+        <div class="builder__cta">
+          <p data-ko="기관 인증, 전수 점검, 실제 화면 납품까지 필요하신가요? 조합만으로 부족한 부분은 직접 만들어 드립니다.">
+            Need an institutional audit, a full accessibility pass or the finished screens? The parts the combination cannot cover can be built for you.
+          </p>
+          <button class="btn btn--primary" type="button" data-open-hire data-type="build">
+            <span data-ko="견적·도입 문의">Request a quote</span>
+            <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ MCP ============ -->
   <section class="section section--mcp" id="mcp" aria-labelledby="mcp-title">
     <div class="section__head">
@@ -1090,24 +1389,47 @@
       </div>
 
       <div class="mcp__config">
-        <h3 class="h3" data-ko="연결하기">Connect it</h3>
+        <h3 class="h3" data-ko="연결하기 · 클라이언트 5종">Connect it · five clients</h3>
 
         <div class="codecard">
-          <div class="codecard__head"><span class="codecard__name">Claude Code</span>
-            <button class="btn btn--sm" type="button" data-copy-text="claude-code">
+          <div class="codecard__head"><span class="codecard__name" data-ko="한 번 받고 바로 점검">Clone once, check it runs</span>
+            <button class="btn btn--sm" type="button" data-copy-text="install">
               <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
             </button>
           </div>
-          <pre class="code" tabindex="0" aria-label="Claude Code command" data-code-text="claude-code"><code>claude mcp add a11y-kit -- node /absolute/path/a11y-ui-kit/mcp/server.mjs</code></pre>
+          <pre class="code" tabindex="0" aria-label="Clone and self-test command" data-code-text="install"><code>git clone --depth 1 https://github.com/doggonug-cpu/doggonug-cpu.github.io.git
+node doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs --selftest</code></pre>
         </div>
 
-        <div class="codecard">
-          <div class="codecard__head"><span class="codecard__name">Cursor · .mcp.json</span>
-            <button class="btn btn--sm" type="button" data-copy-text="mcp-json">
-              <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
-            </button>
+        <div class="tabbar tabbar--sm" role="tablist" aria-label="MCP client configuration" data-tabs="clients">
+          <button class="tab" type="button" role="tab" id="ctab-claude-code" aria-controls="cpanel-claude-code" aria-selected="true" data-tab="claude-code">Claude Code</button>
+          <button class="tab" type="button" role="tab" id="ctab-claude-desktop" aria-controls="cpanel-claude-desktop" aria-selected="false" tabindex="-1" data-tab="claude-desktop">Claude Desktop</button>
+          <button class="tab" type="button" role="tab" id="ctab-cursor" aria-controls="cpanel-cursor" aria-selected="false" tabindex="-1" data-tab="cursor">Cursor</button>
+          <button class="tab" type="button" role="tab" id="ctab-windsurf" aria-controls="cpanel-windsurf" aria-selected="false" tabindex="-1" data-tab="windsurf">Windsurf</button>
+          <button class="tab" type="button" role="tab" id="ctab-vscode" aria-controls="cpanel-vscode" aria-selected="false" tabindex="-1" data-tab="vscode">VS Code</button>
+        </div>
+
+        <div class="clientpanel" role="tabpanel" id="cpanel-claude-code" aria-labelledby="ctab-claude-code" tabindex="0" data-panel="claude-code">
+          <p class="clientpanel__path"><span data-ko="터미널에서 한 줄">One line in your terminal</span></p>
+          <div class="codecard">
+            <div class="codecard__head"><span class="codecard__name">claude mcp add</span>
+              <button class="btn btn--sm" type="button" data-copy-text="claude-code">
+                <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
+              </button>
+            </div>
+            <pre class="code" tabindex="0" aria-label="Claude Code command" data-code-text="claude-code"><code>claude mcp add a11y-kit -- node /absolute/path/a11y-ui-kit/mcp/server.mjs</code></pre>
           </div>
-          <pre class="code" tabindex="0" aria-label="mcp.json configuration" data-code-text="mcp-json"><code>{
+        </div>
+
+        <div class="clientpanel" role="tabpanel" id="cpanel-claude-desktop" aria-labelledby="ctab-claude-desktop" tabindex="0" data-panel="claude-desktop" hidden>
+          <p class="clientpanel__path"><span data-ko="저장 위치">Save as</span> <code>claude_desktop_config.json</code> <span data-ko="(macOS: ~/Library/Application Support/Claude/, Windows: %APPDATA%\Claude)">(macOS: ~/Library/Application Support/Claude/, Windows: %APPDATA%\Claude)</span>, <span data-ko="저장 후 앱 재시작">then restart the app</span></p>
+          <div class="codecard">
+            <div class="codecard__head"><span class="codecard__name">claude_desktop_config.json</span>
+              <button class="btn btn--sm" type="button" data-copy-text="claude-desktop">
+                <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
+              </button>
+            </div>
+            <pre class="code" tabindex="0" aria-label="Claude Desktop configuration" data-code-text="claude-desktop"><code>{
   "mcpServers": {
     "a11y-kit": {
       "command": "node",
@@ -1115,6 +1437,65 @@
     }
   }
 }</code></pre>
+          </div>
+        </div>
+
+        <div class="clientpanel" role="tabpanel" id="cpanel-cursor" aria-labelledby="ctab-cursor" tabindex="0" data-panel="cursor" hidden>
+          <p class="clientpanel__path"><span data-ko="프로젝트 안에 저장">Save in the project as</span> <code>.cursor/mcp.json</code></p>
+          <div class="codecard">
+            <div class="codecard__head"><span class="codecard__name">.cursor/mcp.json</span>
+              <button class="btn btn--sm" type="button" data-copy-text="cursor-mcp">
+                <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
+              </button>
+            </div>
+            <pre class="code" tabindex="0" aria-label="Cursor mcp.json" data-code-text="cursor-mcp"><code>{
+  "mcpServers": {
+    "a11y-kit": {
+      "command": "node",
+      "args": ["/absolute/path/a11y-ui-kit/mcp/server.mjs"]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="clientpanel" role="tabpanel" id="cpanel-windsurf" aria-labelledby="ctab-windsurf" tabindex="0" data-panel="windsurf" hidden>
+          <p class="clientpanel__path"><span data-ko="저장 위치">Save as</span> <code>~/.codeium/windsurf/mcp_config.json</code></p>
+          <div class="codecard">
+            <div class="codecard__head"><span class="codecard__name">mcp_config.json</span>
+              <button class="btn btn--sm" type="button" data-copy-text="windsurf-mcp">
+                <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
+              </button>
+            </div>
+            <pre class="code" tabindex="0" aria-label="Windsurf MCP configuration" data-code-text="windsurf-mcp"><code>{
+  "mcpServers": {
+    "a11y-kit": {
+      "command": "node",
+      "args": ["/absolute/path/a11y-ui-kit/mcp/server.mjs"]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="clientpanel" role="tabpanel" id="cpanel-vscode" aria-labelledby="ctab-vscode" tabindex="0" data-panel="vscode" hidden>
+          <p class="clientpanel__path"><span data-ko="프로젝트 안에 저장">Save in the project as</span> <code>.vscode/mcp.json</code></p>
+          <div class="codecard">
+            <div class="codecard__head"><span class="codecard__name">.vscode/mcp.json</span>
+              <button class="btn btn--sm" type="button" data-copy-text="vscode-mcp">
+                <svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-ko="복사">Copy</span>
+              </button>
+            </div>
+            <pre class="code" tabindex="0" aria-label="VS Code MCP configuration" data-code-text="vscode-mcp"><code>{
+  "servers": {
+    "a11y-kit": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/absolute/path/a11y-ui-kit/mcp/server.mjs"]
+    }
+  }
+}</code></pre>
+          </div>
         </div>
 
         <div class="codecard">
@@ -1128,6 +1509,11 @@
   '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
   | node mcp/server.mjs</code></pre>
         </div>
+
+        <p class="mcp__note" data-ko="경로의 /absolute/path 부분만 바꾸면 됩니다(윈도는 C:/tools/… 처럼 슬래시 사용). npm 패키지는 아직 배포하지 않았으므로 위처럼 복제한 파일 경로를 가리킵니다. 레지스트리용 메타데이터는 mcp/server.json에 준비되어 있습니다.">
+          Replace only the /absolute/path part (on Windows use forward slashes, e.g. C:/tools/…). The npm package is not published yet, so clients point at the cloned file; registry metadata is prepared in mcp/server.json.
+        </p>
+        <p class="clientpanel__status" role="status" aria-live="polite" data-client-status></p>
       </div>
     </div>
   </section>
@@ -1360,7 +1746,9 @@
       </p>
     </div>
     <nav class="footer__nav" aria-label="Footer">
+      <a href="#ai-rules" data-ko="AI 룰 팩">AI rules</a>
       <a href="#components" data-ko="컴포넌트">Components</a>
+      <a href="#builder" data-ko="화면 빌더">Builder</a>
       <a href="#mcp" data-ko="MCP">MCP</a>
       <a href="#pricing" data-ko="가격">Pricing</a>
       <a href="#hire" data-ko="맞춤 구축">Work with me</a>
@@ -1487,6 +1875,6 @@
   </div>
 </noscript>
 
-<script src="app.js?v=4" defer></script>
+<script src="app.js?v=5" defer></script>
 </body>
 </html>

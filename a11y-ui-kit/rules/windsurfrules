@@ -1,0 +1,26 @@
+# .windsurfrules - senior-first UI (A11yKit)
+
+Scope: every HTML, CSS and JS file in this workspace. These rules win over style
+preferences and library defaults.
+
+- Targets: interactive elements >= 48x48 CSS px (56-64px for primary actions), >= 12px
+  between neighbours. Padding grows the hit area, never transform: scale().
+- Focus: 4px #FFE066 ring with 3px offset, :focus-visible only, never clipped.
+- Contrast: body text >= 7:1 (AAA), secondary >= 4.5:1. Base 19px / 1.6, <= ~72ch.
+- Korean text: word-break: keep-all; no mid-word breaks.
+- Layout: correct at 200% zoom and 320px width, no horizontal scroll, no clipped text.
+- State is never colour-only: icon, word, weight or underline always accompany colour.
+- Native semantics first: button, a, input, select, dialog; labels above fields, tied by
+  for/id. Placeholders are never labels.
+- Live regions: role="status" aria-live="polite" for status, role="alert" for errors.
+- Radio groups: fieldset/legend or role="radiogroup" with aria-checked and roving tabindex.
+- Modals: <dialog>.showModal(), Escape closes, focus returns to the trigger.
+- State via aria-pressed / aria-checked / aria-current / aria-expanded, not classes alone.
+- Sound only as optional Web Audio tones synthesised in the gesture (no files, <= 1 per
+  80ms), with a persistent mute switch and the same message in visible text.
+- Honour prefers-reduced-motion; reserve min-height so messages do not shift layout.
+- Ship plain HTML + CSS + one vanilla JS block; no CDN, no tracking, no external requests.
+- Finish with: keyboard-only walkthrough, screen-reader pass, 200% zoom and 320px check,
+  measured contrast, zero console errors, and a list of A11yKit component ids reused.
+
+Component index and copy-ready source: https://doggonug-cpu.github.io/a11y-ui-kit/llms.txt
