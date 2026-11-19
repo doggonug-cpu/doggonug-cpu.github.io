@@ -1114,7 +1114,7 @@
   var RULE_FILES = {
     cursor: 'a11y-senior-ui.mdc',
     'claude-code': 'CLAUDE.md',
-    windsurf: 'windsurfrules',
+    windsurf: 'windsurfrules.txt',
     copilot: 'copilot-instructions.md',
     agents: 'AGENTS.md'
   };
