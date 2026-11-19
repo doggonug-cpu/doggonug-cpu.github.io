@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "note": "Discovery pointer published by https://doggonug-cpu.github.io. It is not an official MCP registry endpoint; it names the MCP servers this site ships and where their descriptors and setup instructions live.",
+  "updated": "2026-11-19",
+  "servers": [
+    {
+      "name": "io.github.doggonug-cpu/a11y-ui-kit",
+      "title": "A11yKit",
+      "description": "Senior-first, WCAG-minded UI component source, AI prompts and manual WCAG checklists for coding agents. Local stdio, zero dependencies, read-only.",
+      "version": "1.0.0",
+      "transport": "stdio",
+      "descriptor": "https://doggonug-cpu.github.io/a11y-ui-kit/mcp/server.json",
+      "documentation": "https://doggonug-cpu.github.io/a11y-ui-kit/llms.txt",
+      "homepage": "https://doggonug-cpu.github.io/a11y-ui-kit/",
+      "repository": "https://github.com/doggonug-cpu/doggonug-cpu.github.io/tree/main/a11y-ui-kit/mcp",
+      "license": "MIT",
+      "install": {
+        "runtime": "node >= 18",
+        "command": "git clone --depth 1 https://github.com/doggonug-cpu/doggonug-cpu.github.io.git",
+        "args": ["doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs"]
+      },
+      "tools": [
+        "list_components",
+        "get_component",
+        "get_ai_prompt",
+        "check_wcag_checklist"
+      ]
+    }
+  ]
+}

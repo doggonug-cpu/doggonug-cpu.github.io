@@ -1,0 +1,410 @@
+# A11yKit — full reference for AI agents
+
+> Long-form companion to https://doggonug-cpu.github.io/a11y-ui-kit/llms.txt.
+> Everything an agent needs to pick a component, explain it, or reproduce it:
+> all 18 components with WCAG criteria and accessibility notes, the design
+> tokens, the MCP tool contracts, the rule set, pricing, and the honest limits.
+> Last updated 2026-11-19. Site: https://doggonug-cpu.github.io/a11y-ui-kit/
+
+## 1. Identity
+
+A11yKit is a senior-first UI kit: components measured against the hands and eyes of
+people in their seventies rather than a 25-year-old thumb. It is built and maintained
+by 한울에듀테크 (Hanul EduTech), an independent studio in Wando, Republic of Korea, as
+part of https://doggonug-cpu.github.io. It is not an official Korean government (KRDS)
+distribution; it follows the same direction on target size, plain language and
+non-colour-only state cues.
+
+Shape of the product:
+- Static HTML + CSS + one vanilla JS block per component, plus a single-file React twin.
+- No framework, bundler, npm package, CDN, font request or tracking script on the site.
+- Ten components MIT (free, commercial use, no attribution), eight Pro (paid, source
+  released to Pro seats only).
+- A local MCP server (stdio, zero dependencies, read-only) that serves the catalog to
+  Claude Code, Cursor, Windsurf, Claude Desktop, VS Code or any MCP client.
+- A paste-ready rule pack for Cursor, Claude Code, Windsurf, Copilot and AGENTS.md agents.
+
+Measured numbers (2026-11-18):
+- Body text #F3F6F9 on #06090F = 18.4:1. Secondary #BAC5D1 on #0E141B = 10.6:1.
+- Accent #FFD84D on page = 14.4:1. Ink #10130A on accent = 13.6:1.
+- Minimum target 48px; primary actions 56-64px; focus ring 4px with 3px offset.
+
+## 2. Ten rules the kit encodes
+
+1. Targets >= 48x48 CSS px, 56-64px for primary actions, >= 12px apart; grow hit areas
+   with padding, never transform: scale().
+2. Body contrast >= 7:1 (WCAG AAA); secondary >= 4.5:1.
+3. Focus indicator 4px solid #FFE066 with 3px offset, :focus-visible only, never clipped.
+4. State is never colour-only: an icon, a word, weight or underline always accompanies it.
+5. Status changes are written into role="status" aria-live="polite"; only errors use
+   role="alert" and interrupt.
+6. Native elements first (button, a, input, select, dialog); labels above fields tied with
+   for/id; a placeholder is never a label.
+7. Choice groups use fieldset/legend or role="radiogroup" with aria-checked and roving
+   tabindex (one tab stop, arrow keys move, Space/Enter selects).
+8. Sound is optional: Web Audio tones synthesized inside the gesture, no audio files, at
+   most one tone per 80ms, a mute switch that persists, and every cue mirrored by visible
+   text and a live-region announcement.
+9. prefers-reduced-motion is respected; messages never shift layout (reserve min-height).
+10. Usable at 200% browser zoom and 320px viewport width with no horizontal scrolling.
+
+## 3. Component catalog (18)
+
+### 01. Big action buttons + tap sound (`big-action-button`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-big-action-button
+- Korean name: 큰 동작 버튼 + 합성 탭 사운드
+- Tags: touch, sound, kiosk, primary-action
+- Summary: 56px buttons with a 4px focus ring and a 40 ms synthesized tap, so a press is confirmed in eye and ear at once.
+- WCAG: 2.5.5 Target Size (AAA), 1.4.6 Contrast (AAA), 2.1.1 Keyboard, 4.1.3 Status Messages
+- Accessibility notes:
+  - Buttons are 56px tall with 12px gaps; the 4px focus ring has a 3px offset and never clips.
+  - The press result is written into a role=status live region, so screen-reader users hear the same confirmation sighted users see.
+  - The tone is created inside the click handler; browsers require a user gesture before audio can start, and this keeps the AudioContext out of the initial page load.
+  - Nothing depends on colour: each action carries a text label.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 02. Text scale + contrast switch (`text-scale-switch`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-text-scale-switch
+- Korean name: 글자 크기 3단계 · 고대비 스위치
+- Tags: settings, contrast, text-size, persistence
+- Summary: Three text sizes and a high-contrast mode that apply instantly and survive a reload.
+- WCAG: 1.4.4 Resize Text, 1.4.8 Visual Presentation (AAA), 2.4.7 Focus Visible (AAA), 4.1.2 Name, Role, Value
+- Accessibility notes:
+  - Scale is applied with a CSS variable on the card, so only the demo text grows and nothing reflows outside it.
+  - aria-pressed on each size button and role=switch with aria-checked on the contrast control give the state to assistive tech, not just to the eye.
+  - The choice is stored in localStorage under one key and restored before first paint of the card.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 03. Medication checklist (`medication-card`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-medication-card
+- Korean name: 큰 글씨 복약 체크 카드
+- Tags: care, checklist, daily, live-region
+- Summary: Three doses a day as 64px rows. One tap marks it taken and the count is announced.
+- WCAG: 1.3.1 Info and Relationships, 2.5.5 Target Size (AAA), 4.1.3 Status Messages, 1.4.6 Contrast (AAA)
+- Accessibility notes:
+  - Each dose is a button with aria-pressed, not a checkbox the user must aim at; the whole 64px row is the target.
+  - The counter is a separate role=status region, so the change is announced once without re-reading the whole list.
+  - Taken state is shown by a filled pill word ('Taken') plus a colour change, never colour alone.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 04. Kiosk choice list (`kiosk-choice-list`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-kiosk-choice-list
+- Korean name: 키오스크 1열 대형 선택
+- Tags: kiosk, radio-group, keyboard, touch
+- Summary: One 64px choice per row with arrow-key focus and the choice announced aloud.
+- WCAG: 2.5.5 Target Size (AAA), 2.1.1 Keyboard, 3.3.2 Labels or Instructions, 4.1.2 Name, Role, Value
+- Accessibility notes:
+  - Uses role=radiogroup with role=radio buttons, aria-checked and a roving tabindex so the group is one tab stop.
+  - Arrow keys move and select; Space and Enter select without moving focus away.
+  - The selected label is echoed in a polite live region because kiosk users often look away from the screen.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 05. Read aloud button (`read-aloud`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-read-aloud
+- Korean name: 음성 읽어주기 버튼
+- Tags: speech, tts, reading, browser-api
+- Summary: speechSynthesis in about 20 lines, with rate control and a stop button.
+- WCAG: 1.1.1 Non-text Content, 1.4.5 Images of Text, 4.1.3 Status Messages
+- Accessibility notes:
+  - Always show the text being read; speech is an aid, not the only channel.
+  - Cancel any current utterance before starting a new one, or voices queue up and read three times.
+  - Detect missing speech support and say so in the status region instead of failing silently.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 06. Two-step confirm switch (`confirm-switch`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-confirm-switch
+- Korean name: 2단계 확인 · 슬라이드 스위치
+- Tags: dialog, destructive, safety, focus
+- Summary: A native dialog: the destructive button only arms after you move a switch in step two.
+- WCAG: 3.3.4 Error Prevention (AAA), 3.3.6 Error Prevention (AAA), 2.4.3 Focus Order, 4.1.2 Name, Role, Value
+- Accessibility notes:
+  - showModal() gives the focus trap, Escape handling and focus return for free; do not rebuild them with divs.
+  - Step two is a deliberate second gesture, which is what WCAG 3.3.4 asks for on destructive actions.
+  - The dialog keeps its accessible name and description visible while the step changes.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 07. Big number keypad (`number-keypad`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-number-keypad
+- Korean name: 대형 숫자 키패드
+- Tags: keypad, pin, kiosk, touch
+- Summary: 64px keys, a 4px focus ring and a masked display that announces each digit count.
+- WCAG: 2.5.5 Target Size (AAA), 2.4.7 Focus Visible (AAA), 4.1.2 Name, Role, Value, 1.4.11 Non-text Contrast
+- Accessibility notes:
+  - The display shows bullets, so a shoulder-surfer learns nothing; the live region says how many digits were entered instead of reading them.
+  - Keys are 64px with 8px gaps, well above the 44px AAA target.
+  - The value lives in one variable and never leaves the page in the demo.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 08. Success and error banners (`status-banner`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-status-banner
+- Korean name: 오류 · 성공 안내 배너
+- Tags: feedback, errors, live-region, sound
+- Summary: Icon, heading and one plain sentence, with a different tone for success and error.
+- WCAG: 1.4.1 Use of Color, 4.1.3 Status Messages, 3.3.1 Error Identification, 1.4.6 Contrast (AAA)
+- Accessibility notes:
+  - Errors use role=alert so they interrupt; success and info use role=status so they wait their turn.
+  - Each state has an icon shape (check, triangle, circle) in addition to colour.
+  - The error copy says what happened and what to do next, not just 'Error'.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 09. Step progress (`step-progress`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-step-progress
+- Korean name: 대형 단계 진행 표시
+- Tags: wizard, progress, forms
+- Summary: Four numbered stages, a filling track and aria-current, announced in words.
+- WCAG: 1.3.1 Info and Relationships, 2.4.8 Location (AAA), 4.1.2 Name, Role, Value, 1.4.11 Non-text Contrast
+- Accessibility notes:
+  - Progress is an ordered list with aria-current='step' on the active item; screen readers get the structure, not just the bar.
+  - Completed steps swap their number for a check mark and keep the text label.
+  - A polite live region says 'Step 2 of 4 · Symptoms' whenever the step changes.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 10. Senior-friendly form (`senior-form`) — FREE
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-senior-form
+- Korean name: 시니어 친화 입력 폼
+- Tags: form, validation, errors, labels
+- Summary: Labels fixed above 56px fields, an error summary that links to each field, messages written as sentences.
+- WCAG: 3.3.1 Error Identification, 3.3.3 Error Suggestion (AAA), 3.3.2 Labels or Instructions, 1.3.1 Info and Relationships
+- Accessibility notes:
+  - Placeholders are never the label: they vanish on typing and fail 3.3.2.
+  - The error summary is focusable (tabindex=-1) and its links move focus to the field, which is the 3.3.1 pattern screen-reader users expect.
+  - Errors are described by aria-describedby and marked aria-invalid; they do not clear until the user edits the field.
+- Source: MIT. Copy-ready on the live page; full HTML/CSS/JS and React code in catalog.json.
+
+### 11. Voice search bar (`voice-search`) — PRO
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-voice-search
+- Korean name: 음성 인식 검색바
+- Tags: speech, search, fallback
+- Summary: Hold to talk, watch the transcript build in large type, and fall back to typing after three failed tries.
+- WCAG: 2.5.5 Target Size (AAA), 1.2.1 Audio-only, 4.1.3 Status Messages
+- Accessibility notes:
+  - Pro component: the full source, React version and MCP payload are released to Pro seats only.
+- Pro spec:
+  - Web Speech recognition with drug-name and number normalisation ("blood pressure pill" → 혈압약)
+  - Typed fallback after three failed recognitions, with the transcript kept for editing
+  - Waveform state indicator that is decorative; the live region carries the words
+- Source: released to Pro seats only; the MCP server returns the spec and a lock notice.
+
+### 12. Family check-in card (`family-checkin`) — PRO
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-family-checkin
+- Korean name: 가족 안부 확인 카드
+- Tags: care, family, notifications
+- Summary: One press sends “I’m okay”; the family side keeps the last-seen time and a plain-language history.
+- WCAG: 2.5.5 Target Size (AAA), 3.3.4 Error Prevention (AAA), 4.1.3 Status Messages
+- Accessibility notes:
+  - Pro component: the full source, React version and MCP payload are released to Pro seats only.
+- Pro spec:
+  - One-tap reply with three large options and a retry path when the send fails
+  - Last-seen time and a three-day streak shown as text, not a chart
+  - Web Push and SMS handoff documented with no vendor lock-in
+- Source: released to Pro seats only; the MCP server returns the spec and a lock notice.
+
+### 13. Hospital timeslots (`hospital-timeslot`) — PRO
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-hospital-timeslot
+- Korean name: 병원 예약 타임슬롯
+- Tags: booking, health, kiosk
+- Summary: 60px slots grouped by morning and afternoon, with doctor and room, confirmed by a 1.2 s hold.
+- WCAG: 2.5.5 Target Size (AAA), 2.5.2 Pointer Cancellation, 1.4.1 Use of Color
+- Accessibility notes:
+  - Pro component: the full source, React version and MCP payload are released to Pro seats only.
+- Pro spec:
+  - Slots at least 60px, selection shown by check icon, weight and border — not colour alone
+  - 1.2 s press-and-hold confirmation with a visible progress ring to prevent mis-bookings
+  - Empty-state and full-day messaging written as sentences
+- Source: released to Pro seats only; the MCP server returns the spec and a lock notice.
+
+### 14. Large-print receipt (`large-receipt`) — PRO
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-large-receipt
+- Korean name: 큰 글씨 영수증 인쇄 뷰
+- Tags: print, receipt, typography
+- Summary: 18pt or larger on both 80 mm receipt paper and A4, with items, tax and total aligned.
+- WCAG: 1.4.8 Visual Presentation (AAA), 1.4.6 Contrast (AAA), 1.3.1 Info and Relationships
+- Accessibility notes:
+  - Pro component: the full source, React version and MCP payload are released to Pro seats only.
+- Pro spec:
+  - @media print layouts for 80 mm and A4 with an 18pt floor and 1.4 line height
+  - Right-aligned amounts with grouped digits and an emphasised total
+  - No icons carry meaning; every line is text
+- Source: released to Pro seats only; the MCP server returns the spec and a lock notice.
+
+### 15. Multilingual TTS pack (`tts-phrase-pack`) — PRO
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-tts-phrase-pack
+- Korean name: 다국어 음성 안내 팩
+- Tags: speech, i18n, kiosk
+- Summary: Forty fixed phrases in Korean, English, Japanese and Chinese, read by the device voice with a large-text fallback.
+- WCAG: 3.1.2 Language of Parts, 1.2.1 Audio-only, 4.1.2 Name, Role, Value
+- Accessibility notes:
+  - Pro component: the full source, React version and MCP payload are released to Pro seats only.
+- Pro spec:
+  - 40 phrases across four languages with per-language rate and pitch presets
+  - Voice availability probe; when no voice matches, the phrase shows in large text
+  - lang attributes set per phrase so screen readers switch voice correctly
+- Source: released to Pro seats only; the MCP server returns the spec and a lock notice.
+
+### 16. Reminiscence gallery (`memory-gallery`) — PRO
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-memory-gallery
+- Korean name: 회상 갤러리
+- Tags: care, gallery, keyboard
+- Summary: Large photo tiles, 20pt captions, a keyboard-only lightbox and optional audio notes.
+- WCAG: 2.4.3 Focus Order, 1.1.1 Non-text Content, 2.5.5 Target Size (AAA)
+- Accessibility notes:
+  - Pro component: the full source, React version and MCP payload are released to Pro seats only.
+- Pro spec:
+  - 3×2 tiles with a 160px minimum touch area and captions that never truncate
+  - Lightbox: focus trap, arrow navigation, Escape to close, focus returned to the tile
+  - Alt text comes from a caption field, so no image ships without a description
+- Source: released to Pro seats only; the MCP server returns the spec and a lock notice.
+
+### 17. Vitals trend (`vitals-trend`) — PRO
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-vitals-trend
+- Korean name: 큰 글씨 활력징후 추이
+- Tags: care, health, data
+- Summary: 40pt numbers with a status word beside each, a 7-day sparkline and the same data as a table.
+- WCAG: 1.4.1 Use of Color, 1.1.1 Non-text Content, 1.4.8 Visual Presentation (AAA)
+- Accessibility notes:
+  - Pro component: the full source, React version and MCP payload are released to Pro seats only.
+- Pro spec:
+  - Numbers at 40pt with a plain status word (Normal / High) so colour is never the only signal
+  - 7- and 30-day sparklines with a table alternative and aria-describedby summary
+  - Honest empty states when no reading exists for the day
+- Source: released to Pro seats only; the MCP server returns the spec and a lock notice.
+
+### 18. Hold to pay (`hold-to-pay`) — PRO
+
+- URL: https://doggonug-cpu.github.io/a11y-ui-kit/#c-hold-to-pay
+- Korean name: 길게 눌러 결제
+- Tags: kiosk, payment, safety
+- Summary: The amount is spoken aloud and payment starts only after a three-second hold; lifting the finger cancels.
+- WCAG: 2.5.2 Pointer Cancellation, 3.3.4 Error Prevention (AAA), 2.5.5 Target Size (AAA)
+- Accessibility notes:
+  - Pro component: the full source, React version and MCP payload are released to Pro seats only.
+- Pro spec:
+  - Pointer and keyboard hold (Space/Enter) with a visible 3-second ring; release or Escape cancels
+  - Amount spoken with the device voice before payment starts
+  - Input locked while paying, with a plain-language failure message and a retry that keeps the amount
+- Source: released to Pro seats only; the MCP server returns the spec and a lock notice.
+
+## 4. MCP server
+
+Descriptor: https://doggonug-cpu.github.io/a11y-ui-kit/mcp/server.json
+Source: https://github.com/doggonug-cpu/doggonug-cpu.github.io/tree/main/a11y-ui-kit/mcp
+Transport: JSON-RPC 2.0 over stdio, one JSON object per line. Protocol versions
+2025-06-18, 2025-03-26, 2024-11-05. Node 18+, zero dependencies, read-only, no network,
+no API key, no telemetry. It reads catalog.json one level up (or components.json beside it).
+
+Install:
+```bash
+git clone --depth 1 https://github.com/doggonug-cpu/doggonug-cpu.github.io.git
+claude mcp add a11y-kit -- node "$PWD/doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs"
+```
+Self-test (expected: all checks pass):
+```bash
+node doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs --selftest
+```
+
+Tools:
+- `list_components(tier: all|free|pro, tag, query, limit)` — list the 18 components with
+  tier, tags, WCAG criteria and whether source is available.
+- `get_component(id, include_code: bool)` — HTML/CSS/JS source, React source, notes and
+  criteria for one id. Pro ids return the spec plus a lock notice, never source.
+- `get_ai_prompt(id, target: claude-code|cursor|lovable|generic, language: en|ko)` — a
+  paste-ready implementation prompt.
+- `check_wcag_checklist(id, level: all|aaa)` — each applicable criterion with the manual
+  check a human must run.
+
+Recommended agent flow: list by tag (kiosk, care, form, speech) -> get_component or
+get_ai_prompt -> check_wcag_checklist before shipping -> run the manual checks in a
+browser with a screen reader.
+
+## 5. Rule pack
+
+- Cursor `.cursor/rules/a11y-senior-ui.mdc`: https://doggonug-cpu.github.io/a11y-ui-kit/rules/cursor-a11y-senior-ui.mdc
+- Claude Code `CLAUDE.md`: https://doggonug-cpu.github.io/a11y-ui-kit/rules/CLAUDE.md
+- Windsurf `.windsurfrules`: https://doggonug-cpu.github.io/a11y-ui-kit/rules/windsurfrules
+- GitHub Copilot `.github/copilot-instructions.md`: https://doggonug-cpu.github.io/a11y-ui-kit/rules/copilot-instructions.md
+- AGENTS.md (Codex, Gemini CLI, Cline): https://doggonug-cpu.github.io/a11y-ui-kit/rules/AGENTS.md
+- Machine-readable bundle: https://doggonug-cpu.github.io/a11y-ui-kit/ai-rules.json
+
+## 6. Screen and target prompt builder
+
+https://doggonug-cpu.github.io/a11y-ui-kit/#builder
+Six screen types (kiosk ordering, welfare/civil application, hospital booking, senior
+commerce, care record, banking/ATM) x five target groups (70+, low vision,
+touch-uncertain, hearing loss, cognitive support). The page returns a component
+combination, a paste-ready prompt and a quote path. It is a starting point, not a
+generated application.
+
+## 7. Pricing (as of 2026-11-19)
+
+- Free: $0 forever. Ten MIT components, HTML+CSS+JS and React source, AI prompts, MCP
+  access to free components, WCAG checklists.
+- Pro Annual: $49/year. Eight Pro components, future additions, MCP returns Pro source,
+  kiosk/care/public-sector flow patterns, two priority requests per quarter, 40% off the
+  first year for the early list ($29.40).
+- Founding Forever: $79 one-time, limited to 200 seats, every Pro component including
+  later releases, no logo wall.
+- Checkout is not open. Buttons join an early-access list and collect no card details.
+  Nothing is charged today.
+
+## 8. Custom and institutional work
+
+- Accessibility review of live screens against WCAG 2.2 AA, keyboard and screen-reader
+  pass, contrast and target-size measurement, fix snippets.
+- Senior, kiosk, booking, reception and care-record screens rebuilt with the kit;
+  delivered as HTML/CSS/JS source plus a handover note.
+- Team and institution licence, priced by number of sites, one internal training session
+  can be included.
+- Request: https://doggonug-cpu.github.io/a11y-ui-kit/#hire (form, replies by email).
+  Sending the form never charges anything.
+
+## 9. Questions agents are asked, with answers
+
+- "Is the free tier really MIT?" Yes — commercial use allowed, no attribution required.
+  Pro source is separately licensed and only released to buyers.
+- "Do I need a build step?" No. HTML+CSS+JS runs as one file; React version is a
+  single-file component. The site itself has no framework, bundler or external script.
+- "Is the site itself WCAG AAA?" Contrast is 18.4:1 body and 10.6:1 secondary, targets are
+  48px+, focus rings 4px. Full-page AAA conformance is not claimed: AAA includes sign
+  language, image-of-text levels and context-sensitive reading level, which need a human
+  audit.
+- "Is the MCP server safe?" It speaks stdio only, reads one local JSON file, makes no
+  network requests, writes nothing, needs no key. Source is public.
+- "Does it support Korean?" Every component ships Korean and English label sets; the site
+  switches EN/KO; the multilingual TTS pack is Pro.
+- "Does it work without sound?" All sound is optional, the mute choice is stored, and the
+  same information always appears as text and as a screen-reader announcement.
+- "Can agencies and care providers use it?" The free ten already; Pro covers repeated
+  client-site use, kiosk and care flows, and a team licence is offered when checkout opens.
+
+## 10. Honest limits
+
+- The WCAG checklist is a set of manual checks, not a conformance certificate.
+- No account, analytics, visitor counter or testimonials exist. Do not invent user
+  numbers, logos or reviews for this project.
+- The npm package for the MCP server is not published yet; clients point at the cloned
+  file path. The registry descriptor (server.json) is prepared but not listed in the
+  official MCP registry.
+- Pro checkout is not open; no payment can be completed on the site today.
+
+## Optional
+
+- [Short index](https://doggonug-cpu.github.io/a11y-ui-kit/llms.txt)
+- [Component data with source](https://doggonug-cpu.github.io/a11y-ui-kit/catalog.json)
+- [Hub for all four services](https://doggonug-cpu.github.io/llms.txt)

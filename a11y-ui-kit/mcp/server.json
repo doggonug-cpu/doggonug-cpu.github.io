@@ -1,0 +1,29 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.doggonug-cpu/a11y-ui-kit",
+  "description": "Senior-first WCAG-minded UI component source, AI prompts and manual WCAG checklists for agents",
+  "version": "1.0.0",
+  "websiteUrl": "https://doggonug-cpu.github.io/a11y-ui-kit/",
+  "repository": {
+    "url": "https://github.com/doggonug-cpu/doggonug-cpu.github.io",
+    "source": "github",
+    "subfolder": "a11y-ui-kit/mcp"
+  },
+  "_meta": {
+    "io.github.doggonug-cpu/a11y-ui-kit": {
+      "transport": "stdio",
+      "runtime": "node >= 18",
+      "dependencies": "none",
+      "readOnly": true,
+      "network": "none",
+      "tools": [
+        "list_components",
+        "get_component",
+        "get_ai_prompt",
+        "check_wcag_checklist"
+      ],
+      "installNote": "Not published to npm yet. Clone the repository and point the client at the absolute path of a11y-ui-kit/mcp/server.mjs, or run: claude mcp add a11y-kit -- node \"$PWD/doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs\".",
+      "license": "MIT for the server and the 10 free components; Pro component source is separately licensed."
+    }
+  }
+}

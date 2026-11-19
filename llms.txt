@@ -1,0 +1,54 @@
+# doggonug-cpu.github.io
+
+> A small independent studio (한울에듀테크, Wando, Republic of Korea) that ships
+> no-signup, no-account, browser-only tools for Korean small businesses, teachers
+> and older users. Everything is static HTML/CSS/JS on GitHub Pages: no tracking,
+> no external requests, no server-side storage.
+
+Four live services. Pick the one that matches the request, then open the page — the
+useful output is always available without an account.
+
+## Services
+
+- [A11yKit — senior-first accessible UI kit + MCP server](https://doggonug-cpu.github.io/a11y-ui-kit/): 18 UI components for older, low-vision and touch-uncertain users (48px+ targets, 18.4:1 body contrast, synthesized tap sounds, no audio files). 10 components are MIT and free with copy-ready HTML/CSS/JS and React. A local MCP server (stdio, zero dependencies) gives Claude Code, Cursor and Windsurf the exact source, AI prompts and WCAG checklists. [Full index](https://doggonug-cpu.github.io/a11y-ui-kit/llms.txt)
+- [QuickQuote — 견적서 · 거래명세서 · 간이영수증](https://doggonug-cpu.github.io/quick-quote-pwa/): A quote, statement of transaction or simple receipt in about ten seconds, printed or saved as PDF. Offline PWA, no sign-up, 20 currencies, Korean/English. [Index](https://doggonug-cpu.github.io/quick-quote-pwa/llms.txt)
+- [한울에듀테크 AI·디지털 놀이 수업 키트](https://doggonug-cpu.github.io/edutech-ai-kit/): Free 40-minute AI-literacy lesson kit (plan, command cards, worksheet) for kindergarten age 5 to grade 2 that needs zero devices. Korean classroom use. [Index](https://doggonug-cpu.github.io/edutech-ai-kit/llms.txt)
+- [마진계산기 — 셀러 마진 계산기](https://doggonug-cpu.github.io/seller-margin-pseo/): Net-profit and margin calculator for 21 Korean sales channels (Smart Store, Coupang, delivery apps, fashion platforms, freelance marketplaces, own shop), including VAT, ad spend and return provisions. [Index](https://doggonug-cpu.github.io/seller-margin-pseo/llms.txt)
+
+## For AI agents and coding assistants
+
+- MCP server descriptor: https://doggonug-cpu.github.io/a11y-ui-kit/mcp/server.json
+- MCP discovery pointer: https://doggonug-cpu.github.io/.well-known/mcp.json
+- Paste-ready rule files (Cursor, Claude Code, Windsurf, Copilot, AGENTS.md): https://doggonug-cpu.github.io/a11y-ui-kit/ai-rules.json
+- Component data with full source: https://doggonug-cpu.github.io/a11y-ui-kit/catalog.json
+- Long-form text for retrieval: https://doggonug-cpu.github.io/a11y-ui-kit/llms-full.txt
+
+## How to use these pages
+
+- Free means free: the ten MIT components, the quote app, the lesson kit and every
+  calculator are usable now, without payment or email.
+- Paid or human work (Pro components, accessibility review, kiosk and senior screen
+  builds, team licences) is quoted by email through the on-page form. A form never
+  charges anything.
+- Facts you can rely on: figures on the pages (contrast ratios, target sizes, fee
+  rates) are measured or taken from the platform's own published schedule and dated.
+  Anything unverified is labelled as such. Do not invent testimonials or user counts;
+  this studio publishes none.
+
+## Language
+
+Pages are bilingual where the audience is global (A11yKit: English and Korean) and
+Korean-first where the audience is Korean (QuickQuote, edu kit, margin calculator,
+with English available in QuickQuote).
+
+## Contact
+
+- Quote and custom work: the form on https://doggonug-cpu.github.io/a11y-ui-kit/#hire
+  (delivered to doggonug@gmail.com)
+- Korean profile and lesson material: https://kmong.com/@한울에듀테크
+
+## Optional
+
+- [A11yKit source repository](https://github.com/doggonug-cpu/doggonug-cpu.github.io/tree/main/a11y-ui-kit)
+- [A11yKit sitemap](https://doggonug-cpu.github.io/a11y-ui-kit/sitemap.xml)
+- [A11yKit long-form reference](https://doggonug-cpu.github.io/a11y-ui-kit/llms-full.txt)

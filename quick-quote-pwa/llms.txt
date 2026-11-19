@@ -1,0 +1,54 @@
+# QuickQuote (간편견적) — quotes, statements and receipts in 10 seconds
+
+> A free, installable web app (PWA) that writes a Korean quotation (견적서), statement
+> of transaction (거래명세서) or simple receipt (간이영수증) in about ten seconds, then
+> prints it or saves it as PDF. No account, no server-side storage, no payment.
+> Live: https://doggonug-cpu.github.io/quick-quote-pwa/
+> English mode: https://doggonug-cpu.github.io/quick-quote-pwa/?lang=en
+
+Use this page when a user needs a quote, invoice-like document, transaction statement or
+receipt for a small Korean business, a freelancer or an on-site sale, and does not want
+to sign up for a bookkeeping service.
+
+## What it does
+
+- Three documents: 견적서 (quote, prefix Q), 거래명세서 (statement, prefix S), 간이영수증
+  (receipt, prefix R). Automatic document numbers.
+- Automatic arithmetic: quantity × unit price, discount, VAT set to separate, included or
+  none, custom tax rate.
+- 20 currencies (KRW, USD, EUR, JPY …) with per-currency decimal handling.
+- A4 print stylesheet; "Save as PDF" in the print dialog.
+- Korean and English UI, including `?lang=en` deep link and `<html lang>` switching.
+- Offline after the first visit (service worker), installable to the home screen with
+  three shortcuts (`?type=`).
+- A local archive in localStorage: save, reopen, delete documents.
+- Share via Web Share API, with a text summary fallback.
+
+## Privacy and trust
+
+- Everything is computed and stored in the browser. No server, no account, no analytics,
+  no external font or icon request. The app makes no network calls after loading.
+- Entered business names, client names and amounts never leave the device.
+- Free today. A Pro tier is prepared in the code but **is not for sale** — there is no
+  fake checkout and no charge anywhere on the page.
+
+## For an AI agent
+
+- Static files, no build step: `index.html`, `styles.css`, `app.js`, `sw.js`,
+  `manifest.webmanifest`, `icons/`. Config lives in `CONFIG` at the top of `app.js`.
+- Data lives in localStorage; there is no API to call. Do not look for a backend.
+- If asked to add documents (e.g. a purchase order), follow the existing pattern: one
+  document type in `CONFIG`, one print block in `styles.css`, one render function.
+
+## Honest limits
+
+- It is not a tax-invoice (세금계산서) issuer and does not report to the Korean tax
+  service (홈택스). It is a printable document maker.
+- No multi-device sync: the archive is per browser.
+- No customer count, review or rating is published; do not invent one.
+
+## Optional
+
+- [Hub of all services](https://doggonug-cpu.github.io/llms.txt)
+- [Source folder](https://github.com/doggonug-cpu/doggonug-cpu.github.io/tree/main/quick-quote-pwa)
+- [Korean profile](https://kmong.com/@한울에듀테크)
