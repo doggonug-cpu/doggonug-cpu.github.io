@@ -52,7 +52,7 @@
 - `styles.css` — all styling, CSS variables, no external fonts
 - `parser.js` — dependency-free parser + CSV/TSV builders (browser global and CommonJS)
 - `app.js` — table rendering, in-place editing, exports, waitlist form
-- `tests/runner.html`, `tests/parser.test.js` — 64 parser assertions, run in a browser
+- `tests/runner.html`, `tests/parser.test.js` — 73 parser assertions, run in a browser
 - `sitemap.xml`, `robots.txt`, `llms.txt`, `icons/favicon.svg`, `og-image.png`
 
 ## Running the tests

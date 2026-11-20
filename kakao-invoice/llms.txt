@@ -61,7 +61,7 @@
 - `styles.css` — 전체 스타일(CSS 변수, 외부 폰트 없음)
 - `parser.js` — 의존성 없는 파서 + CSV/TSV 생성(브라우저 전역·CommonJS 겸용)
 - `app.js` — 표 렌더링·인라인 편집·내보내기·사전신청 폼
-- `tests/runner.html`, `tests/parser.test.js` — 파서 단위 테스트 64개
+- `tests/runner.html`, `tests/parser.test.js` — 파서 단위 테스트 73개
 - `sitemap.xml`, `robots.txt`, `llms.txt`, `icons/favicon.svg`, `og-image.png`
 
 ## 테스트
@@ -71,4 +71,4 @@ python3 -m http.server 8080          # 저장소 루트
 # http://localhost:8080/kakao-invoice/tests/runner.html
 ```
 
-`ALL PASS — 64/64` 가 표시되고 `window.__TEST_RESULTS`에 결과가 남습니다.
+`ALL PASS — 73/73` 가 표시되고 `window.__TEST_RESULTS`에 결과가 남습니다.

@@ -114,10 +114,10 @@
       .replace(/\u00a0/g, ' ');
     // 카톡 내보내기 날짜 구분선 / 대시 구분선 → 주문 경계
     s = s.replace(/^[ \t]*[-=ㅡ_]{3,}[^\n]*$/gm, '\n\n');
-    // PC·Mac 내보내기: "2024년 5월 12일 오후 3:12, 김철수 : 내용"
-    s = s.replace(/^[ \t]*\d{4}년[ \t]*\d{1,2}월[ \t]*\d{1,2}일[ \t]*(?:오전|오후)?[ \t]*\d{1,2}:\d{2}[ \t]*,[ \t]*[^:\n]{1,30}?[ \t]*:[ \t]?/gm, '');
-    // 모바일 내보내기: "[김철수] [오전 10:12] 내용"
-    s = s.replace(/^[ \t]*\[[^\]\n]{1,30}\][ \t]*\[(?:오전|오후)?[ \t]*\d{1,2}:\d{2}\][ \t]*/gm, '');
+    // PC·Mac 내보내기: "2024년 5월 12일 오후 3:12, 김철수 : 내용" → 메시지 하나가 한 덩어리
+    s = s.replace(/^[ \t]*\d{4}년[ \t]*\d{1,2}월[ \t]*\d{1,2}일[ \t]*(?:오전|오후)?[ \t]*\d{1,2}:\d{2}[ \t]*,[ \t]*[^:\n]{1,30}?[ \t]*:[ \t]?/gm, '\n\n');
+    // 모바일 내보내기: "[김철수] [오전 10:12] 내용" → 한 메시지가 한 덩어리
+    s = s.replace(/^[ \t]*\[[^\]\n]{1,30}\][ \t]*\[(?:오전|오후)?[ \t]*\d{1,2}:\d{2}\][ \t]*/gm, '\n\n');
     // 인용 표시 "> "
     s = s.replace(/^[ \t]*>[ \t]?/gm, '');
     return s;
@@ -157,9 +157,10 @@
     return false;
   }
 
-  // 빈 줄로 갈라진 조각이 
-  //  ① 아직 연락처가 없는 주문의 이어짐이거나
-  //  ② 앞 조각에 없는 라벨로 시작하면 한 주문으로 다시 붙입니다.
+  // 빈 줄로 갈라진 조각이
+  //  ① 앞 조각에 없는 라벨로 시작하거나 (예: 전화:, 주소:
+  //  ② 번호만 달랑 시작하거나
+  //  ③ 앞 조각에 연락처만 있고 주소가 비었는데 주소 같은 줄이 오면 한 주문으로 붙입니다.
   // 번호(1. 2.)로 명시된 블록은 절대 합치지 않습니다.
   function mergeContinuations(blocks) {
     var out = [];
@@ -167,12 +168,15 @@
       var prev = out.length ? out[out.length - 1] : null;
       var startsWithNameLabel = NAME_LABEL_AT_START_RE.test(block.text);
       var labelField = firstLabelField(block.text);
-      var prevHasPhone = prev ? !!findPhone(prev.text) : false;
+      var startsBarePhone = /^[\s(]*(?:\+?82|0)[\d\s.\-]{7,}/.test(block.text);
       var continues = false;
       if (prev && !block.explicit && !startsWithNameLabel) {
-        if (!prevHasPhone) {
+        if (labelField && !fieldHasLabel(prev.text, labelField)) {
           continues = true;
-        } else if (labelField && !fieldHasLabel(prev.text, labelField)) {
+        } else if (startsBarePhone && !findPhone(prev.text)) {
+          continues = true;
+        } else if (!findPhone(block.text) && findPhone(prev.text) &&
+                   !looksLikeAddress(prev.text) && looksLikeAddress(block.text)) {
           continues = true;
         }
       }
@@ -189,7 +193,7 @@
   function blankOrder() {
     return {
       name: '', phone: '', phoneRaw: '', address: '', product: '', qty: '', memo: '', depositor: '',
-      issues: [], _touched: false
+      issues: [], _touched: false, _fromLabel: {}
     };
   }
 
@@ -282,17 +286,27 @@
     order._touched = true;
     switch (field) {
       case 'phone':
-        if (!order.phone) {
+        // 라벨이 붙은 값은 자유형에서 짐작한 값보다 우선합니다.
+        if (!order.phone || !order._fromLabel.phone) {
           var normalized = normalizePhone(value);
           order.phoneRaw = value;
           order.phone = normalized.value;
+          order._fromLabel.phone = true;
         }
         break;
       case 'name':
-        if (!order.name) { order.name = value; }
+        if (!order.name || !order._fromLabel.name) {
+          order.name = value;
+          order._fromLabel.name = true;
+        }
         break;
       case 'address':
-        order.address = joinPart(order.address, value);
+        if (order.address && !order._fromLabel.address) {
+          order.address = value;
+        } else {
+          order.address = joinPart(order.address, value);
+        }
+        order._fromLabel.address = true;
         break;
       case 'product':
         addProduct(order, value);
@@ -402,6 +416,7 @@
     }
     order.issues = buildIssues(order);
     delete order._touched;
+    delete order._fromLabel;
     delete order.phoneRaw;
     return order;
   }
@@ -423,7 +438,12 @@
 
     var orders = [];
     blocks.forEach(function (block) {
-      parseBlock(block.text).forEach(function (order) { orders.push(order); });
+      parseBlock(block.text).forEach(function (order) {
+        // 인사·잡담처럼 사장 정보가 거의 없는 덩어리는 주문으로 만들지 않습니다.
+        // (연락처·주소가 있거나, 이름과 상품이 함께 있어야 한 건으로 봅니다.)
+        var meaningful = order.phone || order.address || (order.name && order.product);
+        if (meaningful) { orders.push(order); }
+      });
     });
     return orders;
   }
