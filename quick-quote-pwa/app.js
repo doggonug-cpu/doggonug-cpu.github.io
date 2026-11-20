@@ -71,6 +71,15 @@
       alsoUse: '함께 쓰면 좋은 도구',
       alsoUseLink: '셀러·프리랜서 판매 마진 계산기(21개 채널)',
       alsoUseA11y: '어르신·키오스크용 접근성 UI 킷(A11yKit)', alsoUseKmong: '강사용 수업 자료(한울에듀테크)',
+      alsoUseEdu: '선생님용 40분 AI 수업 자료(한울에듀테크)',
+      alsoUseGongsi: '📡 한미 공시 3줄 요약 (텔레그램·무료)',
+      alsoUseBot: '맞춤 공시 알림 봇 의뢰 · 전체 도구 →',
+      proOffer: '범위를 확인한 뒤 24시간 안에 견적과 함께 론칭 특가를 회신합니다 (선착순, 금액은 견적서에 명시).',
+      proBudget: '예산대 (선택)', budget1: '30만 원 미만', budget2: '30만~100만 원',
+      budget3: '100만~300만 원', budget4: '300만 원 이상', budget5: '미정 — 견적을 먼저 보고 싶습니다',
+      proWhen: '필요한 일정', when1: '오늘·내일 안에', when2: '1주 이내', when3: '2~4주', when4: '일정 미정 · 상의',
+      proFormat: '원하는 납품 형태', fmt1: '지금 쓰는 양식으로 앱 세팅', fmt2: '견적서·세금계산서 템플릿 파일',
+      fmt3: '장부·세금 흐름 연결', fmt4: '상담 후 결정',
       total: '합계', libEmpty: '저장된 문서가 없습니다. ‘저장’을 누르면 여기에 쌓입니다.',
       docTitle: { quote: '견적서', statement: '거래명세서', receipt: '영수증' },
       docIntro: {
@@ -145,6 +154,15 @@
       alsoUse: 'Also useful',
       alsoUseLink: 'Seller & freelancer margin calculator (21 sales channels)',
       alsoUseA11y: 'Senior & kiosk accessible UI kit (A11yKit)', alsoUseKmong: 'Classroom material for teachers (creator profile)',
+      alsoUseEdu: '40-minute AI lesson kit for teachers (Hanul EdTech)',
+      alsoUseGongsi: '📡 KR/US filings in 3 lines (Telegram, free)',
+      alsoUseBot: 'Commission a custom filing-alert bot · all tools →',
+      proOffer: 'Scope is checked first; the quote and a launch price come back within 24 hours (first come, first served; the amount is in the quote).',
+      proBudget: 'Budget range (optional)', budget1: 'Under ₩300k', budget2: '₩300k – 1M',
+      budget3: '₩1M – 3M', budget4: '₩3M and over', budget5: 'Not decided — send the quote first',
+      proWhen: 'When do you need it', when1: 'Today or tomorrow', when2: 'Within a week', when3: '2–4 weeks', when4: 'Not fixed yet',
+      proFormat: 'Deliverable you want', fmt1: 'Set up the app with my own template', fmt2: 'Quote and tax-invoice template files',
+      fmt3: 'Connect to my books and tax flow', fmt4: 'Decide after a call',
       total: 'Total', libEmpty: 'No saved documents yet. Press Save to keep one here.',
       docTitle: { quote: 'QUOTATION', statement: 'STATEMENT', receipt: 'RECEIPT' },
       docIntro: {
@@ -1008,6 +1026,9 @@
         var email = document.getElementById('pro-email');
         var kind = document.getElementById('pro-kind');
         var msg = document.getElementById('pro-msg');
+        var budget = document.getElementById('pro-budget');
+        var when = document.getElementById('pro-when');
+        var format = document.getElementById('pro-format');
         var status = document.getElementById('proStatus');
         var submit = document.getElementById('proSubmit');
         var value = email.value.trim();
@@ -1029,9 +1050,12 @@
             email: value,
             kind: kind ? kind.value : '',
             kind_label: kind ? kind.options[kind.selectedIndex].textContent.trim() : '',
+            budget: budget ? budget.options[budget.selectedIndex].textContent.trim() : '',
+            timeline: when ? when.options[when.selectedIndex].textContent.trim() : '',
+            deliverable: format ? format.options[format.selectedIndex].textContent.trim() : '',
             message: msg ? msg.value.trim() : '',
             app_version: CONFIG.version,
-            _subject: 'QuickQuote — Pro·맞춤 세팅 신청',
+            _subject: 'QuickQuote — Pro·맞춤 세팅 신청 (24시간 회신)',
             _template: 'table',
             _captcha: 'false'
           })

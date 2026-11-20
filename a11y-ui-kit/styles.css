@@ -946,3 +946,11 @@ html[data-theme="hc"] .rulepanel__path code,
 html[data-theme="hc"] .clientpanel__path code{border-color:#fff}
 html[data-theme="hc"] .tab[aria-selected="true"]{background:#FFE800;color:#000}
 html[data-theme="hc"] .builder__cta{background:#000}
+
+/* ============ FOOTER: CROSS TOOLS ============ */
+.hire__offer{margin:.4em 0 0;color:var(--text);font-size:.92rem;font-weight:600;max-width:52em}
+.footer__more{width:100%;border-top:1px solid var(--line, rgba(0,0,0,.12));padding-top:14px}
+.footer__more-title{margin:0 0 8px;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.footer__more ul{list-style:none;margin:0;padding:0;display:flex;gap:6px 18px;flex-wrap:wrap}
+.footer__more a{color:var(--text);text-decoration:none;font-size:.88rem;min-height:44px;display:inline-flex;align-items:center;gap:.35em;padding:0 .35em;border-radius:8px;text-decoration:underline;text-underline-offset:.18em}
+.footer__more a:hover{background:var(--panel-2)}

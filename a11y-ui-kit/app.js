@@ -1033,6 +1033,13 @@
       var kindSel = document.getElementById('hq-kind');
       var org = document.getElementById('hq-org');
       var msg = document.getElementById('hq-msg');
+      var budgetSel = document.getElementById('hq-budget');
+      var whenSel = document.getElementById('hq-when');
+      var formatSel = document.getElementById('hq-format');
+      function pick(sel) {
+        if (!sel) { return ''; }
+        return sel.value + ' (' + (sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].textContent.trim() : '') + ')';
+      }
       hireStatus.classList.remove('is-err');
       hireStatus.textContent = t().sending;
       hireSubmit.disabled = true;
@@ -1044,9 +1051,12 @@
         org: org ? org.value.trim() : '',
         kind: kindSel ? kindSel.value : '',
         kind_label: kindSel ? kindSel.options[kindSel.selectedIndex].textContent.trim() : '',
+        budget: pick(budgetSel),
+        timeline: pick(whenSel),
+        deliverable: pick(formatSel),
         message: msg ? msg.value.trim() : '',
         product: 'a11y-ui-kit',
-        _subject: 'A11yKit — 견적·도입 문의',
+        _subject: 'A11yKit — 견적·도입 문의 (24시간 회신)',
         _template: 'table',
         _captcha: 'false'
       };

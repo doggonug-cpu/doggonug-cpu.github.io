@@ -343,6 +343,9 @@
       <span data-i18n="alsoUse">함께 쓰면 좋은 도구</span>
       <a href="https://doggonug-cpu.github.io/seller-margin-pseo/"><span data-i18n="alsoUseLink">셀러·프리랜서 판매 마진 계산기(21개 채널)</span></a>
       <a href="https://doggonug-cpu.github.io/a11y-ui-kit/"><span data-i18n="alsoUseA11y">어르신·키오스크용 접근성 UI 킷(A11yKit)</span></a>
+      <a href="https://doggonug-cpu.github.io/edutech-ai-kit/"><span data-i18n="alsoUseEdu">선생님용 40분 AI 수업 자료(한울에듀테크)</span></a>
+      <a href="https://t.me/good_gongsi" target="_blank" rel="noopener"><span data-i18n="alsoUseGongsi">📡 한미 공시 3줄 요약 (텔레그램·무료)</span></a>
+      <a href="https://doggonug-cpu.github.io/#disclosure"><span data-i18n="alsoUseBot">맞춤 공시 알림 봇 의뢰 · 전체 도구 →</span></a>
       <a href="https://kmong.com/@%ED%95%9C%EC%9A%B8%EC%97%90%EB%93%80%ED%85%8C%ED%81%AC" target="_blank" rel="noopener"><span data-i18n="alsoUseKmong">강사용 수업 자료(한울에듀테크)</span></a>
     </p>
   </main>
@@ -381,6 +384,7 @@
       <button type="button" class="icon-btn" data-close-pro aria-label="닫기">✕</button>
     </div>
     <p class="hint" data-i18n="proIntro">브랜드 프로필·템플릿·자동 백업을 먼저 쓰고 싶거나, 지금 쓰는 견적서 양식에 맞춰 세팅이 필요하면 필요한 것만 적어 보내 주세요. 영업일 1일 안에 메일로 회신합니다. 이 폼으로 결제가 일어나지 않습니다.</p>
+    <p class="hint pro-offer" data-i18n="proOffer">범위를 확인한 뒤 24시간 안에 견적과 함께 론칭 특가를 회신합니다 (선착순, 금액은 견적서에 명시).</p>
     <form id="proForm" novalidate>
       <div class="field">
         <label class="field-label" for="pro-name" data-i18n="proName">이름 / 상호</label>
@@ -402,6 +406,34 @@
       <div class="field mt-10">
         <label class="field-label" for="pro-msg" data-i18n="proMsg">내용 (선택)</label>
         <textarea id="pro-msg" name="message" rows="3"></textarea>
+      </div>
+      <div class="field mt-10">
+        <label class="field-label" for="pro-budget" data-i18n="proBudget">예산대 (선택)</label>
+        <select id="pro-budget" name="budget">
+          <option value="under-30" data-i18n="budget1">30만 원 미만</option>
+          <option value="30-100" data-i18n="budget2">30만~100만 원</option>
+          <option value="100-300" data-i18n="budget3">100만~300만 원</option>
+          <option value="over-300" data-i18n="budget4">300만 원 이상</option>
+          <option value="undecided" data-i18n="budget5" selected>미정 — 견적을 먼저 보고 싶습니다</option>
+        </select>
+      </div>
+      <div class="field mt-10">
+        <label class="field-label" for="pro-when" data-i18n="proWhen">필요한 일정</label>
+        <select id="pro-when" name="timeline">
+          <option value="today" data-i18n="when1">오늘·내일 안에</option>
+          <option value="1w" data-i18n="when2">1주 이내</option>
+          <option value="2-4w" data-i18n="when3">2~4주</option>
+          <option value="flexible" data-i18n="when4">일정 미정 · 상의</option>
+        </select>
+      </div>
+      <div class="field mt-10">
+        <label class="field-label" for="pro-format" data-i18n="proFormat">원하는 납품 형태</label>
+        <select id="pro-format" name="deliverable">
+          <option value="setup" data-i18n="fmt1">지금 쓰는 양식으로 앱 세팅</option>
+          <option value="template" data-i18n="fmt2">견적서·세금계산서 템플릿 파일</option>
+          <option value="accounting" data-i18n="fmt3">장부·세금 흐름 연결</option>
+          <option value="advise" data-i18n="fmt4">상담 후 결정</option>
+        </select>
       </div>
       <button class="btn btn-primary btn-block mt-10" type="submit" id="proSubmit">
         <span data-i18n="proSend">신청 보내기</span>

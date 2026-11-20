@@ -21,6 +21,7 @@
 <meta name="twitter:image" content="https://doggonug-cpu.github.io/seller-margin-pseo/assets/og.png?v=fbe9a54f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111827'/%3E%3Cpath d='M8 22V13M13 22V9M18 22V16M23 22V11' stroke='%2334d399' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://doggonug-cpu.github.io/seller-margin-pseo/assets/style.css?v=046220c5">
+<link rel="alternate" type="text/plain" title="LLMs.txt" href="https://doggonug-cpu.github.io/seller-margin-pseo/llms.txt">
 </head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>
@@ -304,7 +305,7 @@
         <li>견적서·거래명세서 발행 흐름 연결</li>
         <li>정산 점검표(수수료·부가세·반품) 정리</li>
       </ul>
-      <p class="cta-band-note">견적은 폼으로 받고 이메일로 회신합니다. 이 폼으로 결제가 일어나지 않습니다. 함께 쓰는 무료 도구 — <a href="https://doggonug-cpu.github.io/quick-quote-pwa/">견적서·거래명세서 발급기</a></p>
+      <p class="cta-band-note">범위를 확인한 뒤 <strong>24시간 안에</strong> 견적과 함께 <strong>론칭 특가</strong>를 이메일로 회신합니다(선착순 · 금액은 견적서에 명시). 이 폼으로 결제가 일어나지 않습니다. 함께 쓰는 무료 도구 — <a href="https://doggonug-cpu.github.io/quick-quote-pwa/">견적서·거래명세서 발급기</a></p>
     </div>
     <form class="cta-band-form" id="pseoInquiry" action="https://formsubmit.co/ajax/0e95d93c687b1b0b2346af06319b0a58" method="POST" novalidate>
       <h3>맞춤 세팅 · 도입 문의</h3>
@@ -325,7 +326,37 @@
         <span>내용 <em>(선택)</em></span>
         <textarea name="문의 내용" rows="3" placeholder="예: 스마트스토어와 크몽을 같이 합니다."></textarea>
       </label>
-      <input type="hidden" name="_subject" value="[마진계산기] 맞춤 세팅·도입 문의">
+      <label class="cta-field">
+        <span>예산대 <em>(선택)</em></span>
+        <select name="예산대">
+          <option value="">선택</option>
+          <option>30만 원 미만</option>
+          <option>30만~100만 원</option>
+          <option>100만~300만 원</option>
+          <option>300만 원 이상</option>
+          <option>미정 — 견적을 먼저 보고 싶습니다</option>
+        </select>
+      </label>
+      <label class="cta-field">
+        <span>필요한 일정</span>
+        <select name="필요 일정">
+          <option>1주 이내 (급행)</option>
+          <option>2~4주</option>
+          <option>1~2개월</option>
+          <option>일정 미정 · 상의</option>
+        </select>
+      </label>
+      <label class="cta-field">
+        <span>원하는 납품 형태</span>
+        <select name="납품 형태">
+          <option>엑셀·구글시트 마진 시트</option>
+          <option>계산기 웹페이지 (우리 조건 반영)</option>
+          <option>견적서·거래명세서 흐름 연결</option>
+          <option>정산 점검 리포트(PDF)</option>
+          <option>상담 후 결정</option>
+        </select>
+      </label>
+      <input type="hidden" name="_subject" value="[마진계산기] 맞춤 세팅·도입 문의 (24시간 회신)">
       <input type="hidden" name="_template" value="table">
       <input type="text" name="_honey" class="cta-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="btn btn-primary" type="submit">문의 보내기</button>
@@ -343,9 +374,13 @@
         <p class="foot-related">함께 쓰는 도구 — <a href="https://doggonug-cpu.github.io/quick-quote-pwa/">10초 간편 견적서·간이영수증 발급기(QuickQuote)</a></p>
       </div>
       <div>
-        <strong>바로가기</strong>
-        <p><a href="https://doggonug-cpu.github.io/seller-margin-pseo/">전체 채널 계산기</a></p>
-        <p><a href="https://doggonug-cpu.github.io/seller-margin-pseo/about/">계산 방법과 출처</a></p>
+        <strong>한울이 만드는 다른 도구</strong>
+        <p><a href="https://doggonug-cpu.github.io/seller-margin-pseo/">전체 채널 계산기 · 계산 방법</a></p>
+        <p><a href="https://doggonug-cpu.github.io/quick-quote-pwa/">QuickQuote — 10초 견적서·거래명세서</a></p>
+        <p><a href="https://doggonug-cpu.github.io/a11y-ui-kit/">A11yKit — 시니어·키오스크 접근성 UI 킷</a></p>
+        <p><a href="https://doggonug-cpu.github.io/edutech-ai-kit/">한울에듀테크 AI kit — 40분 AI 수업</a></p>
+        <p><a href="https://t.me/good_gongsi" target="_blank" rel="noopener">📡 한미 공시 3줄 요약 (텔레그램·무료)</a></p>
+        <p><a href="https://doggonug-cpu.github.io/#disclosure">맞춤 공시 알림 봇 의뢰 · 전체 도구 →</a></p>
       </div>
       <div>
         <strong>안내</strong>

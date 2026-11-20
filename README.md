@@ -17,6 +17,12 @@ no server-side storage.
 | [**한울에듀테크 AI kit**](https://doggonug-cpu.github.io/edutech-ai-kit/) | Free 40-minute AI-literacy lesson kit (plan, command cards, worksheet) for age 5–grade 2, zero devices needed. | Teachers, digital tutors, kindergarten staff |
 | [**마진계산기**](https://doggonug-cpu.github.io/seller-margin-pseo/) | Net-profit, margin and break-even price across 21 Korean sales channels, incl. VAT, ads and returns. | Sellers, freelancers, own-shop owners |
 
+## Also running
+
+- [**한미 공시 3줄 요약**](https://t.me/good_gongsi) — a free Telegram channel posting five Korean
+  and US filings as three factual lines twice a day. Custom keyword/ticker alert bots are quoted at
+  <https://doggonug-cpu.github.io/#disclosure> (software build; not investment advice).
+
 ## For AI agents
 
 - Hub index: <https://doggonug-cpu.github.io/llms.txt>

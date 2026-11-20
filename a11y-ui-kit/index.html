@@ -10,7 +10,7 @@
 <link rel="canonical" href="https://doggonug-cpu.github.io/a11y-ui-kit/">
 <link rel="sitemap" type="application/xml" href="https://doggonug-cpu.github.io/a11y-ui-kit/sitemap.xml">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="styles.css?v=5">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="A11yKit">
 <meta property="og:url" content="https://doggonug-cpu.github.io/a11y-ui-kit/">
@@ -1606,8 +1606,11 @@ node doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs --selftest</code></pre>
       <h2 id="hire-title" class="h2" data-ko="복사하다 손이 모자라면, 그 부분만 맡아 만듭니다">
         When copying is not enough, that part can be built for you
       </h2>
-      <p class="sub" data-ko="무료 10종으로 대부분이 끝나고 키오스크·요양·공공 화면만 남았다면, 그 화면을 실제로 고쳐 납품합니다. 상담은 폼으로 받고, 회신은 이메일로 드립니다.">
-        If the free ten get you most of the way and only the kiosk, care or public-sector screens are left, those screens can be rebuilt and handed over. Requests come through the form; the reply comes by email.
+      <p class="sub" data-ko="무료 10종으로 대부분이 끝나고 키오스크·요양·공공 화면만 남았다면, 그 화면을 실제로 고쳐 납품합니다. 상담은 폼으로 받고, 견적은 24시간 안에, 회신은 이메일로 드립니다.">
+        If the free ten get you most of the way and only the kiosk, care or public-sector screens are left, those screens can be rebuilt and handed over. Requests come through the form; the quote comes back within 24 hours by email.
+      </p>
+      <p class="hire__offer" data-ko="지금 신청하시면 론칭 특가를 적용한 금액을 같은 회신에 함께 적어 드립니다 (선착순 · 금액은 견적서에 명시).">
+        Send the form now and the launch price is written into the same reply — first come, first served; the amount appears in the quote itself.
       </p>
     </div>
 
@@ -1659,8 +1662,8 @@ node doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs --selftest</code></pre>
       </article>
     </div>
 
-    <p class="hire__fine" data-ko="견적은 범위를 확인한 뒤 이메일로 보내드립니다. 폼을 보낸다고 결제가 일어나지 않습니다.">
-      Quotes are sent by email after the scope is clear. Sending the form does not charge anything.
+    <p class="hire__fine" data-ko="견적은 범위를 확인한 뒤 24시간 안에 이메일로 보내드리며, 예산대·일정·납품 형태는 위 폼에서 고르실 수 있습니다. 폼을 보낸다고 결제가 일어나지 않습니다.">
+      The scope is checked first and the quote follows within 24 hours by email; budget, timing and deliverable are chosen in the form. Sending the form does not charge anything.
     </p>
   </section>
 
@@ -1754,6 +1757,16 @@ node doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs --selftest</code></pre>
       <a href="#hire" data-ko="맞춤 구축">Work with me</a>
       <a href="#faq" data-ko="FAQ">FAQ</a>
       <a href="https://github.com/doggonug-cpu/doggonug-cpu.github.io/tree/main/a11y-ui-kit" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <nav class="footer__more" aria-label="Other tools and channels">
+      <p class="footer__more-title" data-ko="같은 사람이 만든 다른 것들">Also from the same maker</p>
+      <ul>
+        <li><a href="https://doggonug-cpu.github.io/quick-quote-pwa/"><span data-ko="QuickQuote — 10초 견적서·거래명세서">QuickQuote — quotes and receipts in 10 seconds</span></a></li>
+        <li><a href="https://doggonug-cpu.github.io/edutech-ai-kit/"><span data-ko="한울에듀테크 AI kit — 40분 AI 수업 자료">Hanul EdTech AI kit — a 40-minute AI lesson</span></a></li>
+        <li><a href="https://doggonug-cpu.github.io/seller-margin-pseo/"><span data-ko="마진계산기 — 21개 판매채널 순이익">MarginCalc — net profit across 21 sales channels</span></a></li>
+        <li><a href="https://t.me/good_gongsi" target="_blank" rel="noopener"><span data-ko="📡 한미 공시 3줄 요약 — 텔레그램 채널 (무료)">📡 KR/US filings in 3 lines — Telegram channel (free)</span></a></li>
+        <li><a href="https://doggonug-cpu.github.io/#disclosure"><span data-ko="맞춤 공시 알림 봇 구축 의뢰 · 전체 도구 보기 →">Commission a custom filing-alert bot · all tools →</span></a></li>
+      </ul>
     </nav>
     <p class="footer__legal">© 2026 A11yKit · <span data-ko="독립 프로젝트">independent project</span> · <span data-ko="무료 티어 MIT">free tier MIT</span></p>
   </div>
@@ -1854,6 +1867,35 @@ node doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs --selftest</code></pre>
       <label class="field__label" for="hq-msg" data-ko="내용 (선택)">Details (optional)</label>
       <textarea class="field__input" id="hq-msg" name="message" rows="4"></textarea>
     </div>
+    <div class="field">
+      <label class="field__label" for="hq-budget" data-ko="예산대 (선택)">Budget range (optional)</label>
+      <select class="field__input" id="hq-budget" name="budget">
+        <option value="under-500k" data-ko="50만 원 미만">Under ₩500k</option>
+        <option value="500k-1.5m" data-ko="50만~150만 원">₩500k – 1.5M</option>
+        <option value="1.5m-3m" data-ko="150만~300만 원">₩1.5M – 3M</option>
+        <option value="over-3m" data-ko="300만 원 이상">₩3M and over</option>
+        <option value="undecided" data-ko="미정 — 견적을 먼저 보고 싶습니다" selected>Not decided — send the quote first</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field__label" for="hq-when" data-ko="필요한 일정">When do you need it</label>
+      <select class="field__input" id="hq-when" name="timeline">
+        <option value="1w" data-ko="1주 이내 (급행)">Within a week (rush)</option>
+        <option value="2-4w" data-ko="2~4주">2–4 weeks</option>
+        <option value="1-2m" data-ko="1~2개월">1–2 months</option>
+        <option value="flexible" data-ko="일정 미정 · 상의">Not fixed yet</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field__label" for="hq-format" data-ko="원하는 납품 형태">Deliverable you want</label>
+      <select class="field__input" id="hq-format" name="deliverable">
+        <option value="source" data-ko="HTML·CSS·JS 소스">HTML, CSS and JS source</option>
+        <option value="react" data-ko="React 컴포넌트">React components</option>
+        <option value="report" data-ko="점검 리포트 (PDF)">Audit report (PDF)</option>
+        <option value="training" data-ko="소스 + 내부 교육 1회">Source plus one training session</option>
+        <option value="advise" data-ko="상담 후 결정">Decide after a call</option>
+      </select>
+    </div>
 
     <div class="modal__actions">
       <button class="btn btn--primary btn--block" type="submit" data-hire-submit>
@@ -1875,6 +1917,6 @@ node doggonug-cpu.github.io/a11y-ui-kit/mcp/server.mjs --selftest</code></pre>
   </div>
 </noscript>
 
-<script src="app.js?v=7" defer></script>
+<script src="app.js?v=8" defer></script>
 </body>
 </html>

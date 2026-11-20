@@ -78,7 +78,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 <link rel="alternate" type="text/plain" title="LLMs.txt" href="https://doggonug-cpu.github.io/edutech-ai-kit/llms.txt">
 </head>
 <body>
@@ -533,6 +533,10 @@
           <li>교사 연수·수업 시연 — 방문 일정은 협의해 정합니다</li>
           <li>결제는 계좌이체로 진행하고, 입금 안내는 회신 메일로 드립니다</li>
         </ul>
+        <p class="inquiry-offer">
+          범위를 확인한 뒤 <strong>24시간 안에</strong> 견적과 일정을 메일로 보내드립니다.
+          지금 신청하시면 <strong>론칭 특가</strong>를 적용한 금액을 같은 회신에 적어 드립니다 (선착순, 금액은 견적서에 명시).
+        </p>
         <p class="preview-note" style="margin-top:18px">
           4차시 전체 목차는 신청 없이 바로 내려받을 수 있습니다.
           <a href="files/hanul-ai-play-curriculum-overview.pdf" download>4차시 전체 목차 PDF(2쪽) 내려받기 →</a>
@@ -567,7 +571,37 @@
           <label for="q-msg">내용 <span class="opt">(선택)</span></label>
           <textarea id="q-msg" name="문의 내용" rows="4" placeholder="예: 1학년 4반, 5월 중 2차시만 필요합니다."></textarea>
         </div>
-        <input type="hidden" name="_subject" value="[한울에듀테크] 기관·강사 도입 문의">
+        <div class="field">
+          <label for="q-budget">예산대 <span class="opt">(선택)</span></label>
+          <select id="q-budget" name="예산대">
+            <option value="">선택</option>
+            <option>30만 원 미만</option>
+            <option>30만~100만 원</option>
+            <option>100만~300만 원</option>
+            <option>300만 원 이상</option>
+            <option>미정 — 견적을 먼저 보고 싶습니다</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="q-when">필요한 일정</label>
+          <select id="q-when" name="필요 일정">
+            <option>1주 이내 (급행)</option>
+            <option>2~4주</option>
+            <option>다음 학기 전</option>
+            <option>일정 미정 · 상의</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="q-format">원하는 납품 형태</label>
+          <select id="q-format" name="납품 형태">
+            <option>4차시 패키지 파일 (PPTX·DOCX·PDF)</option>
+            <option>학급·학년 맞춤 수정본</option>
+            <option>인쇄용 PDF 묶음</option>
+            <option>강사 방문 수업·교사 연수</option>
+            <option>상담 후 결정</option>
+          </select>
+        </div>
+        <input type="hidden" name="_subject" value="[한울에듀테크] 기관·강사 도입 문의 (24시간 회신)">
         <input type="hidden" name="_template" value="table">
         <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="btn btn-solid btn-block" type="submit">견적 문의 보내기</button>
@@ -685,6 +719,9 @@
       <a href="https://kmong.com/@%ED%95%9C%EC%9A%B8%EC%97%90%EB%93%80%ED%85%8C%ED%81%AC" target="_blank" rel="noopener">크몽</a>
       <a href="https://doggonug-cpu.github.io/a11y-ui-kit/" target="_blank" rel="noopener">어르신·키오스크 UI 킷</a>
       <a href="https://doggonug-cpu.github.io/quick-quote-pwa/" target="_blank" rel="noopener">견적서 발급기</a>
+      <a href="https://doggonug-cpu.github.io/seller-margin-pseo/" target="_blank" rel="noopener">판매 마진 계산기</a>
+      <a href="https://t.me/good_gongsi" target="_blank" rel="noopener">📡 한미 공시 3줄 요약 (텔레그램·무료)</a>
+      <a href="https://doggonug-cpu.github.io/#disclosure" target="_blank" rel="noopener">전체 도구 · 맞춤 공시 알림 봇 의뢰</a>
     </div>
     <p class="foot-legal">
       이 페이지의 자료는 한울에듀테크가 직접 제작했습니다. 무료 체험 키트는 자유롭게 인쇄해 쓰실 수 있으며, 재판매·재배포는 안 됩니다.
@@ -693,6 +730,6 @@
   </div>
 </footer>
 
-<script src="app.js?v=7" defer></script>
+<script src="app.js?v=8" defer></script>
 </body>
 </html>

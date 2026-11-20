@@ -614,3 +614,11 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   body { background: #fff; }
   .sec { padding: 20px 0; }
 }
+
+/* 기관·강사 도입 — 24시간 견적·론칭 특가 안내 */
+.inquiry-offer {
+  margin-top: 18px; padding: 14px 16px; border-radius: 12px;
+  background: rgba(0, 148, 136, .06); border: 1px solid rgba(0, 148, 136, .22);
+  font-size: 14.5px; line-height: 1.7; color: var(--ink, #1c2b33);
+}
+.inquiry-offer strong { color: var(--teal); }
