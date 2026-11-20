@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>톡송장 3초 — 카톡 주문을 택배 송장 CSV로 바꾸는 무료 웹앱</title>
+<meta name="description" content="카톡·문자로 받은 주문을 붙여넣으면 받는분·연락처·주소·상품·배송메모를 자동으로 나눠 CJ대한통운·로젠·한진·롯데·우체국·스마트스토어 양식 CSV로 내려받습니다. 회원가입 없이 무료, 주소·전화번호는 브라우저 밖으로 나가지 않습니다.">
+<meta name="keywords" content="카톡 주문, 택배 송장, 송장 양식, CSV 변환, 스마트스토어 일괄발송, CJ대한통운, 로젠택배, 한진택배, 롯데택배, 우체국택배, 주문 정리, 셀러 도구">
+<meta name="author" content="한울에듀테크">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+
+<link rel="canonical" href="https://doggonug-cpu.github.io/kakao-invoice/">
+<link rel="alternate" type="text/plain" title="LLMs.txt" href="https://doggonug-cpu.github.io/kakao-invoice/llms.txt">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="톡송장 3초">
+<meta property="og:title" content="톡송장 3초 — 카톡 주문, 3초 만에 송장 양식으로">
+<meta property="og:description" content="주문 대화를 통째로 붙여넣으면 받는분·연락처·주소·상품·배송메모를 자동으로 나눠 5대 택배사·스마트스토어 CSV로 저장합니다. 회원가입 없이 무료.">
+<meta property="og:url" content="https://doggonug-cpu.github.io/kakao-invoice/">
+<meta property="og:image" content="https://doggonug-cpu.github.io/kakao-invoice/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="톡송장 3초 — 카톡 주문을 송장 표로 바꾸는 화면">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="톡송장 3초 — 카톡 주문, 3초 만에 송장 양식으로">
+<meta name="twitter:description" content="카톡 주문을 붙여넣으면 택배 송장 CSV로. 회원가입 없이 무료, 개인정보는 브라우저 안에서만.">
+<meta name="twitter:image" content="https://doggonug-cpu.github.io/kakao-invoice/og-image.png">
+
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<script src="parser.js" defer></script>
+<script src="app.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "톡송장 3초",
+  "alternateName": "카톡 주문 → 택배 송장 변환기",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web, Android, iOS, Windows, macOS",
+  "url": "https://doggonug-cpu.github.io/kakao-invoice/",
+  "description": "카톡·문자로 받은 주문 텍스트를 받는분·연락처·주소·상품·배송메모로 자동 분리해 CJ대한통운·로젠·한진·롯데·우체국·스마트스토어 양식 CSV로 내려받는 무료 웹앱. 모든 변환은 브라우저에서만 이뤄진다.",
+  "inLanguage": "ko",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+  "featureList": [
+    "카톡 주문 텍스트 다건 자동 분리",
+    "받는분·연락처·주소·상품·수량·배송메모·입금자명 추출",
+    "연락처 자릿수·주소 누락 자동 표시와 표에서 바로 수정",
+    "CJ대한통운·로젠·한진·롯데·우체국·스마트스토어 양식 CSV 다운로드",
+    "엑셀 붙여넣기용 TSV 복사",
+    "서버 전송 없는 브라우저 로컬 처리"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "주문 정보가 서버로 전송되나요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "아니요. 붙여넣은 주문의 변환, 표 편집, CSV 생성과 복사는 모두 방문자의 브라우저 안에서만 이뤄집니다. 이름·전화번호·주소를 서버로 보내지 않고 저장하지도 않습니다. 페이지를 닫으면 입력값은 사라집니다. Pro 사전신청 폼에 직접 적은 이메일·연락처만 이메일로 전달됩니다." }
+    },
+    {
+      "@type": "Question",
+      "name": "어떤 형식의 주문을 알아보나요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "이름·전화·주소처럼 라벨이 붙은 형식, '김철수 010-1234-5678 서울시 … / 사과 5kg 2박스' 같은 자유형, 1. 2. 번호나 빈 줄·구분선으로 나뉜 다건, 카카오톡 대화 내보내기의 날짜 구분선과 '[이름] [오전 10:12]' 머리말까지 처리합니다." }
+    },
+    {
+      "@type": "Question",
+      "name": "택배사 양식과 열 이름이 똑같나요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "각 사가 공개한 접수 항목을 기준으로 만든 표준형입니다. 계약 종류나 업로드 화면에 따라 열 이름과 순서가 다를 수 있으니, 처음 쓸 때 한 번만 실제 양식과 대조해 주세요. 표에서 열 이름을 확인하고 CSV를 내려받으면 됩니다." }
+    },
+    {
+      "@type": "Question",
+      "name": "엑셀에 붙여넣으면 전화번호가 깨지나요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "엑셀용 복사는 탭으로 구분한 텍스트(TSV)라 010-1234-5678이 그대로 들어갑니다. CSV는 UTF-8 BOM으로 저장해 한글이 깨지지 않습니다. 엑셀이 하이픈 없는 숫자를 임의로 바꾸는 경우에만 셀 서식을 텍스트로 두면 됩니다." }
+    },
+    {
+      "@type": "Question",
+      "name": "무료인가요? Pro는 무엇인가요?",
+      "acceptedAnswer": { "@type": "Answer", "text": "기본 변환과 5대 택배사·스마트스토어 양식 내려받기는 무제한 무료이고 회원가입도 없습니다. Pro(월 19,000원 예정)는 거래처별 커스텀 발주서 양식 등록, 카톡 .txt 내보내기 일괄 추출, 묶음배송 줄밀림 방지를 담습니다. 아직 출시 전이라 사전신청만 받고 있으며, 신청 단계에서 결제는 일어나지 않습니다." }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#app">변환기로 바로 가기</a>
+
+<header class="site-header">
+  <div class="wrap header-in">
+    <a class="brand" href="./" aria-label="톡송장 3초 홈">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="30" height="30" role="presentation" focusable="false">
+          <rect x="1" y="1" width="30" height="30" rx="9" fill="#fee500"/>
+          <path d="M9 12.5h14v10.2a1.3 1.3 0 0 1-1.3 1.3H10.3A1.3 1.3 0 0 1 9 22.7z" fill="#191919"/>
+          <path d="M8 9.6h16l-2.2 3.4H10.2z" fill="#191919"/>
+          <path d="M13.4 16.2h5.2v1.7h-5.2zM13.4 19.4h3.6v1.6h-3.6z" fill="#fee500"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong>톡송장 3초</strong>
+        <span>카톡 주문 → 송장 양식</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="#app">변환기</a>
+      <a href="#pro">Pro 사전신청</a>
+      <a href="#faq">사용 안내</a>
+      <a class="nav-cta" href="#app">무료로 변환하기</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <p class="kicker"><span class="dot" aria-hidden="true"></span>카톡 주문 정리 · 송장 양식 변환</p>
+        <h1 id="hero-title">카톡에 쌓인 주문,<br>3초 만에 송장 양식으로</h1>
+        <p class="lead">
+          주문 대화를 통째로 붙여넣으면 받는분·연락처·주소·상품·수량·배송메모를
+          자동으로 나눠 표로 보여 드립니다. CJ대한통운·로젠·한진·롯데·우체국·스마트스토어
+          양식으로 CSV를 내려받거나 엑셀에 바로 붙여넣으세요.
+        </p>
+        <p class="privacy-badge">
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M10 1.8 3.6 4.3v5.1c0 4 2.7 6.9 6.4 8.8 3.7-1.9 6.4-4.8 6.4-8.8V4.3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m6.8 9.9 2.2 2.2 4.2-4.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span><strong>100% 브라우저 처리</strong> — 이름·전화·주소는 서버로 보내지 않고 이 창 안에서만 변환합니다.</span>
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#app">주문 붙여넣고 변환하기</a>
+          <a class="btn btn-ghost btn-lg" href="#pro">Pro 사전신청</a>
+        </div>
+        <ul class="hero-facts">
+          <li>회원가입 없음</li>
+          <li>개인정보 서버 미전송</li>
+          <li>변환·다운로드 무제한 무료</li>
+        </ul>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="mock mock-kakao">
+          <p class="mock-title"><span class="mock-dot"></span>카톡 주문</p>
+          <div class="bubble">성함: 박정희<br>연락처: 010-2345-6789<br>주소: 전남 완도군 완도읍 장보고대로 123 3층<br>상품: 완도 활전복 1kg 2박스</div>
+          <div class="bubble bubble-me">이재훈 010-8765-4321 서울시 송파구 올림픽로 300 101동 1203호 / 제주 감귤 5kg 1박스</div>
+        </div>
+        <div class="mock-arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 4v14m0 0 5-5m-5 5-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>3초</span>
+        </div>
+        <div class="mock mock-table">
+          <p class="mock-title"><span class="mock-dot ok"></span>송장 표</p>
+          <table>
+            <thead><tr><th>받는분</th><th>연락처</th><th>상품</th><th>수량</th></tr></thead>
+            <tbody>
+              <tr><td>박정희</td><td>010-2345-6789</td><td>활전복 1kg</td><td>2박스</td></tr>
+              <tr><td>이재훈</td><td>010-8765-4321</td><td>감귤 5kg</td><td>1박스</td></tr>
+            </tbody>
+          </table>
+          <p class="mock-foot">CSV · 엑셀 복사 준비 완료</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="steps" aria-label="사용 순서">
+    <div class="wrap steps-in">
+      <div class="step"><span class="step-no">1</span><div><strong>주문 붙여넣기</strong><p>카톡 대화·문자·메모장 어디서든 그대로 복사해 붙여넣습니다.</p></div></div>
+      <div class="step"><span class="step-no">2</span><div><strong>표에서 확인·수정</strong><p>빠진 주소나 자릿수가 틀린 연락처는 노랑·빨강으로 표시됩니다.</p></div></div>
+      <div class="step"><span class="step-no">3</span><div><strong>양식 골라 내려받기</strong><p>택배사 양식 CSV 또는 엑셀 붙여넣기용 복사로 끝냅니다.</p></div></div>
+    </div>
+  </section>
+
+  <section class="app" id="app" aria-labelledby="app-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">변환기</p>
+        <h2 id="app-title">주문을 붙여넣으면 표가 됩니다</h2>
+        <p class="section-lead">아래 상자에 카톡 주문을 그대로 붙여넣으세요. 여러 건이 섞여 있어도 번호·빈 줄·구분선을 기준으로 나눕니다.</p>
+      </div>
+
+      <div class="app-grid">
+        <section class="panel panel-input" aria-labelledby="input-title">
+          <div class="panel-head">
+            <h3 id="input-title"><span class="num">1</span>카톡 주문 붙여넣기</h3>
+            <span class="panel-badge">여러 건 동시 가능</span>
+          </div>
+
+          <div class="input-grid">
+            <div class="input-main">
+              <label class="sr-only" for="orderInput">카톡 주문 텍스트</label>
+              <textarea id="orderInput" class="order-input" spellcheck="false" autocomplete="off"
+                placeholder="예)
+이름: 김철수
+전화: 010-1234-5678
+주소: 서울시 강남구 테헤란로 123 4층
+상품: 사과 5kg
+수량: 2박스
+
+또는
+이영희 010-2222-3333 부산시 해운대구 센텀중앙로 79 / 배 3kg 1박스"></textarea>
+
+              <div class="input-foot">
+                <p class="input-note" id="inputNote">입력한 내용은 이 브라우저에서만 처리됩니다. 저장·전송하지 않습니다.</p>
+                <button type="button" class="link-btn" id="btnClear">전체 지우기</button>
+              </div>
+            </div>
+
+            <div class="input-side">
+              <div class="sample-bar">
+                <span class="sample-label">샘플로 해보기</span>
+                <div class="sample-btns">
+                  <button type="button" class="chip" data-sample="farm">농산물 공구 카톡</button>
+                  <button type="button" class="chip" data-sample="wholesale">의류 도매 주문</button>
+                  <button type="button" class="chip" data-sample="gift">선물 다건 주문</button>
+                </div>
+                <p class="sample-note">샘플 3번은 일부러 자릿수가 틀린 연락처를 넣었습니다. 어떤 칸이 빨갛게 잡히는지 보세요.</p>
+              </div>
+
+              <details class="formats">
+                <summary>어떤 형식을 알아보나요?</summary>
+                <ul>
+                  <li><strong>라벨형</strong> — <code>이름: 김철수 / 전화: 010-1234-5678 / 주소: …</code> (쉼표·줄바꿈·슬래시 모두 가능)</li>
+                  <li><strong>자유형</strong> — <code>김철수 010-1234-5678 서울시 강남구 테헤란로 123 / 사과 5kg 2박스</code></li>
+                  <li><strong>다건</strong> — <code>1.</code> <code>2)</code> <code>①</code> 번호, 빈 줄, <code>---</code> 구분선</li>
+                  <li><strong>카톡 내보내기</strong> — <code>--------------- 2024년 5월 12일 ---------------</code>, <code>[김미숙] [오전 9:12]</code> 머리말은 자동으로 건너뜁니다.</li>
+                  <li><strong>수량</strong> — <code>2박스</code>, <code>3장</code>, <code>1세트</code>처럼 개수 단위를 수량 열로, <code>5kg</code> 같은 무게는 상품명에 남깁니다.</li>
+                </ul>
+              </details>
+
+              <div class="tip-box">
+                <strong>표에서 바로 고칩니다</strong>
+                <p>이름·연락처·주소·상품·메모·입금자 어느 칸이든 눌러 수정하면 그 자리에서 다시 검사합니다. Enter를 누르면 같은 열의 다음 주문으로 넘어갑니다.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel-result" aria-labelledby="result-title">
+          <div class="panel-head">
+            <h3 id="result-title"><span class="num">2</span>송장 양식 확인·내려받기</h3>
+            <div class="counts" id="counts" aria-live="polite">
+              <span class="count-chip" id="countTotal">0건</span>
+              <span class="count-chip ok" id="countOk" hidden>정상 0</span>
+              <span class="count-chip err" id="countErr" hidden>확인 필요 0</span>
+            </div>
+          </div>
+
+          <div class="courier-row">
+            <label class="field-inline" for="courier">
+              <span>택배사 양식</span>
+              <select id="courier">
+                <option value="cj">CJ대한통운</option>
+                <option value="rosen">로젠택배</option>
+                <option value="hanjin">한진택배</option>
+                <option value="lotte">롯데택배</option>
+                <option value="post">우체국택배</option>
+                <option value="smartstore">스마트스토어 일괄발송</option>
+              </select>
+            </label>
+            <p class="courier-hint" id="courierHint"></p>
+          </div>
+
+          <div class="table-wrap" id="tableWrap" hidden>
+            <table class="orders" id="ordersTable">
+              <caption class="sr-only">변환된 주문 목록. 각 칸을 눌러 바로 고칠 수 있습니다.</caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="col-no">#</th>
+                  <th scope="col">받는분</th>
+                  <th scope="col">연락처</th>
+                  <th scope="col">주소</th>
+                  <th scope="col">상품</th>
+                  <th scope="col" class="col-qty">수량</th>
+                  <th scope="col">배송메모</th>
+                  <th scope="col" class="col-dep">입금자</th>
+                  <th scope="col" class="col-del"><span class="sr-only">삭제</span></th>
+                </tr>
+              </thead>
+              <tbody id="orderRows"></tbody>
+            </table>
+          </div>
+
+          <div class="empty" id="emptyState">
+            <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true" focusable="false">
+              <rect x="8" y="12" width="48" height="40" rx="6" fill="#eef4ff" stroke="#b9cdf5" stroke-width="2"/>
+              <path d="M8 24h48" stroke="#b9cdf5" stroke-width="2"/>
+              <path d="M18 34h12M18 42h20" stroke="#9db6e4" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <p><strong>아직 변환한 주문이 없습니다.</strong><br>위 상자에 카톡 주문을 붙여넣거나 샘플 버튼을 눌러 보세요.</p>
+          </div>
+
+          <div class="export-bar">
+            <label class="check" for="includeDepositor">
+              <input type="checkbox" id="includeDepositor">
+              <span>입금자명 열 포함</span>
+            </label>
+            <div class="export-btns">
+              <button type="button" class="btn btn-primary" id="btnCsv" disabled>
+                <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M10 3v9m0 0 3.5-3.5M10 12 6.5 8.5M4 14.5V16a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                CSV 다운로드
+              </button>
+              <button type="button" class="btn btn-ghost" id="btnCopy" disabled>엑셀용 복사</button>
+            </div>
+          </div>
+          <p class="export-status" id="exportStatus" role="status" aria-live="polite"></p>
+          <p class="fine-print">열 이름은 각 택배사가 공개한 접수 항목을 기준으로 한 표준형입니다. 실제 업로드 양식과 다를 수 있으니 첫 사용 때 한 번 대조해 주세요.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="pro" id="pro" aria-labelledby="pro-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">요금</p>
+        <h2 id="pro-title">변환은 계속 무료, 반복 작업은 Pro로</h2>
+        <p class="section-lead">기본 변환은 회원가입 없이 무제한 무료입니다. 거래처마다 다른 양식과 대량 대화 정리는 Pro에서 맡습니다.</p>
+      </div>
+
+      <div class="plan-grid">
+        <article class="plan">
+          <p class="plan-tag">무료</p>
+          <p class="plan-price"><strong>0원</strong><span>무제한</span></p>
+          <ul class="plan-list">
+            <li>카톡 주문 다건 자동 분리</li>
+            <li>5대 택배사 + 스마트스토어 양식 CSV</li>
+            <li>엑셀 붙여넣기용 TSV 복사</li>
+            <li>연락처·주소 오류 표시와 표에서 수정</li>
+            <li>회원가입·설치 없음, 서버 미전송</li>
+          </ul>
+          <a class="btn btn-ghost btn-block" href="#app">지금 쓰기</a>
+        </article>
+
+        <article class="plan plan-pro">
+          <p class="plan-tag">Pro · 월 19,000원<span class="plan-flag">출시 전 사전신청</span></p>
+          <p class="plan-price"><strong>19,000</strong><span>원 / 월</span></p>
+          <ul class="plan-list">
+            <li>거래처별 커스텀 발주서 양식 등록</li>
+            <li>카톡 <code>.txt</code> 대화 내보내기 일괄 추출</li>
+            <li>묶음배송 줄밀림 방지 — 같은 받는분·주소 자동 묶음 표시</li>
+            <li>새 택배사 양식이 생기면 우선 반영</li>
+            <li>사전신청자에게 출시·요금을 먼저 안내</li>
+          </ul>
+          <p class="plan-note">아직 출시 전입니다. 신청 단계에서 결제는 일어나지 않습니다.</p>
+        </article>
+
+        <section class="pro-form-card" aria-labelledby="pro-form-title">
+          <form class="pro-form" id="proForm" action="https://formsubmit.co/ajax/0e95d93c687b1b0b2346af06319b0a58" method="POST" novalidate>
+            <h3 id="pro-form-title">Pro 사전신청</h3>
+            <p class="form-lead">어떤 양식과 얼마나 많은 주문을 다루시는지 알려 주시면, 출시할 때 먼저 맞춰 드립니다.</p>
+
+            <label class="field">
+              <span>하루 평균 주문 건수</span>
+              <select name="하루 주문 건수" required>
+                <option value="">선택해 주세요</option>
+                <option>10건 이하</option>
+                <option>11~50건</option>
+                <option>51~200건</option>
+                <option>200건 이상</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>주로 쓰는 택배사</span>
+              <select name="주 사용 택배사">
+                <option>CJ대한통운</option>
+                <option>로젠택배</option>
+                <option>한진택배</option>
+                <option>롯데택배</option>
+                <option>우체국택배</option>
+                <option>스마트스토어 일괄발송</option>
+                <option>여러 곳을 같이 씁니다</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>회신 이메일</span>
+              <input type="email" name="email" inputmode="email" autocomplete="email" required placeholder="seller@example.com">
+            </label>
+
+            <label class="field">
+              <span>연락처 <em>(선택)</em></span>
+              <input type="tel" name="연락처" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000">
+            </label>
+
+            <label class="field">
+              <span>필요한 기능 <em>(선택)</em></span>
+              <textarea name="필요한 기능" rows="2" placeholder="예: 거래처 A는 우리 양식으로, 카톡 txt 파일을 통째로 넣고 싶습니다."></textarea>
+            </label>
+
+            <label class="check check-consent" for="proConsent">
+              <input type="checkbox" id="proConsent" name="개인정보 동의" value="동의" required>
+              <span>사전신청 안내를 위해 이메일·연락처를 수집하는 데 동의합니다. 안내 목적으로만 쓰고 다른 곳에 넘기지 않습니다.</span>
+            </label>
+
+            <input type="hidden" name="_subject" value="[톡송장 3초] Pro 사전신청">
+            <input type="hidden" name="_template" value="table">
+            <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button class="btn btn-primary btn-block" type="submit">사전신청 보내기</button>
+            <p class="form-status" id="proStatus" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq-wrap">
+      <div class="section-head">
+        <p class="kicker">사용 안내</p>
+        <h2 id="faq-title">자주 묻는 것</h2>
+      </div>
+      <details>
+        <summary>주문 정보가 서버로 전송되나요?</summary>
+        <p>아니요. 붙여넣은 주문의 변환, 표 편집, CSV 생성과 복사는 모두 방문자의 브라우저 안에서만 이뤄집니다. 이름·전화번호·주소를 서버로 보내지 않고 저장하지도 않습니다. 페이지를 닫으면 입력값은 사라집니다. Pro 사전신청 폼에 직접 적은 이메일·연락처만 이메일로 전달됩니다.</p>
+      </details>
+      <details>
+        <summary>어떤 형식의 주문을 알아보나요?</summary>
+        <p>라벨형(<code>이름: … / 전화: … / 주소: …</code>), 자유형(<code>김철수 010-1234-5678 서울시 … / 사과 5kg 2박스</code>), <code>1.</code> <code>2)</code> 번호·빈 줄·<code>---</code>로 나뉜 다건, 카카오톡 대화 내보내기의 날짜 구분선과 <code>[이름] [오전 10:12]</code> 머리말까지 처리합니다.</p>
+      </details>
+      <details>
+        <summary>택배사 양식과 열 이름이 똑같나요?</summary>
+        <p>각 사가 공개한 접수 항목을 기준으로 만든 표준형입니다. 계약 종류나 업로드 화면에 따라 열 이름과 순서가 다를 수 있으니, 처음 쓸 때 한 번만 실제 양식과 대조해 주세요. 표 위의 ‘택배사 양식’을 바꾸면 열 순서가 바로 바뀝니다.</p>
+      </details>
+      <details>
+        <summary>엑셀에 붙여넣으면 전화번호가 깨지나요?</summary>
+        <p>엑셀용 복사는 탭으로 구분한 텍스트(TSV)라 <code>010-1234-5678</code>이 그대로 들어갑니다. CSV는 UTF-8 BOM으로 저장해 한글이 깨지지 않습니다. 엑셀이 하이픈 없는 숫자를 임의로 바꾸는 경우에만 셀 서식을 텍스트로 두면 됩니다.</p>
+      </details>
+      <details>
+        <summary>무료인가요? Pro는 무엇인가요?</summary>
+        <p>기본 변환과 5대 택배사·스마트스토어 양식 내려받기는 무제한 무료이고 회원가입도 없습니다. Pro(월 19,000원 예정)는 거래처별 커스텀 발주서 양식 등록, 카톡 <code>.txt</code> 내보내기 일괄 추출, 묶음배송 줄밀림 방지를 담습니다. 아직 출시 전이라 사전신청만 받고 있으며, 신청 단계에서 결제는 일어나지 않습니다.</p>
+      </details>
+      <details>
+        <summary>휴대폰에서도 쓸 수 있나요?</summary>
+        <p>네. 휴대폰 브라우저에서 열면 표가 카드 형태로 바뀌어 한 손으로도 고칠 수 있습니다. 카톡에서 주문을 길게 눌러 복사한 뒤 붙여넣으세요.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="cta-band" aria-labelledby="cta-title">
+    <div class="wrap cta-in">
+      <div>
+        <h2 id="cta-title">오늘 받은 주문, 지금 정리해 두세요</h2>
+        <p>붙여넣고, 확인하고, 내려받으면 끝입니다. 설치도 회원가입도 없습니다.</p>
+      </div>
+      <a class="btn btn-kakao btn-lg" href="#app">변환기 열기</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <strong class="foot-brand">톡송장 3초</strong>
+      <p>카톡·문자 주문을 택배 송장 양식으로 바꾸는 브라우저 도구입니다. 변환은 방문자의 기기에서만 이뤄지고, 주문 정보를 서버에 저장하지 않습니다.</p>
+      <p class="foot-related">함께 쓰는 도구 — <a href="https://doggonug-cpu.github.io/quick-quote-pwa/">10초 견적서·거래명세서(QuickQuote)</a> · <a href="https://doggonug-cpu.github.io/seller-margin-pseo/">판매 마진계산기</a></p>
+    </div>
+    <div>
+      <strong>한울이 만드는 다른 도구</strong>
+      <p><a href="https://doggonug-cpu.github.io/">전체 도구 모음</a></p>
+      <p><a href="https://doggonug-cpu.github.io/a11y-ui-kit/">A11yKit — 시니어·키오스크 UI 킷</a></p>
+      <p><a href="https://doggonug-cpu.github.io/edutech-ai-kit/">AI·디지털 놀이 수업 키트</a></p>
+      <p><a href="https://doggonug-cpu.github.io/quick-quote-pwa/">QuickQuote — 견적서·거래명세서</a></p>
+    </div>
+    <div>
+      <strong>안내</strong>
+      <p>택배사 열 이름은 공개된 접수 항목 기준의 표준형이며, 실제 업로드 양식과 다를 수 있습니다.</p>
+      <p>Pro는 출시 전 사전신청 단계로, 신청만으로 결제되지 않습니다.</p>
+      <p class="updated">최종 수정 2026년 11월 20일</p>
+    </div>
+  </div>
+  <div class="wrap copyright">
+    <p>© <span id="year">2026</span> 한울에듀테크 · 이 사이트는 광고·제휴 링크를 운영하지 않습니다.</p>
+  </div>
+</footer>
+
+<noscript>
+  <p class="noscript">이 변환기는 브라우저에서 자바스크립트로 동작합니다. 자바스크립트를 켜면 주문을 표로 바꿀 수 있습니다.</p>
+</noscript>
+</body>
+</html>
