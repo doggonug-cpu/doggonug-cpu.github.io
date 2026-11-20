@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>톡송장 3초 — 카톡 주문을 택배 송장 CSV로 바꾸는 무료 웹앱</title>
-<meta name="description" content="카톡·문자로 받은 주문을 붙여넣으면 받는분·연락처·주소·상품·배송메모를 자동으로 나눠 CJ대한통운·로젠·한진·롯데·우체국·스마트스토어 양식 CSV로 내려받습니다. 회원가입 없이 무료, 주소·전화번호는 브라우저 밖으로 나가지 않습니다.">
+<meta name="description" content="카톡 주문을 붙여넣으면 수취인·연락처·기본/상세주소·품목·수량·배송메시지로 나눠 표준 9열(감열식 4B-2054N)·CJ대한통운·로젠·한진·롯데·우체국·스마트스토어 양식 CSV로 내려받습니다. 다중배송·말풍선·정정·단골·닉네임·도서산간·사진 주문까지 8가지 현장 유형을 적색·황색·녹색으로 검증합니다. 회원가입 없이 무료, 주문 정보는 브라우저 밖으로 나가지 않습니다.">
 <meta name="keywords" content="카톡 주문, 택배 송장, 송장 양식, CSV 변환, 스마트스토어 일괄발송, CJ대한통운, 로젠택배, 한진택배, 롯데택배, 우체국택배, 주문 정리, 셀러 도구">
 <meta name="author" content="한울에듀테크">
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -49,9 +49,10 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
   "featureList": [
     "카톡 주문 텍스트 다건 자동 분리",
-    "받는분·연락처·주소·상품·수량·배송메모·입금자명 추출",
-    "연락처 자릿수·주소 누락 자동 표시와 표에서 바로 수정",
-    "CJ대한통운·로젠·한진·롯데·우체국·스마트스토어 양식 CSV 다운로드",
+    "수취인·연락처·기본주소·상세주소·품목·수량·배송메시지·특수플래그 추출",
+    "실전 8대 현장 유형 처리(다중배송·말풍선·정정·단골·비표준표기·닉네임·도서산간·사진)",
+    "적색 보류·황색 확인·녹색 정상 검증 게이트와 50자 배송메시지 점검",
+    "표준 9열(감열식 4B-2054N)·CJ대한통운·로젠·한진·롯데·우체국·스마트스토어 양식 CSV 다운로드",
     "엑셀 붙여넣기용 TSV 복사",
     "서버 전송 없는 브라우저 로컬 처리"
   ]
@@ -75,7 +76,7 @@
     {
       "@type": "Question",
       "name": "택배사 양식과 열 이름이 똑같나요?",
-      "acceptedAnswer": { "@type": "Answer", "text": "각 사가 공개한 접수 항목을 기준으로 만든 표준형입니다. 계약 종류나 업로드 화면에 따라 열 이름과 순서가 다를 수 있으니, 처음 쓸 때 한 번만 실제 양식과 대조해 주세요. 표에서 열 이름을 확인하고 CSV를 내려받으면 됩니다." }
+      "acceptedAnswer": { "@type": "Answer", "text": "표준 9열(수취인명·연락처·우편번호·기본주소·상세주소·품목명·수량·배송메시지·특수플래그)은 감열식 4B-2054N·대량등록용 고정 양식이고, 나머지 다섯 곳은 각 사가 공개한 접수 항목을 기준으로 만든 표준형입니다. 계약 종류나 업로드 화면에 따라 열 이름과 순서가 다를 수 있으니 처음 쓸 때 한 번만 실제 양식과 대조해 주세요." }
     },
     {
       "@type": "Question",
@@ -85,7 +86,7 @@
     {
       "@type": "Question",
       "name": "무료인가요? Pro는 무엇인가요?",
-      "acceptedAnswer": { "@type": "Answer", "text": "기본 변환과 5대 택배사·스마트스토어 양식 내려받기는 무제한 무료이고 회원가입도 없습니다. Pro(월 19,000원 예정)는 거래처별 커스텀 발주서 양식 등록, 카톡 .txt 내보내기 일괄 추출, 묶음배송 줄밀림 방지를 담습니다. 아직 출시 전이라 사전신청만 받고 있으며, 신청 단계에서 결제는 일어나지 않습니다." }
+      "acceptedAnswer": { "@type": "Answer", "text": "기본 변환과 표준 9열·5대 택배사·스마트스토어 양식 내려받기는 무제한 무료이고 회원가입도 없습니다. Pro(월 19,000원 예정)는 거래처별 커스텀 발주서 양식 등록, 카톡 .txt 내보내기 일괄 추출, 묶음배송 줄밀림 방지를 담습니다. 아직 출시 전이라 사전신청만 받고 있으며, 신청 단계에서 결제는 일어나지 않습니다." }
     }
   ]
 }
@@ -178,6 +179,27 @@
     </div>
   </section>
 
+  <section class="types" aria-labelledby="types-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">실전 8대 유형</p>
+        <h2 id="types-title">현장에서 실제로 오는 카톡, 8가지로 나눠 처리합니다</h2>
+        <p class="section-lead">한 줄 주문만 예쁘게 읽는 도구가 아닙니다. 아래 8가지 경우를 모두 읽되, 그대로 내보내면 안 되는 주문은 <strong>적색 보류</strong>로 먼저 잡아냅니다.</p>
+      </div>
+      <ol class="type-grid">
+        <li><span class="type-no">1</span><strong>1인 다수 배송지</strong><p>“1개는 우리집, 2개는 어머니댁”을 두 줄로 나눕니다. 나눈 수량 합이 총 주문량과 다르면 적색 보류(<code>[수량불일치]</code>)로 내보내기를 막습니다. “보내는 분”은 수취인이 아니라 발송인으로 넣습니다.</p></li>
+        <li><span class="type-no">2</span><strong>말풍선 쪼개기</strong><p>이름·번호·주소·비번이 한 줄씩 따로 온 카톡을 같은 발화자·5분 이내 기준으로 한 주문으로 묶습니다. 6분 이상 벌어지면 다른 주문으로 봅니다.</p></li>
+        <li><span class="type-no">3</span><strong>정정·취소 발화</strong><p>“3박스로 바꿀게요”, “취소할게요”를 읽어 <em>마지막 값</em>을 최종값으로 넣고, 황색 확인(<code>[정정발화]</code>)과 원본 대화를 함께 붙입니다.</p></li>
+        <li><span class="type-no">4</span><strong>단골 생략</strong><p>“저번 주소로 2박스만요”처럼 주소·연락처를 짐작해야 하는 주문은 채우지 않고 적색 격리(<code>[단골확인필요]</code>)합니다.</p></li>
+        <li><span class="type-no">5</span><strong>비표준 표기</strong><p><code>010.1234.5678</code> 같은 표기를 정규화하고, <code>105-802</code>를 <code>105동 802호</code>로 고쳐 기본주소와 상세주소를 나눕니다.</p></li>
+        <li><span class="type-no">6</span><strong>닉네임·입금자 분리</strong><p>수취인·발송인·입금자를 따로 두고, <code>사랑맘</code>·<code>ㅇㅇ맘</code>·하트 같은 닉네임은 황색 경고(<code>[닉네임주의]</code>)로 표시합니다.</p></li>
+        <li><span class="type-no">7</span><strong>도서산간·배송 조건</strong><p>제주·울릉·신안·완도 등 섬 지역은 <code>[도서산간 +추가운임]</code>으로 태깅하고, “금요일 도착”·“아이스팩”·“현관비번”은 배송메시지로 빼되 50자를 넘으면 글자수와 함께 경고합니다.</p></li>
+        <li><span class="type-no">8</span><strong>사진 주문</strong><p><code>[사진]</code>·캡처만 온 주문은 지어내지 않고 적색 확인 행(<code>[사진확인필요]</code>)으로 남깁니다. 같은 주문이 두 번 들어오면 <code>[중복의심]</code>도 붙습니다.</p></li>
+      </ol>
+      <p class="type-legend"><span class="dot red"></span>적색 = 보류(내보내기 차단) · <span class="dot amber"></span>황색 = 확인 · <span class="dot green"></span>녹색 = 그대로 발송 가능</p>
+    </div>
+  </section>
+
   <section class="app" id="app" aria-labelledby="app-title">
     <div class="wrap">
       <div class="section-head">
@@ -220,8 +242,9 @@
                   <button type="button" class="chip" data-sample="farm">농산물 공구 카톡</button>
                   <button type="button" class="chip" data-sample="wholesale">의류 도매 주문</button>
                   <button type="button" class="chip" data-sample="gift">선물 다건 주문</button>
+                  <button type="button" class="chip chip-strong" data-sample="reality">8대 유형 실전 테스트</button>
                 </div>
-                <p class="sample-note">샘플 3번은 일부러 자릿수가 틀린 연락처를 넣었습니다. 어떤 칸이 빨갛게 잡히는지 보세요.</p>
+                <p class="sample-note">‘8대 유형 실전 테스트’는 다중배송·말풍선·정정·단골·닉네임·도서산간·사진·중복을 한 번에 넣어 둔 샘플입니다. 샘플 3번은 일부러 자릿수가 틀린 연락처를 넣었습니다.</p>
               </div>
 
               <details class="formats">
@@ -249,7 +272,8 @@
             <div class="counts" id="counts" aria-live="polite">
               <span class="count-chip" id="countTotal">0건</span>
               <span class="count-chip ok" id="countOk" hidden>정상 0</span>
-              <span class="count-chip err" id="countErr" hidden>확인 필요 0</span>
+              <span class="count-chip warn" id="countWarn" hidden>확인 0</span>
+              <span class="count-chip err" id="countErr" hidden>보류 0</span>
             </div>
           </div>
 
@@ -257,6 +281,7 @@
             <label class="field-inline" for="courier">
               <span>택배사 양식</span>
               <select id="courier">
+                <option value="standard9" selected>표준 9열 (감열식 4B-2054N) · 권장</option>
                 <option value="cj">CJ대한통운</option>
                 <option value="rosen">로젠택배</option>
                 <option value="hanjin">한진택배</option>
@@ -274,14 +299,15 @@
               <thead>
                 <tr>
                   <th scope="col" class="col-no">#</th>
-                  <th scope="col">받는분</th>
-                  <th scope="col">연락처</th>
-                  <th scope="col">주소</th>
-                  <th scope="col">상품</th>
+                  <th scope="col" class="col-name">수취인</th>
+                  <th scope="col" class="col-phone">연락처</th>
+                  <th scope="col" class="col-addr">주소 <span class="th-sub">기본 / 상세</span></th>
+                  <th scope="col" class="col-product">품목</th>
                   <th scope="col" class="col-qty">수량</th>
-                  <th scope="col">배송메모</th>
-                  <th scope="col" class="col-dep">입금자</th>
-                  <th scope="col" class="col-del"><span class="sr-only">삭제</span></th>
+                  <th scope="col" class="col-memo">배송메시지</th>
+                  <th scope="col" class="col-who">발송 / 입금</th>
+                  <th scope="col" class="col-flags">특수플래그</th>
+                  <th scope="col" class="col-status"><span class="sr-only">상태</span></th>
                 </tr>
               </thead>
               <tbody id="orderRows"></tbody>
@@ -298,10 +324,16 @@
           </div>
 
           <div class="export-bar">
-            <label class="check" for="includeDepositor">
-              <input type="checkbox" id="includeDepositor">
-              <span>입금자명 열 포함</span>
-            </label>
+            <div class="export-opts">
+              <label class="check" for="includeSender">
+                <input type="checkbox" id="includeSender">
+                <span>발송인 열 포함</span>
+              </label>
+              <label class="check" for="includeDepositor">
+                <input type="checkbox" id="includeDepositor">
+                <span>입금자명 열 포함</span>
+              </label>
+            </div>
             <div class="export-btns">
               <button type="button" class="btn btn-primary" id="btnCsv" disabled>
                 <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M10 3v9m0 0 3.5-3.5M10 12 6.5 8.5M4 14.5V16a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -311,7 +343,7 @@
             </div>
           </div>
           <p class="export-status" id="exportStatus" role="status" aria-live="polite"></p>
-          <p class="fine-print">열 이름은 각 택배사가 공개한 접수 항목을 기준으로 한 표준형입니다. 실제 업로드 양식과 다를 수 있으니 첫 사용 때 한 번 대조해 주세요.</p>
+          <p class="fine-print">표준 9열은 감열식 4B-2054N·대량등록용 고정 양식입니다. 우편번호 칸은 도로명주소 API 키 없이 동작하도록 비워 두었으니, 필요하면 표에서 직접 채우세요. 택배사 열 이름은 각 사가 공개한 접수 항목을 기준으로 한 표준형이며 실제 업로드 양식과 다를 수 있습니다.</p>
         </section>
       </div>
     </div>
@@ -331,8 +363,9 @@
           <p class="plan-price"><strong>0원</strong><span>무제한</span></p>
           <ul class="plan-list">
             <li>카톡 주문 다건 자동 분리</li>
-            <li>5대 택배사 + 스마트스토어 양식 CSV</li>
+            <li>표준 9열 + 5대 택배사 + 스마트스토어 양식 CSV</li>
             <li>엑셀 붙여넣기용 TSV 복사</li>
+            <li>8대 현장 유형 읽기 + 적색·황색·녹색 검증 게이트</li>
             <li>연락처·주소 오류 표시와 표에서 수정</li>
             <li>회원가입·설치 없음, 서버 미전송</li>
           </ul>
@@ -424,7 +457,7 @@
       </details>
       <details>
         <summary>어떤 형식의 주문을 알아보나요?</summary>
-        <p>라벨형(<code>이름: … / 전화: … / 주소: …</code>), 자유형(<code>김철수 010-1234-5678 서울시 … / 사과 5kg 2박스</code>), <code>1.</code> <code>2)</code> 번호·빈 줄·<code>---</code>로 나뉜 다건, 카카오톡 대화 내보내기의 날짜 구분선과 <code>[이름] [오전 10:12]</code> 머리말까지 처리합니다.</p>
+        <p>라벨형(<code>이름: … / 전화: … / 주소: …</code>), 자유형(<code>김철수 010-1234-5678 서울시 … / 사과 5kg 2박스</code>), <code>1.</code> <code>2)</code> 번호·빈 줄·<code>---</code>로 나뉜 다건, 카카오톡 대화 내보내기의 날짜 구분선과 <code>[이름] [오전 10:12]</code> 머리말까지 처리합니다. 같은 사람이 5분 안에 쪼개 보낸 말풍선은 한 주문으로 묶고, “1개는 우리집 2개는 어머니댁”처럼 한 번에 여러 곳으로 보내는 주문은 배송지별로 나눕니다.</p>
       </details>
       <details>
         <summary>택배사 양식과 열 이름이 똑같나요?</summary>
@@ -436,7 +469,15 @@
       </details>
       <details>
         <summary>무료인가요? Pro는 무엇인가요?</summary>
-        <p>기본 변환과 5대 택배사·스마트스토어 양식 내려받기는 무제한 무료이고 회원가입도 없습니다. Pro(월 19,000원 예정)는 거래처별 커스텀 발주서 양식 등록, 카톡 <code>.txt</code> 내보내기 일괄 추출, 묶음배송 줄밀림 방지를 담습니다. 아직 출시 전이라 사전신청만 받고 있으며, 신청 단계에서 결제는 일어나지 않습니다.</p>
+        <p>기본 변환과 표준 9열·5대 택배사·스마트스토어 양식 내려받기는 무제한 무료이고 회원가입도 없습니다. Pro(월 19,000원 예정)는 거래처별 커스텀 발주서 양식 등록, 카톡 <code>.txt</code> 내보내기 일괄 추출, 묶음배송 줄밀림 방지를 담습니다. 아직 출시 전이라 사전신청만 받고 있으며, 신청 단계에서 결제는 일어나지 않습니다.</p>
+      </details>
+      <details>
+        <summary>우편번호는 왜 비어 있나요?</summary>
+        <p>행정안전부 도로명주소 API는 무료 키를 따로 받아야 하는 외부 연동이라, 1차 버전은 주소만으로 우편번호를 조회하지 않습니다. 대신 표의 우편번호 칸을 직접 채우거나, 주문에 <code>우편번호: 06236</code>처럼 적혀 있으면 그대로 옮깁니다. API 키를 붙이면 자동 조회로 바꿀 수 있습니다.</p>
+      </details>
+      <details>
+        <summary>특수플래그는 무엇인가요?</summary>
+        <p>9열 표준 양식의 마지막 열입니다. <code>[수량불일치]</code>·<code>[사진확인필요]</code>·<code>[단골확인필요]</code>는 적색 보류라 CSV 내려받기가 막히고, <code>[정정발화]</code>·<code>[닉네임주의]</code>·<code>[중복의심]</code>은 황색 확인, <code>[도서산간 +추가운임]</code>은 추가 운임을 확인하라는 표시입니다.</p>
       </details>
       <details>
         <summary>휴대폰에서도 쓸 수 있나요?</summary>

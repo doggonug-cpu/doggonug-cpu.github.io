@@ -42,18 +42,52 @@
       '전화번호: 010-5555-66',
       '주소: 광주시 서구 상무중앙로 58',
       '상품명: 한우 선물세트 1호'
+    ].join('\n'),
+    reality: [
+      '--- 실제 카톡 8대 유형 테스트 ---',
+      '[김미숙] [오전 9:10] 전복 1kg 3박스요. 1개는 우리집(서울 강남구 테헤란로 123 4층), 2개는 어머니댁(부산 해운대구 센텀중앙로 79 101-202 김OO 010-1234-5678) 보내주세요. 보내는 분은 홍길동',
+      '[김미숙] [오전 9:20] 전복 2박스',
+      '[김미숙] [오전 9:21] 010 1234 5678',
+      '[김미숙] [오전 9:22] 수원시 영통구 OO아파트 101-202',
+      '[김미숙] [오전 9:24] 아 현관비번 #1234*',
+      '[김미숙] [오전 9:25] 3박스로 바꿀게요',
+      '[김미숙] [오전 9:40] 사장님 저 박영희예요 저번 주소로 2박스만요 입금했어요!',
+      '[김미숙] [오전 9:52] 받는분: 사랑맘',
+      '[김미숙] [오전 9:52] 연락처: 010-9999-8888',
+      '[김미숙] [오전 9:53] 주소: 제주시 애월읍 하귀리 123 3층',
+      '[김미숙] [오전 9:53] 상품: 감귤 5kg 2박스',
+      '[김미숙] [오전 9:54] 배송메시지: 아이스팩 넣어서 문 앞에 놓아주시고 도착하면 문자 주세요. 금요일 오후에 도착하면 좋겠습니다. 경비실에도 알려주세요',
+      '[김미숙] [오전 10:20] [사진]',
+      '[김미숙] [오전 10:21] 사진 보냈어요 확인 부탁드려요',
+      '[김미숙] [오전 10:40] 이영희 010-7777-6666 인천시 연수구 송도과학로 32 202호 / 배 3kg 1박스',
+      '[김미숙] [오전 10:50] 이영희 010-7777-6666 인천시 연수구 송도과학로 32 202호 / 배 3kg 1박스'
     ].join('\n')
   };
 
+  // 표의 한 칸. stacked 는 한 칸에 입력 두 개(주소 → 기본/상세, 발송/입금).
   var FIELDS = [
-    { key: 'name', label: '받는분', width: '' },
-    { key: 'phone', label: '연락처', width: '' },
-    { key: 'address', label: '주소', width: '' },
-    { key: 'product', label: '상품', width: '' },
-    { key: 'qty', label: '수량', width: '' },
-    { key: 'memo', label: '배송메모', width: '' },
-    { key: 'depositor', label: '입금자', width: '' }
+    { key: 'name', label: '수취인', cls: 'col-name' },
+    { key: 'phone', label: '연락처', cls: 'col-phone' },
+    {
+      key: 'address', label: '주소', cls: 'col-addr',
+      stacked: [
+        { key: 'addrBase', label: '기본주소', placeholder: '기본주소' },
+        { key: 'addrDetail', label: '상세주소', placeholder: '동·호·층' }
+      ]
+    },
+    { key: 'product', label: '품목', cls: 'col-product' },
+    { key: 'qty', label: '수량', cls: 'col-qty' },
+    { key: 'memo', label: '배송메시지', cls: 'col-memo' },
+    {
+      key: 'who', label: '발송/입금', cls: 'col-who',
+      stacked: [
+        { key: 'sender', label: '발송인', placeholder: '발송인' },
+        { key: 'depositor', label: '입금자', placeholder: '입금자' }
+      ]
+    }
   ];
+
+  var GATE_LABEL = { red: '보류', yellow: '확인', green: '정상' };
 
   var state = { orders: [], parseTimer: null };
 
@@ -64,10 +98,12 @@
   var counts = document.getElementById('counts');
   var countTotal = document.getElementById('countTotal');
   var countOk = document.getElementById('countOk');
+  var countWarn = document.getElementById('countWarn');
   var countErr = document.getElementById('countErr');
   var courierSelect = document.getElementById('courier');
   var courierHint = document.getElementById('courierHint');
   var includeDepositor = document.getElementById('includeDepositor');
+  var includeSender = document.getElementById('includeSender');
   var btnCsv = document.getElementById('btnCsv');
   var btnCopy = document.getElementById('btnCopy');
   var btnClear = document.getElementById('btnClear');
@@ -103,20 +139,28 @@
 
   function updateCounts() {
     var total = state.orders.length;
-    var bad = 0;
-    var warnOnly = 0;
+    var red = 0;
+    var yellow = 0;
     state.orders.forEach(function (order) {
-      if (hasError(order)) { bad += 1; }
-      else if ((order.issues || []).length) { warnOnly += 1; }
+      var gate = order.gate || 'green';
+      if (gate === 'red') { red += 1; }
+      else if (gate === 'yellow') { yellow += 1; }
     });
-    var ok = total - bad - warnOnly;
-    countTotal.textContent = total + '건';
-    countOk.hidden = ok === 0;
-    countOk.textContent = '정상 ' + ok;
-    countErr.hidden = bad + warnOnly === 0;
-    countErr.textContent = '확인 필요 ' + (bad + warnOnly);
-    countErr.classList.toggle('err', bad > 0);
-    countErr.classList.toggle('warn', bad === 0 && warnOnly > 0);
+    var green = total - red - yellow;
+
+    if (countTotal) { countTotal.textContent = total + '건'; }
+    if (countOk) {
+      countOk.hidden = green === 0;
+      countOk.textContent = '정상 ' + green;
+    }
+    if (countWarn) {
+      countWarn.hidden = yellow === 0;
+      countWarn.textContent = '확인 ' + yellow;
+    }
+    if (countErr) {
+      countErr.hidden = red === 0;
+      countErr.textContent = '보류 ' + red;
+    }
 
     tableWrap.hidden = total === 0;
     emptyState.hidden = total > 0;
@@ -126,19 +170,34 @@
   }
 
   /* ── 표 그리기 ────────────────────────────────────────── */
-  function makeCellInput(order, field, index) {
+  function fieldLabel(key) {
+    for (var i = 0; i < FIELDS.length; i++) {
+      if (FIELDS[i].key === key) { return FIELDS[i].label; }
+      var stack = FIELDS[i].stacked || [];
+      for (var j = 0; j < stack.length; j++) {
+        if (stack[j].key === key) { return stack[j].label; }
+      }
+    }
+    return key;
+  }
+
+  function makeCellInput(order, field, index, placeholder) {
     var el = document.createElement('input');
     el.type = 'text';
     el.className = 'cell-input';
     el.value = order[field] || '';
     el.setAttribute('data-field', field);
-    el.setAttribute('aria-label', (index + 1) + '번 주문 ' + (FIELDS.filter(function (f) { return f.key === field; })[0] || {}).label);
+    el.setAttribute('aria-label', (index + 1) + '번 주문 ' + fieldLabel(field));
+    if (placeholder) { el.placeholder = placeholder; }
     el.spellcheck = false;
     el.autocomplete = 'off';
 
     el.addEventListener('input', function () {
-      order[field] = el.value;
+      applyField(order, field, el.value);
+      T.refreshOrder(order);
+      T.markDuplicates(state.orders);
       refreshRow(el.closest('tr'), order);
+      updateAllFlags();
       updateCounts();
       say(exportStatus, '');
     });
@@ -146,7 +205,7 @@
     el.addEventListener('keydown', function (event) {
       if (event.key !== 'Enter') { return; }
       event.preventDefault();
-      var inputs = Array.prototype.slice.call(tbody.querySelectorAll('[data-field="' + field + '"]'));
+      var inputs = Array.prototype.slice.call(tbody.querySelectorAll('input[data-field="' + field + '"]'));
       var at = inputs.indexOf(el);
       var next = inputs[at + 1];
       if (next) { next.focus(); next.select(); }
@@ -155,28 +214,44 @@
     return el;
   }
 
+  function applyField(order, field, value) {
+    order[field] = value;
+    if (field === 'addrBase' || field === 'addrDetail') {
+      order.address = ((order.addrBase || '') + ' ' + (order.addrDetail || '')).trim();
+    }
+  }
+
   function makeStatusCell(order, index) {
     var td = document.createElement('td');
     td.className = 'cell-status';
     td.setAttribute('data-label', '상태');
 
-    var issues = order.issues || [];
+    var gate = order.gate || 'green';
     var badge = document.createElement('span');
-    if (hasError(order)) {
-      badge.className = 'badge badge-error';
-      badge.textContent = '확인';
-    } else if (issues.length) {
-      badge.className = 'badge badge-warn';
-      badge.textContent = '확인';
-    } else {
-      badge.className = 'badge badge-ok';
-      badge.textContent = '정상';
-    }
+    badge.className = 'badge ' + (gate === 'red' ? 'badge-error' : gate === 'yellow' ? 'badge-warn' : 'badge-ok');
+    badge.textContent = GATE_LABEL[gate] || '정상';
+    var issues = order.issues || [];
     if (issues.length) {
       badge.title = issues.map(function (issue) { return issue.message; }).join(' · ');
-      badge.setAttribute('aria-label', '확인 필요: ' + badge.title);
+      badge.setAttribute('aria-label', GATE_LABEL[gate] + ': ' + badge.title);
     }
     td.appendChild(badge);
+
+    if (order.raw && (order.flags || []).length) {
+      var peek = document.createElement('button');
+      peek.type = 'button';
+      peek.className = 'row-peek';
+      peek.textContent = '원문';
+      peek.setAttribute('aria-expanded', 'false');
+      peek.setAttribute('aria-label', (index + 1) + '번 주문 원문 보기');
+      peek.addEventListener('click', function () {
+        var row = tbody.querySelector('tr.preview-row[data-for="' + index + '"]');
+        if (!row) { return; }
+        row.hidden = !row.hidden;
+        peek.setAttribute('aria-expanded', row.hidden ? 'false' : 'true');
+      });
+      td.appendChild(peek);
+    }
 
     var del = document.createElement('button');
     del.type = 'button';
@@ -193,39 +268,106 @@
     return td;
   }
 
+  function makeFlagsCell(order) {
+    var td = document.createElement('td');
+    td.className = 'cell-flags';
+    td.setAttribute('data-label', '특수플래그');
+    var flags = order.flags || [];
+    if (!flags.length) {
+      var dash = document.createElement('span');
+      dash.className = 'flag-none';
+      dash.textContent = '—';
+      td.appendChild(dash);
+      return td;
+    }
+    flags.forEach(function (flag) {
+      var chip = document.createElement('span');
+      chip.className = 'flag-chip ' + flagClass(flag);
+      chip.textContent = flag;
+      var note = (order.flagNotes || {})[flag];
+      if (note) {
+        chip.title = note;
+        chip.setAttribute('aria-label', flag + ': ' + note);
+      }
+      td.appendChild(chip);
+    });
+    return td;
+  }
+
+  function flagClass(flag) {
+    if (flag.indexOf('수량불일치') === 0 || flag.indexOf('사진') === 0 || flag.indexOf('단골') === 0) { return 'is-red'; }
+    if (flag.indexOf('도서산간') === 0) { return 'is-blue'; }
+    return 'is-amber';
+  }
+
+  function updateAllFlags() {
+    Array.prototype.forEach.call(tbody.querySelectorAll('tr.order-row'), function (tr, index) {
+      var order = state.orders[index];
+      if (!order) { return; }
+      var td = tr.querySelector('.cell-flags');
+      if (td) { td.replaceWith(makeFlagsCell(order)); }
+      tr.classList.toggle('is-error', order.gate === 'red');
+      tr.classList.toggle('is-warn', order.gate === 'yellow');
+      var preview = tbody.querySelector('tr.preview-row[data-for="' + index + '"]');
+      if (preview) {
+        var pre = preview.querySelector('pre');
+        if (pre) { pre.textContent = order.raw || ''; }
+      }
+    });
+  }
+
   function refreshRow(tr, order) {
-    var issues = T.issuesFor(order);
+    var issues = order.issues || T.issuesFor(order);
     order.issues = issues;
 
-    var error = hasError(order);
-    tr.classList.toggle('is-error', error);
-    tr.classList.toggle('is-warn', !error && issues.length > 0);
+    tr.classList.toggle('is-error', order.gate === 'red');
+    tr.classList.toggle('is-warn', order.gate === 'yellow');
 
-    FIELDS.forEach(function (field) {
-      var el = tr.querySelector('[data-field="' + field.key + '"]');
-      if (!el) { return; }
-      var level = levelFor(issues, field.key);
+    Array.prototype.forEach.call(tr.querySelectorAll('.cell-input'), function (el) {
+      var field = el.getAttribute('data-field');
+      var level = levelFor(issues, field);
       el.classList.toggle('is-error', level === 'error');
       el.classList.toggle('is-warn', level === 'warn');
     });
 
     var td = tr.querySelector('.cell-status');
     if (td) {
-      var fresh = makeStatusCell(order, Number(tr.getAttribute('data-index')));
-      td.replaceWith(fresh);
+      td.replaceWith(makeStatusCell(order, Number(tr.getAttribute('data-index'))));
     }
+  }
+
+  function makePreviewRow(order, index) {
+    var tr = document.createElement('tr');
+    tr.className = 'preview-row';
+    tr.setAttribute('data-for', String(index));
+    tr.hidden = true;
+    var td = document.createElement('td');
+    td.colSpan = FIELDS.length + 3;
+    var wrap = document.createElement('div');
+    wrap.className = 'preview-box';
+    var label = document.createElement('p');
+    label.className = 'preview-label';
+    label.textContent = '원본 대화 미리보기 — 고친 내용이 최종값으로 들어갔는지 확인하세요.';
+    var pre = document.createElement('pre');
+    pre.textContent = order.raw || '';
+    wrap.appendChild(label);
+    wrap.appendChild(pre);
+    td.appendChild(wrap);
+    tr.appendChild(td);
+    return tr;
   }
 
   function render() {
     tbody.textContent = '';
 
+    if (state.orders.length) { T.markDuplicates(state.orders); }
+
     state.orders.forEach(function (order, index) {
       var tr = document.createElement('tr');
+      tr.className = 'order-row';
       tr.setAttribute('data-index', String(index));
-      order.issues = T.issuesFor(order);
-      var error = hasError(order);
-      if (error) { tr.classList.add('is-error'); }
-      else if (order.issues.length) { tr.classList.add('is-warn'); }
+      if (order.gate === 'red') { tr.classList.add('is-error'); }
+      else if (order.gate === 'yellow') { tr.classList.add('is-warn'); }
 
       var no = document.createElement('td');
       no.className = 'row-no';
@@ -235,16 +377,33 @@
       FIELDS.forEach(function (field) {
         var td = document.createElement('td');
         td.setAttribute('data-label', field.label);
-        var el = makeCellInput(order, field.key, index);
-        var level = levelFor(order.issues, field.key);
-        if (level === 'error') { el.classList.add('is-error'); }
-        if (level === 'warn') { el.classList.add('is-warn'); }
-        td.appendChild(el);
+        if (field.cls) { td.className = field.cls; }
+
+        if (field.stacked) {
+          var stack = document.createElement('div');
+          stack.className = 'cell-stack';
+          field.stacked.forEach(function (part) {
+            var el = makeCellInput(order, part.key, index, part.placeholder);
+            var level = levelFor(order.issues || [], part.key);
+            if (level === 'error') { el.classList.add('is-error'); }
+            if (level === 'warn') { el.classList.add('is-warn'); }
+            stack.appendChild(el);
+          });
+          td.appendChild(stack);
+        } else {
+          var el = makeCellInput(order, field.key, index);
+          var level = levelFor(order.issues || [], field.key);
+          if (level === 'error') { el.classList.add('is-error'); }
+          if (level === 'warn') { el.classList.add('is-warn'); }
+          td.appendChild(el);
+        }
         tr.appendChild(td);
       });
 
+      tr.appendChild(makeFlagsCell(order));
       tr.appendChild(makeStatusCell(order, index));
       tbody.appendChild(tr);
+      tbody.appendChild(makePreviewRow(order, index));
     });
 
     updateCounts();
@@ -263,7 +422,10 @@
 
   /* ── 내보내기 ─────────────────────────────────────────── */
   function options() {
-    return { includeDepositor: !!(includeDepositor && includeDepositor.checked) };
+    return {
+      includeDepositor: !!(includeDepositor && includeDepositor.checked),
+      includeSender: !!(includeSender && includeSender.checked)
+    };
   }
 
   function blockingErrors() {
@@ -276,14 +438,14 @@
     var courier = T.courierById(courierSelect.value);
     var now = new Date();
     var stamp = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-    return '톡송장_' + courier.label.replace(/\s+/g, '') + '_' + stamp + '.csv';
+    return '톡송장_' + courier.label.replace(/[\s()]+/g, '') + '_' + stamp + '.csv';
   }
 
   function downloadCsv() {
     if (!state.orders.length) { return; }
     var bad = blockingErrors();
     if (bad) {
-      say(exportStatus, '확인 필요 ' + bad + '건이 있습니다. 빨간 칸을 고치거나 해당 행을 지운 뒤 내려받아 주세요.', true);
+      say(exportStatus, '적색 보류 ' + bad + '건이 있습니다. 빨간 칸을 고치거나 해당 행을 지운 뒤 내려받아 주세요.', true);
       var firstBad = tbody.querySelector('.is-error [data-field]');
       if (firstBad) { firstBad.focus(); }
       return;
@@ -328,7 +490,7 @@
     if (!state.orders.length) { return; }
     var bad = blockingErrors();
     if (bad) {
-      say(exportStatus, '확인 필요 ' + bad + '건이 있습니다. 빨간 칸을 먼저 고쳐 주세요.', true);
+      say(exportStatus, '적색 보류 ' + bad + '건이 있습니다. 빨간 칸을 먼저 고쳐 주세요.', true);
       return;
     }
     var tsv = T.toTSV(state.orders, courierSelect.value, options());
@@ -474,6 +636,11 @@
   if (includeDepositor) {
     includeDepositor.addEventListener('change', function () {
       say(exportStatus, includeDepositor.checked ? '입금자명 열을 CSV 끝에 추가합니다.' : '');
+    });
+  }
+  if (includeSender) {
+    includeSender.addEventListener('change', function () {
+      say(exportStatus, includeSender.checked ? '발송인 열을 CSV 끝에 추가합니다.' : '');
     });
   }
 
