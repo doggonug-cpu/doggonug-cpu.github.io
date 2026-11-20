@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>한울의 작은 웹도구 4종 + 한미 공시 3줄 요약 — 무료, 회원가입 없음</title>
-<meta name="description" content="완도에서 만드는 무료 웹도구 4종(접근성 UI 킷, 10초 견적서, AI 수업 자료, 판매 마진 계산기)과 매일 두 번 오는 한미 공시 3줄 요약 채널. 필요하면 맞춤 제작·공시 알림 봇 구축을 견적 24시간 안에 회신합니다.">
+<title>한울의 작은 웹도구 5종 + 한미 공시 3줄 요약 — 무료, 회원가입 없음</title>
+<meta name="description" content="완도에서 만드는 무료 웹도구 5종(접근성 UI 킷, 10초 견적서, AI 수업 자료, 판매 마진 계산기, 카톡 주문 송장 변환기)과 매일 두 번 오는 한미 공시 3줄 요약 채널. 필요하면 맞춤 제작·공시 알림 봇 구축을 견적 24시간 안에 회신합니다.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="https://doggonug-cpu.github.io/">
 <link rel="alternate" type="text/plain" title="LLMs.txt" href="https://doggonug-cpu.github.io/llms.txt">
@@ -12,8 +12,8 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="한울의 작은 웹도구">
-<meta property="og:title" content="무료 웹도구 4종 + 한미 공시 3줄 요약">
-<meta property="og:description" content="접근성 UI 킷 · 10초 견적서 · AI 수업 자료 · 판매 마진 계산기. 전부 무료, 회원가입·추적 없음. 맞춤 제작과 공시 알림 봇은 견적 24시간 안에 회신합니다.">
+<meta property="og:title" content="무료 웹도구 5종 + 한미 공시 3줄 요약">
+<meta property="og:description" content="접근성 UI 킷 · 10초 견적서 · AI 수업 자료 · 판매 마진 계산기 · 카톡 주문 송장 변환기. 전부 무료, 회원가입·추적 없음. 맞춤 제작과 공시 알림 봇은 견적 24시간 안에 회신합니다.">
 <meta property="og:url" content="https://doggonug-cpu.github.io/">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary">
@@ -32,7 +32,7 @@
       "@type": "CollectionPage",
       "@id": "https://doggonug-cpu.github.io/#page",
       "url": "https://doggonug-cpu.github.io/",
-      "name": "한울의 작은 웹도구 4종 + 한미 공시 3줄 요약",
+      "name": "한울의 작은 웹도구 5종 + 한미 공시 3줄 요약",
       "isPartOf": { "@id": "https://doggonug-cpu.github.io/#website" },
       "mainEntity": {
         "@type": "ItemList",
@@ -40,7 +40,8 @@
           { "@type": "ListItem", "position": 1, "name": "A11yKit", "url": "https://doggonug-cpu.github.io/a11y-ui-kit/" },
           { "@type": "ListItem", "position": 2, "name": "QuickQuote", "url": "https://doggonug-cpu.github.io/quick-quote-pwa/" },
           { "@type": "ListItem", "position": 3, "name": "한울에듀테크 AI kit", "url": "https://doggonug-cpu.github.io/edutech-ai-kit/" },
-          { "@type": "ListItem", "position": 4, "name": "마진계산기", "url": "https://doggonug-cpu.github.io/seller-margin-pseo/" }
+          { "@type": "ListItem", "position": 4, "name": "마진계산기", "url": "https://doggonug-cpu.github.io/seller-margin-pseo/" },
+          { "@type": "ListItem", "position": 5, "name": "톡송장 3초", "url": "https://doggonug-cpu.github.io/kakao-invoice/" }
         ]
       }
     },
@@ -65,7 +66,7 @@
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--body);line-height:1.65;
+body{margin:0;background:var(--bg);color:var(--body);line-height:1.65;word-break:keep-all;overflow-wrap:break-word;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;font-size:17px}
 h1,h2,h3{color:var(--ink);line-height:1.28;letter-spacing:-.01em;margin:0}
 h1{font-size:clamp(1.7rem,4.2vw,2.6rem)}
@@ -91,7 +92,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,te
 .hero .facts li{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:.86rem;color:var(--muted)}
 section{padding:32px 0}
 .sec-kicker{margin:0 0 6px;font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:18px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-top:18px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:8px}
 .card h3{margin:0}
 .card h3 a{color:var(--ink);text-decoration:none}
@@ -152,7 +153,7 @@ form .btn{margin-top:16px;width:100%}
   <div class="wrap">
     <a class="brand" href="https://doggonug-cpu.github.io/"><span class="dot" aria-hidden="true"></span>한울의 작은 웹도구</a>
     <nav aria-label="주요 메뉴">
-      <a href="#tools">도구 4종</a>
+      <a href="#tools">도구 5종</a>
       <a href="#disclosure">공시 채널</a>
       <a href="#custom">맞춤 제작</a>
       <a href="https://doggonug-cpu.github.io/llms.txt" target="_blank" rel="noopener">AI 인덱스</a>
@@ -162,14 +163,14 @@ form .btn{margin-top:16px;width:100%}
 
 <main id="main">
   <div class="wrap hero">
-    <h1>무료로 쓰는 도구 네 개,<br>그 옆의 일은 맡아서 합니다.</h1>
+    <h1>무료로 쓰는 도구 다섯 개,<br>그 옆의 일은 맡아서 합니다.</h1>
     <p class="lead">
       완도에서 만드는 정적 웹도구입니다. 회원가입도, 추적도, 서버 저장도 없고 모든 계산과 문서 작성은
       방문자의 브라우저 안에서 끝납니다. 매일 두 번씩 한·미 공시를 3줄로 정리해 보내는 텔레그램 채널도
       같은 사람이 운영합니다.
     </p>
     <ul class="facts">
-      <li>4개 도구 전부 무료</li>
+      <li>5개 도구 전부 무료</li>
       <li>계정·카드 정보 없음</li>
       <li>공시 요약은 사실만 — 투자 자문 아님</li>
       <li>견적 회신 24시간 이내</li>
@@ -178,7 +179,7 @@ form .btn{margin-top:16px;width:100%}
 
   <section id="tools" aria-labelledby="tools-title">
     <div class="wrap">
-      <p class="sec-kicker">도구 4종</p>
+      <p class="sec-kicker">도구 5종</p>
       <h2 id="tools-title">지금 바로 열어 쓸 수 있는 것들</h2>
       <div class="grid">
         <article class="card">
@@ -208,6 +209,13 @@ form .btn{margin-top:16px;width:100%}
           <p>스마트스토어·쿠팡·배달앱·크몽 등 21개 판매채널의 순이익·마진·손익분기 판매가를 부가세·광고비·반품까지 넣어 계산합니다.</p>
           <p class="meta">계산 무료 · 마진 시트 제작은 견적</p>
           <a class="go" href="https://doggonug-cpu.github.io/seller-margin-pseo/">도구 열기 →</a>
+        </article>
+        <article class="card">
+          <p class="tag">판매 · 배송</p>
+          <h3><a href="https://doggonug-cpu.github.io/kakao-invoice/">톡송장 3초</a></h3>
+          <p>카톡 주문을 붙여넣으면 받는분·연락처·주소·상품·수량·배송메모를 자동으로 나눠 CJ·로젠·한진·롯데·우체국·스마트스토어 양식 CSV로 저장합니다. 100% 브라우저 처리, 회원가입 없음.</p>
+          <p class="meta">변환·CSV 무료 · 커스텀 양식은 Pro</p>
+          <a class="go" href="https://doggonug-cpu.github.io/kakao-invoice/">도구 열기 →</a>
         </article>
       </div>
     </div>
@@ -259,7 +267,7 @@ form .btn{margin-top:16px;width:100%}
             <option>맞춤 공시 알림 봇 (키워드·기업 지정)</option>
             <option>공시 3줄 뉴스레터 사전 신청</option>
             <option>기존 사이트·업무 자동화 (수집·정리·알림)</option>
-            <option>도구 4종 중 하나의 맞춤 제작</option>
+            <option>도구 5종 중 하나의 맞춤 제작</option>
             <option>기타 문의</option>
           </select>
 
@@ -387,6 +395,7 @@ form .btn{margin-top:16px;width:100%}
           <li><a href="https://doggonug-cpu.github.io/quick-quote-pwa/">QuickQuote — 10초 견적서</a></li>
           <li><a href="https://doggonug-cpu.github.io/edutech-ai-kit/">한울에듀테크 AI kit</a></li>
           <li><a href="https://doggonug-cpu.github.io/seller-margin-pseo/">마진계산기 — 21개 채널</a></li>
+          <li><a href="https://doggonug-cpu.github.io/kakao-invoice/">톡송장 3초 — 카톡 주문 송장 변환</a></li>
         </ul>
       </div>
       <div>

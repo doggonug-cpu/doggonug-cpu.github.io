@@ -5,7 +5,7 @@ Pages user site at <https://doggonug-cpu.github.io>. No framework, no bundler, n
 no server-side storage.
 
 **한국어** — 완도에서 만드는 작은 정적 웹도구 모음입니다. 회원가입·추적·서버 저장이 없고,
-모든 계산과 문서 작성은 방문자의 브라우저에서만 이뤄집니다. 아래 네 서비스는 지금 바로
+모든 계산과 문서 작성은 방문자의 브라우저에서만 이뤄집니다. 아래 다섯 서비스는 지금 바로
 쓸 수 있고, AI 에이전트용 인덱스(`llms.txt`)와 MCP 서버도 함께 배포합니다.
 
 ## Live services
@@ -16,6 +16,7 @@ no server-side storage.
 | [**QuickQuote**](https://doggonug-cpu.github.io/quick-quote-pwa/) | 견적서 · 거래명세서 · 간이영수증 in ~10 seconds, printed or saved as PDF. Offline PWA, 20 currencies, KO/EN. | Small businesses, freelancers, on-site sales |
 | [**한울에듀테크 AI kit**](https://doggonug-cpu.github.io/edutech-ai-kit/) | Free 40-minute AI-literacy lesson kit (plan, command cards, worksheet) for age 5–grade 2, zero devices needed. | Teachers, digital tutors, kindergarten staff |
 | [**마진계산기**](https://doggonug-cpu.github.io/seller-margin-pseo/) | Net-profit, margin and break-even price across 21 Korean sales channels, incl. VAT, ads and returns. | Sellers, freelancers, own-shop owners |
+| [**톡송장 3초**](https://doggonug-cpu.github.io/kakao-invoice/) | 카톡·문자 주문을 받는분·연락처·주소·상품·수량·배송메모로 나눠 CJ·로젠·한진·롯데·우체국·스마트스토어 CSV로. 브라우저 안에서만 변환합니다. | 공구·도매·소규모 셀러, 스마트스토어 판매자 |
 
 ## Also running
 
