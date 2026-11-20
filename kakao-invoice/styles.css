@@ -208,7 +208,7 @@ img { max-width: 100%; height: auto; }
 .type-grid li { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px 16px 14px; box-shadow: var(--shadow); min-width: 0; }
 .type-grid strong { display: block; color: var(--ink); font-size: .95rem; margin-bottom: 6px; }
 .type-grid p { font-size: .84rem; color: var(--muted); line-height: 1.55; }
-.type-grid code { font-size: .78rem; background: #eef4ff; color: var(--accent); border-radius: 5px; padding: 1px 5px; word-break: break-all; }
+.type-grid code { font-size: .78rem; background: #eef4ff; color: var(--accent); border-radius: 5px; padding: 1px 5px; word-break: keep-all; overflow-wrap: anywhere; }
 .type-no { position: absolute; top: 12px; right: 14px; font-size: .74rem; font-weight: 800; color: #b3bfd0; }
 .type-legend { margin-top: 16px; font-size: .84rem; color: var(--muted); display: flex; align-items: center; flex-wrap: wrap; gap: 6px 4px; }
 .type-legend .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-left: 8px; }
