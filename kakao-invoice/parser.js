@@ -972,7 +972,12 @@
     if (extracted.detected) {
       // 유형 2: 말풍선 병합 세션 단위로 파싱
       buildSessions(extracted.messages).forEach(function (session) {
-        blocks.push({ text: session.text, explicit: true });
+        var parts = splitNumbered(session.text);
+        if (parts.length > 1) {
+          parts.forEach(function (part) { blocks.push({ text: part, explicit: true }); });
+        } else {
+          blocks.push({ text: session.text, explicit: true });
+        }
       });
       if (extracted.preamble.trim()) {
         blocks.push({ text: extracted.preamble.trim(), explicit: true });
