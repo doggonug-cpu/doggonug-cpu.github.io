@@ -4,6 +4,13 @@
 
   var T = window.TalkInvoice;
   if (!T) { return; }
+  var L = window.TalkLicense || null;
+
+  /* 결제 동선 설정 — 크몽 상품이 승인되면 아래 kmongUrl 에 상품 주소만 넣으면 됩니다. */
+  var PAY = {
+    kmongUrl: '',
+    pending: '크몽 상품 승인 직후 카드결제 링크가 연결됩니다. 지금 바로 사용하려면 계좌이체 신청(이메일·입금자명)을 남겨 주세요 — 입금 안내를 메일로 보내 드립니다.'
+  };
 
   var SAMPLES = {
     farm: [
@@ -89,7 +96,7 @@
 
   var GATE_LABEL = { red: '보류', yellow: '확인', green: '정상' };
 
-  var state = { orders: [], parseTimer: null };
+  var state = { orders: [], parseTimer: null, license: null, split: null };
 
   var input = document.getElementById('orderInput');
   var tbody = document.getElementById('orderRows');
@@ -108,8 +115,80 @@
   var btnCopy = document.getElementById('btnCopy');
   var btnClear = document.getElementById('btnClear');
   var exportStatus = document.getElementById('exportStatus');
-  var proForm = document.getElementById('proForm');
-  var proStatus = document.getElementById('proStatus');
+  var orderForm = document.getElementById('orderForm');
+  var orderStatus = document.getElementById('orderStatus');
+  var countPlan = document.getElementById('countPlan');
+  var countLock = document.getElementById('countLock');
+  var licenseForm = document.getElementById('licenseForm');
+  var licenseInput = document.getElementById('licenseInput');
+  var licenseState = document.getElementById('licenseState');
+  var licenseStatus = document.getElementById('licenseStatus');
+  var licenseRemove = document.getElementById('licenseRemove');
+
+  /* ── 라이선스 상태 ────────────────────────────────────── */
+  function storage() {
+    try { return window.localStorage; } catch (err) { return null; }
+  }
+
+  function isPro() { return !!(L && L.isPro(state.license)); }
+
+  function splitInfo() {
+    if (!L) { return { pro: true, limit: null, total: state.orders.length, visible: state.orders.length, locked: 0 }; }
+    return L.splitOrders(state.orders, state.license);
+  }
+
+  function licenseLine() {
+    var lic = state.license || { status: 'none' };
+    if (!L) { return '라이선스 기능을 불러오지 못했습니다. 새로 고침해 주세요.'; }
+    if (lic.status === 'valid') {
+      var left = lic.daysLeft;
+      return 'Pro 사용 중 — ' + lic.planLabel + ' 이용권, ' + lic.exp + '까지' +
+        (typeof left === 'number' && left >= 0 ? ' (' + (left === 0 ? '오늘까지' : left + '일 남음') + ')' : '') + '.';
+    }
+    if (lic.status === 'expired') {
+      return '키가 ' + lic.exp + '에 만료되었습니다. 새 키를 등록하면 다시 열립니다.';
+    }
+    if (lic.status === 'invalid') {
+      return '등록된 키를 확인할 수 없습니다 — ' + lic.reason + '.';
+    }
+    return '이 브라우저에 등록된 키가 없습니다 — 무료 체험(1회 5건)으로 쓰고 있습니다.';
+  }
+
+  function refreshLicenseUI() {
+    var lic = state.license || { status: 'none' };
+    if (countPlan) {
+      countPlan.textContent = lic.status === 'valid' ? ('Pro 무제한 · ' + lic.exp) : '무료 체험 · 1회 5건';
+      countPlan.classList.toggle('pro', lic.status === 'valid');
+    }
+    if (licenseState) {
+      licenseState.textContent = licenseLine();
+      licenseState.classList.toggle('is-err', lic.status === 'invalid' || lic.status === 'expired');
+      licenseState.classList.toggle('is-pro', lic.status === 'valid');
+    }
+  }
+
+  /* Pro는 택배사 양식·열 선택을 이 브라우저에 기억합니다(무료는 기억하지 않음). */
+  function applySavedFormat() {
+    if (!L || !isPro()) { return; }
+    var fmt = L.readFormat(storage());
+    if (!fmt) { return; }
+    if (fmt.courier) {
+      var hit = false;
+      Array.prototype.forEach.call(courierSelect.options, function (opt) { if (opt.value === fmt.courier) { hit = true; } });
+      if (hit) { courierSelect.value = fmt.courier; }
+    }
+    if (includeSender) { includeSender.checked = !!fmt.includeSender; }
+    if (includeDepositor) { includeDepositor.checked = !!fmt.includeDepositor; }
+  }
+
+  function rememberFormat() {
+    if (!L || !isPro()) { return; }
+    L.saveFormat(storage(), {
+      courier: courierSelect.value,
+      includeSender: !!(includeSender && includeSender.checked),
+      includeDepositor: !!(includeDepositor && includeDepositor.checked)
+    });
+  }
 
   /* ── 공통 ─────────────────────────────────────────────── */
   function levelFor(issues, field) {
@@ -137,7 +216,8 @@
     courierHint.textContent = '열 구성: ' + courier.note;
   }
 
-  function updateCounts() {
+  function updateCounts(split) {
+    split = split || splitInfo();
     var total = state.orders.length;
     var red = 0;
     var yellow = 0;
@@ -160,6 +240,10 @@
     if (countErr) {
       countErr.hidden = red === 0;
       countErr.textContent = '보류 ' + red;
+    }
+    if (countLock) {
+      countLock.hidden = split.locked === 0;
+      countLock.textContent = 'Pro 잠금 ' + split.locked;
     }
 
     tableWrap.hidden = total === 0;
@@ -357,12 +441,73 @@
     return tr;
   }
 
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) { node.className = className; }
+    if (text !== undefined && text !== null) { node.textContent = text; }
+    return node;
+  }
+
+  function makePaywallRow(split) {
+    var tr = document.createElement('tr');
+    tr.className = 'paywall-row';
+    var td = document.createElement('td');
+    td.colSpan = FIELDS.length + 3;
+
+    var box = el('div', 'paywall');
+
+    box.appendChild(el('p', 'paywall-tag', 'Pro 잠금 — 6번째 행부터'));
+    box.appendChild(el('p', 'paywall-title', '입력한 ' + split.total + '건 중 ' + split.locked + '건이 잠겨 있습니다'));
+    box.appendChild(el('p', 'paywall-desc',
+      '앞의 ' + split.visible + '건은 지금 그대로 표에서 고쳐 쓰고 CSV·엑셀로 내보낼 수 있습니다. ' +
+      (split.visible + 1) + '~' + split.total + '번 주문은 Pro 라이선스를 등록하면 이 자리에서 바로 열립니다. ' +
+      '무료 체험은 1회 변환 5건까지입니다.'));
+
+    var actions = el('div', 'paywall-actions');
+    var kmong = el('button', 'btn btn-primary', 'Pro 1개월 이용권 카드결제 (크몽)');
+    kmong.type = 'button';
+    kmong.id = 'payKmong';
+    var transfer = el('a', 'btn btn-ghost', '계좌이체로 5분 만에 키 받기');
+    transfer.setAttribute('href', '#order');
+    var register = el('a', 'btn btn-quiet', '이미 키가 있어요 — 등록');
+    register.setAttribute('href', '#license');
+    actions.appendChild(kmong);
+    actions.appendChild(transfer);
+    actions.appendChild(register);
+    box.appendChild(actions);
+
+    var note = el('p', 'paywall-note', PAY.pending);
+    note.id = 'payNotice';
+    note.hidden = true;
+    box.appendChild(note);
+
+    box.appendChild(el('p', 'paywall-foot',
+      '1개월 29,000원 · 3개월 79,000원. 키 한 줄을 등록하면 이 브라우저에서 바로 열립니다. 주문 데이터는 지금도 브라우저 밖으로 나가지 않습니다.'));
+
+    td.appendChild(box);
+    tr.appendChild(td);
+
+    kmong.addEventListener('click', function () {
+      if (PAY.kmongUrl) {
+        window.open(PAY.kmongUrl, '_blank', 'noopener');
+        return;
+      }
+      note.hidden = false;
+      transfer.focus();
+    });
+
+    return tr;
+  }
+
   function render() {
     tbody.textContent = '';
 
     if (state.orders.length) { T.markDuplicates(state.orders); }
 
-    state.orders.forEach(function (order, index) {
+    var split = splitInfo();
+    state.split = split;
+
+    state.orders.slice(0, split.visible).forEach(function (order, index) {
       var tr = document.createElement('tr');
       tr.className = 'order-row';
       tr.setAttribute('data-index', String(index));
@@ -406,7 +551,9 @@
       tbody.appendChild(makePreviewRow(order, index));
     });
 
-    updateCounts();
+    if (split.locked > 0) { tbody.appendChild(makePaywallRow(split)); }
+
+    updateCounts(split);
   }
 
   /* ── 파싱 ─────────────────────────────────────────────── */
@@ -428,10 +575,22 @@
     };
   }
 
-  function blockingErrors() {
-    return state.orders.filter(function (order) {
+  function blockingErrors(rows) {
+    return (rows || state.orders).filter(function (order) {
       return (order.issues || T.issuesFor(order)).some(function (issue) { return issue.level === 'error'; });
     }).length;
+  }
+
+  /* 무료 체험은 앞의 5건만 내보냅니다. Pro는 전체. */
+  function rowsForExport() {
+    if (!L) { return state.orders.slice(); }
+    return L.exportRows(state.orders, state.license);
+  }
+
+  function limitNote(sent) {
+    var hidden = state.orders.length - sent;
+    if (hidden <= 0) { return ''; }
+    return ' 무료 체험은 1회 5건까지 내보냅니다 — 나머지 ' + hidden + '건은 Pro 키를 등록하면 함께 나옵니다.';
   }
 
   function fileName() {
@@ -443,7 +602,8 @@
 
   function downloadCsv() {
     if (!state.orders.length) { return; }
-    var bad = blockingErrors();
+    var rows = rowsForExport();
+    var bad = blockingErrors(rows);
     if (bad) {
       say(exportStatus, '적색 보류 ' + bad + '건이 있습니다. 빨간 칸을 고치거나 해당 행을 지운 뒤 내려받아 주세요.', true);
       var firstBad = tbody.querySelector('.is-error [data-field]');
@@ -451,7 +611,7 @@
       return;
     }
 
-    var csv = T.toCSV(state.orders, courierSelect.value, options());
+    var csv = T.toCSV(rows, courierSelect.value, options());
     var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     var url = URL.createObjectURL(blob);
     var link = document.createElement('a');
@@ -463,7 +623,7 @@
       URL.revokeObjectURL(url);
       link.remove();
     }, 1500);
-    say(exportStatus, 'CSV 파일을 내려받았습니다 — ' + state.orders.length + '건, ' + T.courierById(courierSelect.value).label + ' 양식.');
+    say(exportStatus, 'CSV 파일을 내려받았습니다 — ' + rows.length + '건, ' + T.courierById(courierSelect.value).label + ' 양식.' + limitNote(rows.length));
   }
 
   function copyText(text) {
@@ -488,67 +648,76 @@
 
   function copyTsv() {
     if (!state.orders.length) { return; }
-    var bad = blockingErrors();
+    var rows = rowsForExport();
+    var bad = blockingErrors(rows);
     if (bad) {
       say(exportStatus, '적색 보류 ' + bad + '건이 있습니다. 빨간 칸을 먼저 고쳐 주세요.', true);
       return;
     }
-    var tsv = T.toTSV(state.orders, courierSelect.value, options());
+    var tsv = T.toTSV(rows, courierSelect.value, options());
     copyText(tsv).then(function () {
-      say(exportStatus, '표를 복사했습니다. 엑셀에서 셀을 고르고 붙여넣으면 열이 맞춰 들어갑니다.');
+      say(exportStatus, '표를 복사했습니다 — ' + rows.length + '건. 엑셀에서 셀을 고르고 붙여넣으면 열이 맞춰 들어갑니다.' + limitNote(rows.length));
     }).catch(function () {
       say(exportStatus, '복사가 막혔습니다. 표의 칸을 직접 선택해 복사하거나 CSV로 내려받아 주세요.', true);
     });
   }
 
-  /* ── Pro 사전신청 ─────────────────────────────────────── */
+  /* ── Pro 계좌이체 신청 ────────────────────────────────── */
   function fieldWrap(el) { return el.closest('.field') || el.closest('.check'); }
 
   function markField(el, bad) {
-    var wrap = fieldWrap(el);
+    var wrap = el ? fieldWrap(el) : null;
     if (wrap) { wrap.classList.toggle('has-error', bad); }
   }
 
-  function submitInquiry(event) {
+  function submitOrderForm(event) {
     event.preventDefault();
 
-    var orderCount = proForm.elements['하루 주문 건수'];
-    var email = proForm.elements['email'];
-    var consent = proForm.elements['개인정보 동의'];
-    var honey = proForm.elements['_honey'];
+    var period = orderForm.elements['이용 기간'];
+    var depositor = orderForm.elements['입금자명'];
+    var email = orderForm.elements['email'];
+    var consent = orderForm.elements['개인정보 동의'];
+    var honey = orderForm.elements['_honey'];
 
-    markField(orderCount, false);
+    markField(period, false);
+    markField(depositor, false);
     markField(email, false);
     markField(consent, false);
 
     if (honey && honey.value) {
-      say(proStatus, '사전신청을 접수했습니다. 감사합니다.');
-      proForm.reset();
+      say(orderStatus, '신청을 접수했습니다. 감사합니다.');
+      orderForm.reset();
       return;
     }
 
-    if (!orderCount.value) {
-      markField(orderCount, true);
-      say(proStatus, '하루 주문 건수를 골라 주세요.', true);
-      orderCount.focus();
+    if (!period.value) {
+      markField(period, true);
+      say(orderStatus, '이용 기간을 골라 주세요.', true);
+      period.focus();
+      return;
+    }
+    if (!depositor.value.trim()) {
+      markField(depositor, true);
+      say(orderStatus, '입금자명을 적어 주세요(입금하실 때 쓸 이름).', true);
+      depositor.focus();
       return;
     }
     if (!email.value || !email.checkValidity()) {
       markField(email, true);
-      say(proStatus, '회신받을 이메일 주소를 확인해 주세요.', true);
+      say(orderStatus, '키와 입금 안내를 받을 이메일 주소를 확인해 주세요.', true);
       email.focus();
       return;
     }
     if (!consent.checked) {
       markField(consent, true);
-      say(proStatus, '사전신청 안내를 위한 개인정보 수집에 동의해 주세요.', true);
+      say(orderStatus, '입금 안내·키 발급을 위한 이메일·입금자명 수집에 동의해 주세요.', true);
       consent.focus();
       return;
     }
 
-    var endpoint = proForm.getAttribute('action');
+    var endpoint = orderForm.getAttribute('action');
     var data = new URLSearchParams();
-    new FormData(proForm).forEach(function (value, key) {
+    new FormData(orderForm).forEach(function (value, key) {
       if (key === '_honey') { return; }
       data.append(key, value);
     });
@@ -556,11 +725,11 @@
     data.append('page', window.location.href);
     data.append('접수 시각', new Date().toISOString());
 
-    var button = proForm.querySelector('button[type="submit"]');
+    var button = orderForm.querySelector('button[type="submit"]');
     var label = button.textContent;
     button.disabled = true;
     button.textContent = '보내는 중…';
-    say(proStatus, '');
+    say(orderStatus, '');
 
     var timer;
     var guard = new Promise(function (_, reject) {
@@ -578,9 +747,9 @@
       window.clearTimeout(timer);
       var ok = result && (result.success === 'true' || result.success === true);
       if (!ok) { throw new Error('not accepted'); }
-      proForm.reset();
+      orderForm.reset();
       button.textContent = '접수 완료';
-      say(proStatus, '사전신청을 접수했습니다. 출시하면 적어 주신 이메일로 먼저 안내드립니다.');
+      say(orderStatus, '신청을 접수했습니다. 입금 안내와 키 발급 방법을 적어 주신 이메일로 보내 드립니다(메일이 안 보이면 스팸함도 확인해 주세요).');
       window.setTimeout(function () {
         button.disabled = false;
         button.textContent = label;
@@ -589,8 +758,35 @@
       window.clearTimeout(timer);
       button.disabled = false;
       button.textContent = label;
-      say(proStatus, '지금은 신청을 받지 못했습니다. 잠시 뒤 다시 시도해 주세요.', true);
+      say(orderStatus, '지금은 신청을 받지 못했습니다. 잠시 뒤 다시 시도해 주세요.', true);
     });
+  }
+
+  /* ── 라이선스 키 등록 ─────────────────────────────────── */
+  function submitLicense(event) {
+    event.preventDefault();
+    if (!L) { say(licenseStatus, '라이선스 기능을 불러오지 못했습니다. 새로 고침해 주세요.', true); return; }
+    var token = (licenseInput.value || '').trim();
+    if (!token) {
+      say(licenseStatus, '이메일로 받은 키(TS3.…)를 붙여넣어 주세요.', true);
+      licenseInput.focus();
+      return;
+    }
+    var result = L.saveLicense(storage(), token, Date.now());
+    state.license = result;
+    refreshLicenseUI();
+    render();
+    if (result.status === 'valid') {
+      licenseInput.value = '';
+      say(licenseStatus, 'Pro가 열렸습니다 — ' + result.exp + '까지' +
+        (result.stored === false ? ' (이 브라우저에 저장하지 못했습니다: 시크릿 모드일 수 있습니다)' : '') + '.', false);
+      applySavedFormat();
+      rememberFormat();
+    } else if (result.status === 'expired') {
+      say(licenseStatus, '만료된 키입니다 — ' + result.reason + '. 새 키를 받아 등록해 주세요.', true);
+    } else {
+      say(licenseStatus, result.reason || '키를 확인해 주세요.', true);
+    }
   }
 
   /* ── 이벤트 연결 ──────────────────────────────────────── */
@@ -630,16 +826,19 @@
 
   courierSelect.addEventListener('change', function () {
     updateCourierHint();
+    rememberFormat();
     say(exportStatus, '');
   });
 
   if (includeDepositor) {
     includeDepositor.addEventListener('change', function () {
+      rememberFormat();
       say(exportStatus, includeDepositor.checked ? '입금자명 열을 CSV 끝에 추가합니다.' : '');
     });
   }
   if (includeSender) {
     includeSender.addEventListener('change', function () {
+      rememberFormat();
       say(exportStatus, includeSender.checked ? '발송인 열을 CSV 끝에 추가합니다.' : '');
     });
   }
@@ -647,11 +846,24 @@
   btnCsv.addEventListener('click', downloadCsv);
   btnCopy.addEventListener('click', copyTsv);
 
-  if (proForm) { proForm.addEventListener('submit', submitInquiry); }
+  if (orderForm) { orderForm.addEventListener('submit', submitOrderForm); }
+  if (licenseForm) { licenseForm.addEventListener('submit', submitLicense); }
+  if (licenseRemove) {
+    licenseRemove.addEventListener('click', function () {
+      if (L) { L.clearLicense(storage()); }
+      state.license = L ? L.readLicense(storage(), Date.now()) : { status: 'none' };
+      refreshLicenseUI();
+      render();
+      say(licenseStatus, '이 브라우저에서 키를 지웠습니다. 무료 체험(1회 5건)으로 돌아갑니다.');
+    });
+  }
 
   var year = document.getElementById('year');
   if (year) { year.textContent = String(new Date().getFullYear()); }
 
+  state.license = L ? L.readLicense(storage(), Date.now()) : { status: 'none' };
+  applySavedFormat();
   updateCourierHint();
+  refreshLicenseUI();
   updateCounts();
 })();

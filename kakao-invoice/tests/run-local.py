@@ -14,7 +14,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 ctx = quickjs.Context()
 ctx.eval("var window = this; var globalThis = this; var module = undefined;")
 
-for name in ("parser.js", "tests/cases.js"):
+for name in ("parser.js", "license.js", "tests/cases.js"):
     source = (ROOT / name).read_text(encoding="utf-8")
     try:
         ctx.eval(source)

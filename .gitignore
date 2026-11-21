@@ -1,0 +1,5 @@
+# 서명용 개인키는 절대 공개 저장소에 넣지 않습니다 (라이선스 키 발급은 저장소 밖에서).
+*.pem
+*.key
+license_private_key*
+issued_keys.csv

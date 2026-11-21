@@ -14,7 +14,7 @@ useful output is always available without an account.
 - [QuickQuote — 견적서 · 거래명세서 · 간이영수증](https://doggonug-cpu.github.io/quick-quote-pwa/): A quote, statement of transaction or simple receipt in about ten seconds, printed or saved as PDF. Offline PWA, no sign-up, 20 currencies, Korean/English. [Index](https://doggonug-cpu.github.io/quick-quote-pwa/llms.txt)
 - [한울에듀테크 AI·디지털 놀이 수업 키트](https://doggonug-cpu.github.io/edutech-ai-kit/): Free 40-minute AI-literacy lesson kit (plan, command cards, worksheet) for kindergarten age 5 to grade 2 that needs zero devices. Korean classroom use. [Index](https://doggonug-cpu.github.io/edutech-ai-kit/llms.txt)
 - [마진계산기 — 셀러 마진 계산기](https://doggonug-cpu.github.io/seller-margin-pseo/): Net-profit and margin calculator for 21 Korean sales channels (Smart Store, Coupang, delivery apps, fashion platforms, freelance marketplaces, own shop), including VAT, ad spend and return provisions. [Index](https://doggonug-cpu.github.io/seller-margin-pseo/llms.txt)
-- [톡송장 3초 — 카톡 주문 → 택배 송장 CSV](https://doggonug-cpu.github.io/kakao-invoice/): Paste KakaoTalk or SMS order messages and get recipient, phone, address, product, quantity and delivery memo split into a table, then export a courier CSV (CJ대한통운, 로젠, 한진, 롯데, 우체국) or SmartStore waybill columns. Parsed in the browser only; free and unlimited, no account. [Index](https://doggonug-cpu.github.io/kakao-invoice/llms.txt)
+- [톡송장 3초 — 카톡 주문 → 택배 송장 CSV](https://doggonug-cpu.github.io/kakao-invoice/): Paste KakaoTalk or SMS order messages and get recipient, phone, address, product, quantity and delivery memo split into a table, then export a courier CSV (CJ대한통운, 로젠, 한진, 롯데, 우체국) or SmartStore waybill columns. Parsed in the browser only, no account. Free for up to 5 orders per conversion; Pro (₩29,000/month, ₩79,000/3 months) unlocks 6+ orders with a licence key. [Index](https://doggonug-cpu.github.io/kakao-invoice/llms.txt)
 
 ## Filing summaries (Telegram) and custom alert bots
 
@@ -54,9 +54,9 @@ with English available in QuickQuote).
 ## Contact
 
 - Quote and custom work: the form on https://doggonug-cpu.github.io/a11y-ui-kit/#hire
-- Order-to-waybill conversion questions: the Pro waitlist form on
-  https://doggonug-cpu.github.io/kakao-invoice/#pro
-  (delivered to doggonug@gmail.com)
+- Order-to-waybill conversion questions: the order form on
+  https://doggonug-cpu.github.io/kakao-invoice/#order
+  (delivered to doggonug@gmail.com; the bank account is sent by reply)
 - Korean profile and lesson material: https://kmong.com/@한울에듀테크
 
 ## Optional

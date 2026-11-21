@@ -1,7 +1,7 @@
 # 톡송장 3초 — 카톡 주문 → 택배 송장 CSV
 
-> A free Korean browser tool that turns pasted KakaoTalk order messages into a
-> courier-ready spreadsheet: recipient, phone, postal code, base address, detail
+> A Korean browser tool that turns pasted KakaoTalk order messages into a
+> courier-ready spreadsheet (free for up to 5 orders per conversion): recipient, phone, postal code, base address, detail
 > address, product, quantity, delivery memo and special flags are split out
 > automatically, then exported as the fixed 9-column thermal-label sheet
 > (감열식 4B-2054N) or for CJ대한통운, 로젠, 한진, 롯데, 우체국, SmartStore.
@@ -59,15 +59,55 @@ no attention.
 ## Privacy
 
 - No network request is made with order data. Parsing, editing, CSV building and
-  clipboard copy all run in the page. Nothing is stored (no localStorage).
-- The only form that sends anything is the Pro waitlist form (email, optional phone,
-  order volume), posted through FormSubmit to the operator's mailbox.
+  clipboard copy all run in the page. Orders are never stored.
+- localStorage holds two things only, neither of them order data: the Pro licence key
+  (`ts3.license.v1`, a signed text token) and — for Pro users — the chosen courier and
+  column options (`ts3.format.v1`).
+- The only form that sends anything is the account-transfer order form (email,
+  depositor name, plan), posted through FormSubmit to the operator's mailbox. No bank
+  account or phone number is ever printed on the page; it is sent in the reply.
 
 ## Free vs Pro
 
-- Free and unlimited: conversion, five couriers + SmartStore format, CSV and TSV.
-- Pro (₩19,000/month, not released yet — waitlist only): per-client custom order
-  forms, bulk extraction from exported KakaoTalk `.txt`, bundle-shipment guard.
+- Free: one conversion of up to **5 orders** with every feature — eight field shapes,
+  the red/yellow/green gate, standard 9-column sheet, five couriers + SmartStore, CSV
+  and TSV. Conversions themselves are unlimited.
+- Pro (₩29,000 / month, ₩79,000 / 3 months): converting 6+ orders at once, unlimited
+  CSV/TSV export, and remembering the courier/column choice in that browser.
+- Pro opens with a licence key issued by email and pasted into the page (no account, no
+  PG). The key is an ECDSA P-256 signature over its own payload; the page carries only
+  the public key and checks it locally, so there is no server and no master secret in
+  the source. Paying by card (Kmong) is switched on by filling `PAY.kmongUrl` in
+  `app.js`; until then the button shows the "coming right after Kmong approval" note
+  and points at the account-transfer form.
+
+## Issuing a Pro key (operator, ~10 seconds)
+
+The signing key is **not** in this repository. It lives at
+`<workspace>/projects/toksongjang-license/license_private_key.pem` (0600, outside the
+public GitHub Pages checkout); `.gitignore` also blocks `*.pem` in case one is ever
+copied in.
+
+```
+# once
+python3 scripts/generate_license_key.py --init     # writes the key outside the repo
+python3 scripts/generate_license_key.py --check    # public key in license.js matches
+
+# per order (after the transfer is confirmed)
+python3 scripts/generate_license_key.py --plan month   --email buyer@example.com
+python3 scripts/generate_license_key.py --plan quarter --email buyer@example.com
+python3 scripts/generate_license_key.py --verify "TS3.…"
+
+# emergency: rotate the key pair
+python3 scripts/generate_license_key.py --pub       # paste into license.js PUBLIC_KEY
+```
+
+Key format: `TS3.<base64url payload>.<base64url r||s>`, payload
+`{"v":1,"id":"…","plan":"month|quarter|half","exp":"YYYY-MM-DD","iat":"YYYY-MM-DD","sub":"…"}`.
+`exp` is the last valid day (Korea time). Each issued key is appended to
+`issued_keys.csv` next to the private key. A key is not device-locked: it works in any
+browser where it is pasted, so it can be shared — treat it as a 29,000원 honour-system
+licence for the 14-day test.
 
 ## Limits (stated on the page)
 
@@ -78,15 +118,18 @@ no attention.
   standard shape, not a guarantee of the courier's current upload template.
 - SmartStore export is the four-column waybill registration format
   (`상품주문번호, 배송방법, 택배사, 송장번호`), so order numbers must be filled in.
-- Pro is a pre-launch waitlist; no payment is taken.
+- Pro is sold as a licence key by email; a card checkout via Kmong is added once that
+  listing is approved.
 
 ## Files
 
 - `index.html` — page, SEO metadata, JSON-LD (SoftwareApplication, FAQPage)
 - `styles.css` — all styling, CSS variables, no external fonts
 - `parser.js` — dependency-free parser + CSV/TSV builders (browser global and CommonJS)
-- `app.js` — table rendering, in-place editing, exports, waitlist form
-- `tests/runner.html`, `tests/cases.js`, `tests/parser.test.js` — 165 parser assertions
+- `license.js` — ECDSA P-256 public-key licence check + the 5-order free limit
+- `app.js` — table rendering, in-place editing, exports, paywall, order form, key entry
+- `scripts/generate_license_key.py` — local key issuer (private key lives outside the repo)
+- `tests/runner.html`, `tests/cases.js`, `tests/parser.test.js` — 244 assertions
 - `tests/run-local.py` — same cases headless through QuickJS (`python3 tests/run-local.py`)
 - `sitemap.xml`, `robots.txt`, `llms.txt`, `icons/favicon.svg`, `og-image.png`
 
@@ -97,5 +140,5 @@ python3 -m http.server 8080      # 저장소 루트에서
 open http://localhost:8080/kakao-invoice/tests/runner.html
 ```
 
-The page prints `ALL PASS — 165/165` and exposes `window.__TEST_RESULTS`.
+The page prints `ALL PASS — 244/244` and exposes `window.__TEST_RESULTS`.
 Headless: `python3 tests/run-local.py` (needs `pip install quickjs`).

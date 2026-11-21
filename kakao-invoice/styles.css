@@ -550,3 +550,52 @@ section { scroll-margin-top: 80px; }
 @media print {
   .site-header, .hero-visual, .sample-bar, .export-bar, .pro, .faq, .cta-band, .site-footer { display: none !important; }
 }
+
+/* ── Pro 잠금(Paywall) · 라이선스 ─────────────────────────── */
+.count-chip.plan { background: var(--accent-soft); color: var(--accent); border-color: #b9cdf5; font-weight: 800; }
+.count-chip.plan.pro { background: var(--ok-bg); color: var(--ok); border-color: var(--ok-line); }
+.count-chip.lock { background: #1d2534; color: #fff; border-color: #1d2534; }
+
+.orders tr.paywall-row > td { padding: 0; }
+.paywall {
+  display: grid; gap: 10px; padding: 18px;
+  background: linear-gradient(180deg, #f7faff, #edf3ff);
+  border-top: 2px dashed #b9cdf5; border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.paywall-tag { font-size: .74rem; font-weight: 900; letter-spacing: .05em; color: var(--accent); }
+.paywall-title { font-size: 1.04rem; font-weight: 800; color: var(--ink); line-height: 1.35; }
+.paywall-desc { font-size: .9rem; color: var(--body); max-width: 74ch; }
+.paywall-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.paywall-actions .btn { min-height: 46px; padding: 0 16px; }
+.btn-quiet { background: transparent; color: var(--accent); border-color: transparent; box-shadow: none; }
+.btn-quiet:hover { background: #fff; border-color: var(--line-strong); }
+.paywall-note {
+  font-size: .86rem; color: var(--warn); background: var(--warn-bg);
+  border: 1px solid var(--warn-line); border-radius: var(--radius-sm); padding: 10px 12px;
+}
+.paywall-foot { font-size: .8rem; color: var(--muted); }
+
+.license-card { margin-top: 18px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+.license-card h3 { font-size: 1.08rem; margin-bottom: 6px; }
+.license-lead { font-size: .88rem; color: var(--muted); margin-bottom: 14px; max-width: 84ch; }
+.license-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.license-row .field { flex: 1 1 320px; margin-bottom: 0; }
+.license-btns { display: flex; gap: 8px; }
+.license-btns .btn { min-height: 44px; }
+.license-state { margin-top: 12px; font-size: .88rem; font-weight: 700; color: var(--muted); }
+.license-state.is-pro { color: var(--ok); }
+.license-state.is-err { color: var(--err); }
+
+@media (max-width: 899px) {
+  .orders tr.paywall-row { padding: 0; border: 1px solid #b9cdf5; background: #f7faff; }
+  .orders tr.paywall-row > td { display: block; padding: 0; }
+  .orders tr.paywall-row > td::before { content: none !important; }
+  .paywall { border-radius: 12px; }
+}
+@media (max-width: 720px) {
+  .paywall-actions .btn { width: 100%; }
+  .license-row { align-items: stretch; }
+  .license-row .field { flex-basis: 100%; }
+  .license-btns .btn { flex: 1 1 auto; }
+}

@@ -416,6 +416,158 @@
     eq(T.parseOrders('이름: 김철수\n전화: 010-5555-66\n주소: 서울시 강남구 테헤란로 123')[0].gate, 'red',
       '게이트: 연락처 오류는 적색');
 
+
+    /* ══ 29. Pro 라이선스 키 검증 ═══════════════════════════ */
+    var L = (typeof globalThis !== 'undefined' ? globalThis : this).TalkLicense;
+    if (!L) {
+      ok(false, '라이선스: license.js 를 불러오지 못했습니다');
+    } else {
+      var NOW = Date.UTC(2026, 10, 21, 3, 0, 0); /* 2026-11-21 12:00 KST */
+
+      var TOKEN_VALID = 'TS3.eyJ2IjoxLCJpZCI6IlRTMy1URVNULVZBTElEIiwicGxhbiI6Im1vbnRoIiwiZXhwIjoiMjA5OS0xMi0zMSIsImlhdCI6IjIwMjYtMTEtMjEiLCJzdWIiOiLthYzsiqTtirgg6rWs66ek7J6QIn0.tbTj5_d1r_ns0x86pzIpiLy8kjxYpbQAlBK5sq4kpyHEPj42bM6RvybS4BjDQGdObOy9DBHGjI2BebFNUWgQpw';
+      var TOKEN_EXPIRED = 'TS3.eyJ2IjoxLCJpZCI6IlRTMy1URVNULUVYUElSRUQiLCJwbGFuIjoibW9udGgiLCJleHAiOiIyMDIwLTAxLTAxIiwiaWF0IjoiMjAxOS0xMi0wMSIsInN1YiI6Im9sZEBleGFtcGxlLmNvbSJ9.L0Qxzi7ajAffF_lfIm3a2o6SGSSbs_21uc6M6Zrhu-r_anlIuuPeU5qYgZP_N5eQsc1FSKBlxnUl-wRfXN2A2w';
+      var TOKEN_FOREIGN = 'TS3.eyJ2IjoxLCJpZCI6IlRTMy1URVNULUZPUkVJR04iLCJwbGFuIjoibW9udGgiLCJleHAiOiIyMDk5LTEyLTMxIiwiaWF0IjoiMjAyNi0xMS0yMSJ9.URTxHRzBpVPXNKodgNOmSqJRxbzf4RZmfB5s1Yp6D9WOENZ-8hfC75o7K2nFeqUBOFlhIORgyfiLwkmB6ksRKA';
+      var TOKEN_TAMPERED = 'TS3.eyJ2IjoxLCJpZCI6IlRTMy1URVNULVZBTElEIiwicGxhbiI6Im1vbnRoIiwiZXhwIjoiMjA5OS0xMi0zMCIsImlhdCI6IjIwMjYtMTEtMjEiLCJzdWIiOiLthYzsiqTtirgg6rWs66ek7J6QIn0.tbTj5_d1r_ns0x86pzIpiLy8kjxYpbQAlBK5sq4kpyHEPj42bM6RvybS4BjDQGdObOy9DBHGjI2BebFNUWgQpw';
+      var TOKEN_NOEXP = 'TS3.eyJ2IjoxLCJpZCI6IlRTMy1URVNULU5PRVhQIiwicGxhbiI6Im1vbnRoIiwiaWF0IjoiMjAyNi0xMS0yMSJ9.3nnUuWq4qhvzbyI4PWOFe0xIT8dRabhm06u1ebJvbJQBe8fJMIxEoEQ0YK87Q50sPKAoZ04-nlP-avpc4wet-w';
+      var TOKEN_V2 = 'TS3.eyJ2IjoyLCJpZCI6IlRTMy1URVNULVYyIiwicGxhbiI6Im1vbnRoIiwiZXhwIjoiMjA5OS0xMi0zMSJ9.xHmqrKIKisVe-R1IqxIOvHt-2eQAedsvluUpXwM2RYDrZT15TbnZdZTMgkJWbDMcpF_9kkhcREgdxQ38ZvEwfw';
+      var TOKEN_QUARTER = 'TS3.eyJ2IjoxLCJpZCI6IlRTMy1URVNULVFVQVJURVIiLCJwbGFuIjoicXVhcnRlciIsImV4cCI6IjIwOTktMDMtMDEiLCJpYXQiOiIyMDI2LTExLTIxIn0.S5SvbxrtuPhWSQgp2ixXTsPJDOjK2OTOb4AcdUoYjuKGBsbXnz_Jy9I6list22YG78VTz3lHvEJw5bYGBjUoyg';
+
+      var v = L.evaluateToken(TOKEN_VALID, NOW);
+      eq(v.status, 'valid', '키: 서명·기간이 맞으면 사용 가능');
+      eq(v.exp, '2099-12-31', '키: 만료일 읽기');
+      eq(v.planLabel, '1개월', '키: 1개월권 표기');
+      eq(v.sub, '테스트 구매자', '키: 한글 대상 표기');
+      eq(v.daysLeft, L.daysBetween('2026-11-21', '2099-12-31'), '키: 남은 일수 계산');
+
+      var e1 = L.evaluateToken(TOKEN_EXPIRED, NOW);
+      eq(e1.status, 'expired', '키: 만료일이 지나면 만료');
+      ok(e1.reason.indexOf('2020-01-01') !== -1, '키: 만료 사유에 만료일 표시');
+      eq(e1.daysLeft < 0, true, '키: 만료 키는 남은 일수가 음수');
+
+      eq(L.evaluateToken(TOKEN_FOREIGN, NOW).status, 'invalid', '키: 다른 개인키로 만든 서명 거부');
+      eq(L.evaluateToken(TOKEN_TAMPERED, NOW).status, 'invalid', '키: 만료일을 바꾸면 서명 불일치로 거부');
+      eq(L.evaluateToken(TOKEN_TAMPERED, NOW).reason.indexOf('서명') !== -1, true, '키: 변조 사유가 서명 불일치');
+      eq(L.evaluateToken(TOKEN_NOEXP, NOW).status, 'invalid', '키: 만료일이 없으면 거부');
+      eq(L.evaluateToken(TOKEN_V2, NOW).status, 'invalid', '키: 지원하지 않는 버전 거부');
+      eq(L.evaluateToken(TOKEN_QUARTER, NOW).planLabel, '3개월', '키: 3개월권 표기');
+
+      eq(L.evaluateToken('  ' + TOKEN_VALID + '\n ', NOW).status, 'valid', '키: 앞뒤 공백·줄바꿈 허용');
+      eq(L.evaluateToken(TOKEN_VALID.replace(/^TS3/, 'ts3'), NOW).status, 'valid', '키: 소문자 접두어 허용');
+      eq(L.evaluateToken('', NOW).status, 'none', '키: 빈 값은 미등록');
+      eq(L.evaluateToken('TS3.abc', NOW).status, 'invalid', '키: 점이 모자라면 거부');
+      eq(L.evaluateToken('ABCD.eyJ2IjoxfQ.AAAA', NOW).status, 'invalid', '키: 다른 서비스 접두어 거부');
+      eq(L.evaluateToken('TS3.!!!.!!!', NOW).status, 'invalid', '키: base64url 아닌 본문 거부');
+      var shortSig = TOKEN_VALID.split('.');
+      eq(L.evaluateToken('TS3.' + shortSig[1] + '.' + shortSig[2].slice(0, 40), NOW).status, 'invalid', '키: 서명 길이가 다르면 거부');
+
+      var sig = L._debug.b64uDecode(TOKEN_VALID.split('.')[2]);
+      ok(L._debug.verifySignature(L._debug.asciiBytes(TOKEN_VALID.split('.')[1]), sig), '키: 유효 서명 검증');
+      var flipped = new Uint8Array(sig);
+      flipped[10] = flipped[10] ^ 1;
+      eq(L._debug.verifySignature(L._debug.asciiBytes(TOKEN_VALID.split('.')[1]), flipped), false, '키: 서명 1비트 변조 거부');
+      eq(L._debug.verifySignature(L._debug.asciiBytes('다른본문'), sig), false, '키: 다른 본문에는 같은 서명이 통하지 않음');
+      eq(L._debug.onCurve(L._debug.PUB_X, L._debug.PUB_Y), true, '키: 공개키가 곡선 위에 있음');
+      ok(L.PUBLIC_KEY.x.length === 64 && L.PUBLIC_KEY.y.length === 64, '키: 공개키는 64자리 16진수');
+      ok(!('d' in L.PUBLIC_KEY) && !('k' in L.PUBLIC_KEY) && !('privateKey' in L), '키: 프론트엔드에 개인키 필드 없음');
+
+      /* ══ 30. 무료 5건 한도 ═══════════════════════════════════ */
+      var freeLic = { status: 'none' };
+      eq(L.limitFor(freeLic), L.FREE_LIMIT, '한도: 무료는 5건');
+      eq(L.FREE_LIMIT, 5, '한도: 무료 상수 5');
+      eq(L.limitFor(v), null, '한도: Pro는 무제한(null)');
+      eq(L.limitFor(e1), L.FREE_LIMIT, '한도: 만료 키는 무료와 같음');
+
+      function fakeOrders(n) {
+        var list = [];
+        for (var i = 0; i < n; i++) { list.push({ name: '손님' + (i + 1), qty: '1박스', gate: 'green', flags: [] }); }
+        return list;
+      }
+      var s0 = L.splitOrders([], freeLic);
+      eq(s0.visible, 0, '한도: 빈 입력 0건');
+      eq(s0.locked, 0, '한도: 빈 입력 잠금 없음');
+      var s3 = L.splitOrders(fakeOrders(3), freeLic);
+      eq(s3.visible, 3, '한도: 3건은 전부 보임');
+      eq(s3.locked, 0, '한도: 3건은 잠금 없음');
+      var s5 = L.splitOrders(fakeOrders(5), freeLic);
+      eq(s5.visible, 5, '한도: 5건은 전부 보임(경계)');
+      eq(s5.locked, 0, '한도: 5건은 잠금 없음');
+      var s6 = L.splitOrders(fakeOrders(6), freeLic);
+      eq(s6.visible, 5, '한도: 6건이면 5건만 보임');
+      eq(s6.locked, 1, '한도: 6번째 행부터 잠금');
+      var s12 = L.splitOrders(fakeOrders(12), freeLic);
+      eq(s12.visible, 5, '한도: 12건 중 5건 보임');
+      eq(s12.locked, 7, '한도: 12건 중 7건 잠금');
+      eq(s12.total, 12, '한도: 전체 건수 유지');
+      eq(s12.pro, false, '한도: 무료는 pro 아님');
+      var s12p = L.splitOrders(fakeOrders(12), v);
+      eq(s12p.visible, 12, '한도: Pro는 12건 모두 보임');
+      eq(s12p.locked, 0, '한도: Pro는 잠금 없음');
+      eq(s12p.pro, true, '한도: Pro 표시');
+
+      eq(L.exportRows(fakeOrders(12), freeLic).length, 5, '한도: 무료 CSV는 5건까지');
+      eq(L.exportRows(fakeOrders(12), v).length, 12, '한도: Pro CSV는 전체');
+      eq(L.exportRows(fakeOrders(5), freeLic).length, 5, '한도: 5건은 그대로 내보냄');
+
+      /* ══ 31. 저장소·양식 기억 ════════════════════════════════ */
+      function mockStore() {
+        var map = {};
+        return {
+          getItem: function (k) { return Object.prototype.hasOwnProperty.call(map, k) ? map[k] : null; },
+          setItem: function (k, val) { map[k] = String(val); },
+          removeItem: function (k) { delete map[k]; }
+        };
+      }
+      var store = mockStore();
+      eq(L.readLicense(store, NOW).status, 'none', '저장소: 비어 있으면 미등록');
+      var saved = L.saveLicense(store, TOKEN_VALID, NOW);
+      eq(saved.status, 'valid', '저장소: 유효 키 저장');
+      eq(saved.stored, true, '저장소: 저장 성공 표시');
+      eq(L.readLicense(store, NOW).status, 'valid', '저장소: 다시 읽으면 Pro');
+      eq(L.readLicense(store, NOW).exp, '2099-12-31', '저장소: 만료일 유지');
+      var bad = L.saveLicense(store, TOKEN_TAMPERED, NOW);
+      eq(bad.status, 'invalid', '저장소: 변조 키는 거부');
+      eq(bad.stored, false, '저장소: 변조 키는 저장하지 않음');
+      eq(L.readLicense(store, NOW).status, 'valid', '저장소: 기존 키는 그대로');
+      L.saveLicense(store, TOKEN_EXPIRED, NOW);
+      eq(L.readLicense(store, NOW).status, 'expired', '저장소: 만료 키는 만료로 읽힘');
+      L.clearLicense(store);
+      eq(L.readLicense(store, NOW).status, 'none', '저장소: 등록 해제 후 미등록');
+      var broken = mockStore();
+      broken.setItem(L.STORE_KEY, 'garbage');
+      eq(L.readLicense(broken, NOW).status, 'invalid', '저장소: 깨진 값은 무효 처리');
+      var noStore = null;
+      eq(L.readLicense(noStore, NOW).status, 'none', '저장소: 저장소가 막혀도 무료로 동작');
+      eq(L.saveLicense(noStore, TOKEN_VALID, NOW).stored, false, '저장소: 저장 불가면 stored=false');
+
+      var fstore = mockStore();
+      eq(L.readFormat(fstore), null, '양식: 저장 전에는 없음');
+      L.saveFormat(fstore, { courier: 'cj', includeSender: true, includeDepositor: false });
+      var fmt = L.readFormat(fstore);
+      eq(fmt && fmt.courier, 'cj', '양식: 택배사 기억');
+      eq(fmt && fmt.includeSender, true, '양식: 발송인 열 기억');
+      L.clearFormat(fstore);
+      eq(L.readFormat(fstore), null, '양식: 지우면 없음');
+
+      /* ══ 32. 날짜·해시 기반 함수 ═════════════════════════════ */
+      eq(L.seoulDate(Date.UTC(2026, 10, 21, 14, 59, 59)), '2026-11-21', '날짜: 한국 시간 23:59는 같은 날');
+      eq(L.seoulDate(Date.UTC(2026, 10, 21, 15, 0, 0)), '2026-11-22', '날짜: UTC 15시는 한국 다음 날');
+      eq(L.dayNumber('2026-02-30'), null, '날짜: 없는 날짜 거부');
+      eq(L.dayNumber('2026-13-01'), null, '날짜: 없는 달 거부');
+      eq(L.daysBetween('2026-11-21', '2026-12-21'), 30, '날짜: 30일 차이');
+      var hex = function (bytes) {
+        var out = '';
+        for (var i = 0; i < bytes.length; i++) { out += (bytes[i] < 16 ? '0' : '') + bytes[i].toString(16); }
+        return out;
+      };
+      eq(hex(L._debug.sha256(L._debug.asciiBytes(''))), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', '해시: 빈 문자열 SHA-256');
+      eq(hex(L._debug.sha256(L._debug.asciiBytes('abc'))), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad', '해시: abc SHA-256');
+      var raw = new Uint8Array([0, 1, 250, 255, 128, 64]);
+      var round = L._debug.b64uDecode(L._debug.b64uEncode(raw));
+      eq(round && Array.prototype.join.call(round, ','), '0,1,250,255,128,64', 'base64url: 왕복 일치');
+      var kr = L._debug.utf8Decode(L._debug.utf8Encode('완도 전복 2박스'));
+      eq(kr, '완도 전복 2박스', 'UTF-8: 한글 왕복 일치');
+    }
+
     return { total: results.length, passed: results.filter(function (r) { return r.pass; }).length };
   }
 
