@@ -310,15 +310,15 @@ section { scroll-margin-top: 80px; }
 .orders td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
 .orders tr:last-child td { border-bottom: 0; }
 .orders .col-no { width: 34px; }
-.orders .col-name { width: 90px; }
+.orders .col-name { width: 88px; }
 .orders .col-phone { width: 136px; }
 .orders .col-addr { width: auto; }
-.orders .col-product { width: 104px; }
-.orders .col-qty { width: 60px; }
-.orders .col-memo { width: 124px; }
-.orders .col-who { width: 90px; }
-.orders .col-flags { width: 124px; }
-.orders .col-status { width: 112px; }
+.orders .col-product { width: 132px; }
+.orders .col-qty { width: 58px; }
+.orders .col-memo { width: 128px; }
+.orders .col-who { width: 88px; }
+.orders .col-flags { width: 116px; }
+.orders .col-status { width: 108px; }
 .orders .th-sub { display: block; font-weight: 600; font-size: .68rem; color: #8b99ac; }
 .orders .row-no { font-size: .82rem; font-weight: 800; color: var(--muted); text-align: center; }
 .cell-stack { display: grid; gap: 4px; }
