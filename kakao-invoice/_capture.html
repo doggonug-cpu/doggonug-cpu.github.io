@@ -23,6 +23,7 @@
   var h = Number(q.get('h') || 720);
   var sample = q.get('sample') || '';
   var target = q.get('scroll') || '';
+  var offset = Number(q.get('offset') || 0);
   var frame = document.getElementById('frame');
   var report = document.getElementById('report');
 
@@ -60,7 +61,10 @@
       else if (target === 'table') { node = d.getElementById('tableWrap'); }
       else if (target === 'results') { node = d.getElementById('result-title'); }
       else if (target === 'pro') { node = d.getElementById('pro-title'); }
-      if (node) { node.scrollIntoView({ block: target === 'paywall' ? 'end' : 'start' }); }
+      if (node) {
+        node.scrollIntoView({ block: target === 'paywall' ? 'end' : 'start' });
+        if (offset) { frame.contentWindow.scrollBy(0, -offset); }
+      }
     } catch (err) { /* noop */ }
     window.setTimeout(measure, 500);
   }
