@@ -264,6 +264,9 @@ section { scroll-margin-top: 80px; }
 .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
 .chip-strong { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 .chip-strong[aria-pressed="true"] { color: #fff; }
+.chip-hell { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 800; }
+.chip-hell:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.chip-hell[aria-pressed="true"] { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; }
 
 .input-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
 .input-note { font-size: .8rem; color: var(--muted); line-height: 1.45; }
@@ -564,6 +567,13 @@ section { scroll-margin-top: 80px; }
   text-align: left;
 }
 .paywall-tag { font-size: .74rem; font-weight: 900; letter-spacing: .05em; color: var(--accent); }
+.roi {
+  display: grid; gap: 4px; padding: 12px 14px; margin-bottom: 2px;
+  background: #fff; border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+}
+.roi-line { font-size: .9rem; font-weight: 700; color: var(--ink); line-height: 1.5; overflow-wrap: anywhere; }
+.roi-detail { font-size: .8rem; color: var(--muted); line-height: 1.55; overflow-wrap: anywhere; }
 .paywall-title { font-size: 1.04rem; font-weight: 800; color: var(--ink); line-height: 1.35; }
 .paywall-desc { font-size: .9rem; color: var(--body); max-width: 74ch; }
 .paywall-actions { display: flex; flex-wrap: wrap; gap: 8px; }

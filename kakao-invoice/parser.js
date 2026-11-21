@@ -1247,6 +1247,66 @@
     return order;
   }
 
+  /* ── 체험용 샘플: '현장 지옥 10건 혼합' ───────────────────────
+     말풍선 쪼개기 · 1인 3곳 배송지 · 정정·취소 · 닉네임/입금자 불일치 · 사진 주문 · 제주 도서산간을
+     한 번에 넣은 실제 마감 대화 10건입니다. 앞 5건은 그대로 변환되고 6번째부터 Pro 잠금으로 보입니다.
+     (화면(app.js)과 단위 테스트가 같은 문장을 쓰도록 파서에 두었습니다.) */
+  var SAMPLE_HELL10 = [
+    "--- 2026년 11월 20일 금요일 ---",
+    "[김미숙] [오전 9:02] 박정희 010-2345-6789",
+    "[김미숙] [오전 9:03] 서울시 마포구 월드컵북로 400 12층",
+    "[김미숙] [오전 9:04] 완도 활전복 1kg 2박스",
+    "[김미숙] [오전 9:20] 전복 6박스요. 2개는 우리집(서울시 송파구 올림픽로 300 101동 1203호 박정희 010-8765-4321), 2개는 어머니댁(부산시 해운대구 센텀중앙로 79 5층 김옥순 010-2222-3333), 2개는 회사(경기도 성남시 분당구 정자일로 100 8층 박정희 010-8765-4321)",
+    "[김미숙] [오전 9:40] 이철수 010-3333-4444 대구시 수성구 동대구로 100 5층",
+    "[김미숙] [오전 9:40] 한우 선물세트 3박스",
+    "[김미숙] [오전 9:41] 아 2박스로 바꿀게요",
+    "[김미숙] [오전 10:00] [사진]",
+    "[김미숙] [오전 10:01] 사진 보냈어요 확인 부탁드려요",
+    "[김미숙] [오전 10:20] 받는분: 사랑맘",
+    "[김미숙] [오전 10:20] 연락처: 010-9999-8888",
+    "[김미숙] [오전 10:21] 주소: 인천시 연수구 송도과학로 32 202호",
+    "[김미숙] [오전 10:21] 상품: 제주 감귤 5kg 2박스",
+    "[김미숙] [오전 10:22] 입금자: 김정은",
+    "[김미숙] [오전 10:40] 최현우 010-7777-6666 제주시 애월읍 하귀리 123 3층 / 제주 감귤 5kg 1박스",
+    "[김미숙] [오전 10:41] 금요일 오후 도착하게 아이스팩 넣어 보내주세요",
+    "[김미숙] [오전 11:00] 정미경 010-1111-2222 광주시 서구 상무중앙로 58 3층 / 배 3kg 1박스",
+    "[김미숙] [오전 11:01] 앗 죄송해요 그거 취소할게요",
+    "[김미숙] [오전 11:20] 조은영 010-4444-5555 서울시 강남구 테헤란로 123 4층 / 완도 미역 1kg 2봉",
+  ].join('\n');
+
+  /* ── 시간 절약(ROI) 계산 — 페이월 상단 배너 ────────────────
+     1건당 수작업 1.5분(이름·주소 나누기·엑셀 입력) vs 변환 0.05분(3초),
+     월 20회 마감 기준으로 환산합니다. */
+  var ROI = { MANUAL_MIN: 1.5, TOOL_MIN: 0.05, MONTHLY_ROUNDS: 20 };
+
+  function roiNumber(value) {
+    var rounded = Math.round((Number(value) + 1e-9) * 10) / 10;
+    return String(rounded).replace(/\.0$/, '');
+  }
+
+  function roiSummary(count) {
+    var n = Math.floor(Number(count));
+    if (!isFinite(n) || n <= 0) { return null; }
+
+    var manual = n * ROI.MANUAL_MIN;
+    var tool = n * ROI.TOOL_MIN;
+    var saved = manual - tool;
+    var monthly = saved * ROI.MONTHLY_ROUNDS / 60;
+    var round1 = function (value) { return Math.round((value + 1e-9) * 10) / 10; };
+
+    return {
+      count: n,
+      manualMin: round1(manual),
+      toolMin: Math.round((tool + 1e-9) * 100) / 100,
+      savedMin: round1(saved),
+      monthlyRounds: ROI.MONTHLY_ROUNDS,
+      monthlyHours: round1(monthly),
+      line: '수작업 정리 시 약 ' + roiNumber(manual) + '분 소요 → 톡송장 3초로 약 ' + roiNumber(saved) + '분 절약',
+      detail: '월 ' + ROI.MONTHLY_ROUNDS + '회 마감 기준 월 ' + roiNumber(monthly) +
+        '시간 절약 · 1건당 수작업 1.5분(이름·주소 나누기·엑셀 입력) 대비 변환 0.05분'
+    };
+  }
+
   return {
     parseOrders: parseOrders,
     parse: parseOrders,
@@ -1263,6 +1323,9 @@
     flagText: flagText,
     COURIERS: COURIERS,
     courierById: courierById,
-    columnsFor: columnsFor
+    columnsFor: columnsFor,
+    roiSummary: roiSummary,
+    SAMPLE_HELL10: SAMPLE_HELL10,
+    ROI: ROI
   };
 });

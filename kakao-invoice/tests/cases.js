@@ -568,7 +568,65 @@
       eq(kr, '완도 전복 2박스', 'UTF-8: 한글 왕복 일치');
     }
 
-    return { total: results.length, passed: results.filter(function (r) { return r.pass; }).length };
+      /* ══ 33. 시간 절약 ROI (페이월 상단 배너) ═════════════════ */
+      var roi10 = T.roiSummary(10);
+      ok(!!roi10, 'ROI: 10건 계산됨');
+      eq(roi10.count, 10, 'ROI: 건수 유지');
+      eq(roi10.manualMin, 15, 'ROI: 10건 수작업 15분(1건 1.5분)');
+      eq(roi10.savedMin, 14.5, 'ROI: 10건 14.5분 절약');
+      eq(roi10.monthlyHours, 4.8, 'ROI: 월 20회 마감 4.8시간');
+      eq(roi10.line, '수작업 정리 시 약 15분 소요 → 톡송장 3초로 약 14.5분 절약', 'ROI: 본문 문구');
+      ok(/월 20회 마감 기준 월 4\.8시간/.test(roi10.detail), 'ROI: 월 환산 문구');
+      ok(/1건당 수작업 1\.5분/.test(roi10.detail), 'ROI: 건당 기준 문구');
+      eq(T.roiSummary(6).savedMin, 8.7, 'ROI: 6건(잠금 시작) 8.7분');
+      eq(T.roiSummary(6).monthlyHours, 2.9, 'ROI: 6건 월 2.9시간');
+      eq(T.roiSummary(20).manualMin, 30, 'ROI: 20건 수작업 30분');
+      eq(T.roiSummary(20).monthlyHours, 9.7, 'ROI: 20건 월 9.7시간');
+      eq(T.roiSummary('12').count, 12, 'ROI: 문자열 건수도 계산');
+      eq(T.roiSummary(10).line.indexOf('10분'), -1, 'ROI: 소수점이 붙은 값을 그대로 쓰지 않음');
+      eq(T.roiSummary(0), null, 'ROI: 0건은 계산하지 않음');
+      eq(T.roiSummary(-3), null, 'ROI: 음수는 계산하지 않음');
+      eq(T.roiSummary(null), null, 'ROI: 빈 값은 계산하지 않음');
+      eq(T.roiSummary(''), null, 'ROI: 빈 문자열은 계산하지 않음');
+      eq(typeof T.SAMPLE_HELL10, 'string', '지옥샘플: 파서에 문장이 있음');
+
+      /* ══ 34. 현장 지옥 10건 혼합 샘플 (파싱·잠금) ══════════════ */
+      var hell = T.parseOrders(T.SAMPLE_HELL10);
+      eq(hell.length, 10, '지옥샘플: 10건으로 분리');
+      eq(hell[0].name, '박정희', '지옥샘플 1번: 말풍선 4개가 한 주문으로 병합');
+      eq(hell[0].phone, '010-2345-6789', '지옥샘플 1번: 연락처');
+      eq(hell[0].qty, '2박스', '지옥샘플 1번: 수량');
+      eq(hell[1].name, '박정희', '지옥샘플 2번: 1인 다배송지(집)');
+      eq(hell[1].memo, '배송처: 우리집', '지옥샘플 2번: 배송처 표시');
+      eq(hell[2].name, '김옥순', '지옥샘플 3번: 1인 다배송지(어머니댁)');
+      eq(hell[3].memo, '배송처: 회사', '지옥샘플 4번: 1인 다배송지(회사)');
+      eq(hell[1].qty + '/' + hell[2].qty + '/' + hell[3].qty, '2개/2개/2개', '지옥샘플: 6박스를 3곳으로 나눔');
+      ok(hasFlag(hell[2], '다중배송지'), '지옥샘플: 다중배송지 플래그');
+      eq(hell[4].qty, '2박스', '지옥샘플 5번: 정정 발화의 마지막 값');
+      eq(hell[4].product, '한우 선물세트', '지옥샘플 5번: 상품명');
+      ok(hasFlag(hell[4], '정정발화'), '지옥샘플 5번: 정정 플래그');
+      eq(hell[4].gate, 'yellow', '지옥샘플 5번: 황색 확인');
+      eq(hell[5].gate, 'red', '지옥샘플 6번: 사진 주문은 적색');
+      ok(hasFlag(hell[5], '사진확인필요'), '지옥샘플 6번: 사진 플래그');
+      eq(hell[6].name, '사랑맘', '지옥샘플 7번: 닉네임 수취인');
+      eq(hell[6].depositor, '김정은', '지옥샘플 7번: 입금자는 별도 필드');
+      ok(hasFlag(hell[6], '닉네임주의'), '지옥샘플 7번: 닉네임 경고');
+      ok(hasFlag(hell[7], '도서산간 +추가운임'), '지옥샘플 8번: 제주 도서산간');
+      ok(/아이스팩/.test(hell[7].memo), '지옥샘플 8번: 배송메시지 분리');
+      ok(hasFlag(hell[8], '취소발화'), '지옥샘플 9번: 취소 발화');
+      eq(hell[9].gate, 'green', '지옥샘플 10번: 그대로 발송 가능');
+      var hellErrors = hell.slice(0, 5).filter(function (o) {
+        return (o.issues || []).some(function (issue) { return issue.level === 'error'; });
+      }).length;
+      eq(hellErrors, 0, '지옥샘플: 앞 5건은 적색 보류 없음(무료 CSV 가능)');
+      var hellSplit = L.splitOrders(hell, freeLic);
+      eq(hellSplit.visible, 5, '지옥샘플: 무료는 5건까지 보임');
+      eq(hellSplit.locked, 5, '지옥샘플: 6~10번째 5건 잠금');
+      eq(L.exportRows(hell, freeLic).length, 5, '지옥샘플: 무료 CSV 5건');
+      eq(L.splitOrders(hell, v).locked, 0, '지옥샘플: Pro는 잠금 없음');
+      eq(T.roiSummary(hellSplit.total).monthlyHours, 4.8, '지옥샘플: 10건 ROI는 월 4.8시간');
+
+      return { total: results.length, passed: results.filter(function (r) { return r.pass; }).length };
   }
 
   return runCases;

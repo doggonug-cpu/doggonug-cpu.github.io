@@ -50,6 +50,7 @@
       '주소: 광주시 서구 상무중앙로 58',
       '상품명: 한우 선물세트 1호'
     ].join('\n'),
+    hell10: T.SAMPLE_HELL10,
     reality: [
       '--- 실제 카톡 8대 유형 테스트 ---',
       '[김미숙] [오전 9:10] 전복 1kg 3박스요. 1개는 우리집(서울 강남구 테헤란로 123 4층), 2개는 어머니댁(부산 해운대구 센텀중앙로 79 101-202 김OO 010-1234-5678) 보내주세요. 보내는 분은 홍길동',
@@ -455,6 +456,16 @@
     td.colSpan = FIELDS.length + 3;
 
     var box = el('div', 'paywall');
+
+    /* 시간 절약(ROI) 배너 — 페이월 안내 바로 위. 건수만 넣으면 그 자리에서 계산합니다. */
+    var roi = T.roiSummary(split.total);
+    if (roi) {
+      var roiBox = el('div', 'roi');
+      roiBox.id = 'roiBanner';
+      roiBox.appendChild(el('p', 'roi-line', '입력한 ' + roi.count + '건 기준 — ' + roi.line));
+      roiBox.appendChild(el('p', 'roi-detail', roi.detail));
+      box.appendChild(roiBox);
+    }
 
     box.appendChild(el('p', 'paywall-tag', 'Pro 잠금 — 6번째 행부터'));
     box.appendChild(el('p', 'paywall-title', '입력한 ' + split.total + '건 중 ' + split.locked + '건이 잠겨 있습니다'));
