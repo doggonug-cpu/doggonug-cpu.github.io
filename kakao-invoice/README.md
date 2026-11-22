@@ -72,7 +72,7 @@ no attention.
 - Free: one conversion of up to **5 orders** with every feature — eight field shapes,
   the red/yellow/green gate, standard 9-column sheet, five couriers + SmartStore, CSV
   and TSV. Conversions themselves are unlimited.
-- Pro (₩29,000 / month, ₩79,000 / 3 months): converting 6+ orders at once, unlimited
+- Pro (₩29,000 / month, ₩79,000 / 3 months, ₩149,000 / 6 months): converting 6+ orders at once, unlimited
   CSV/TSV export, and remembering the courier/column choice in that browser.
 - Pro opens with a licence key issued by email and pasted into the page (no account, no
   PG). The key is an ECDSA P-256 signature over its own payload; the page carries only

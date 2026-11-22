@@ -18,23 +18,23 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="톡송장 3초">
 <meta property="og:title" content="톡송장 3초 — 카톡 주문, 3초 만에 송장 양식으로">
-<meta property="og:description" content="주문 대화를 통째로 붙여넣으면 받는분·연락처·주소·상품·배송메모를 자동으로 나눠 5대 택배사·스마트스토어 CSV로 저장합니다. 회원가입 없이 1회 5건 무료, 6건 이상은 Pro 월 29,000원.">
+<meta property="og:description" content="주문 대화를 통째로 붙여넣으면 받는분·연락처·주소·상품·배송메모를 자동으로 나눠 5대 택배사·스마트스토어 CSV로 저장합니다. 회원가입 없이 1회 5건 무료, 6건 이상은 Pro(1개월 29,000원·3개월 79,000원·6개월 149,000원).">
 <meta property="og:url" content="https://doggonug-cpu.github.io/kakao-invoice/">
-<meta property="og:image" content="https://doggonug-cpu.github.io/kakao-invoice/og-image.png?v=20261122f">
+<meta property="og:image" content="https://doggonug-cpu.github.io/kakao-invoice/og-image.png?v=20261122g">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="톡송장 3초 — 카톡 주문 정리 화면. 1회 5건 무료, 6건 이상 Pro 월 29,000원">
+<meta property="og:image:alt" content="톡송장 3초 — 카톡 주문 정리 화면. 1회 5건 무료, 6건 이상 Pro">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="톡송장 3초 — 카톡 주문, 3초 만에 송장 양식으로">
-<meta name="twitter:description" content="카톡 주문을 붙여넣으면 택배 송장 CSV로. 1회 5건 무료, 6건 이상 Pro(월 29,000원). 개인정보는 브라우저 안에서만.">
-<meta name="twitter:image" content="https://doggonug-cpu.github.io/kakao-invoice/og-image.png?v=20261122f">
+<meta name="twitter:description" content="카톡 주문을 붙여넣으면 택배 송장 CSV로. 1회 5건 무료, 6건 이상 Pro(1개월 29,000원·3개월 79,000원·6개월 149,000원). 개인정보는 브라우저 안에서만.">
+<meta name="twitter:image" content="https://doggonug-cpu.github.io/kakao-invoice/og-image.png?v=20261122g">
 
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css?v=20261122e">
 <script src="parser.js?v=20261122e" defer></script>
 <script src="license.js?v=20261122e" defer></script>
-<script src="app.js?v=20261122e" defer></script>
+<script src="app.js?v=20261122f" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -50,7 +50,8 @@
   "offers": [
     { "@type": "Offer", "name": "무료 체험 (1회 5건)", "price": "0", "priceCurrency": "KRW" },
     { "@type": "Offer", "name": "Pro 1개월", "price": "29000", "priceCurrency": "KRW" },
-    { "@type": "Offer", "name": "Pro 3개월", "price": "79000", "priceCurrency": "KRW" }
+    { "@type": "Offer", "name": "Pro 3개월", "price": "79000", "priceCurrency": "KRW" },
+    { "@type": "Offer", "name": "Pro 6개월", "price": "149000", "priceCurrency": "KRW" }
   ],
   "featureList": [
     "카톡 주문 텍스트 다건 자동 분리",
@@ -91,7 +92,7 @@
     {
       "@type": "Question",
       "name": "무료인가요? Pro는 무엇인가요?",
-      "acceptedAnswer": { "@type": "Answer", "text": "한 번 변환에 5건까지는 무료이고, 8대 현장 유형·3색 검증 게이트·표준 9열·5대 택배사·스마트스토어 양식 CSV와 엑셀 복사를 그대로 씁니다. 6건 이상을 한 번에 바꾸려면 Pro가 필요합니다(1개월 29,000원 / 3개월 79,000원). 카드 결제는 크몽에서, 계좌이체는 신청서를 남기면 입금 안내와 라이선스 키를 이메일로 받습니다. 키는 그 브라우저에만 저장되고, 주문 정보는 여전히 서버로 가지 않습니다." }
+      "acceptedAnswer": { "@type": "Answer", "text": "한 번 변환에 5건까지는 무료이고, 8대 현장 유형·3색 검증 게이트·표준 9열·5대 택배사·스마트스토어 양식 CSV와 엑셀 복사를 그대로 씁니다. 6건 이상을 한 번에 바꾸려면 Pro가 필요합니다(1개월 29,000원 / 3개월 79,000원 / 6개월 149,000원). 카드 결제는 크몽에서, 계좌이체는 신청서를 남기면 입금 안내와 라이선스 키를 이메일로 받습니다. 키는 그 브라우저에만 저장되고, 주문 정보는 여전히 서버로 가지 않습니다." }
     }
   ]
 }
@@ -386,6 +387,7 @@
             <li>CSV·엑셀 복사 무제한</li>
             <li>택배사 양식·열 설정을 이 브라우저에 기억</li>
             <li>3개월권 79,000원 (월 26,333원)</li>
+            <li>6개월권 149,000원 (월 24,833원)</li>
           </ul>
           <p class="plan-note">사업자·PG 없이도 쓸 수 있게, 이메일로 받은 라이선스 키 한 줄을 붙여넣으면 이 브라우저에서 바로 열립니다. 카드결제는 크몽 상품 승인 직후 이 자리에 연결됩니다.</p>
           <a class="btn btn-primary btn-block" href="#order">계좌이체로 키 받기</a>
@@ -402,6 +404,7 @@
                 <option value="">선택해 주세요</option>
                 <option value="1개월 29,000원">1개월 — 29,000원</option>
                 <option value="3개월 79,000원">3개월 — 79,000원</option>
+                <option value="6개월 149,000원">6개월 — 149,000원</option>
               </select>
             </label>
 
@@ -474,7 +477,7 @@
       </details>
       <details>
         <summary>무료인가요? Pro는 무엇인가요?</summary>
-        <p>한 번 변환에 5건까지는 무료이고, 8대 현장 유형·3색 검증 게이트·표준 9열·5대 택배사·스마트스토어 양식 CSV와 엑셀 복사를 그대로 씁니다. 6건 이상을 한 번에 바꾸려면 Pro가 필요합니다(1개월 29,000원 / 3개월 79,000원). 카드 결제는 크몽에서, 계좌이체는 신청서를 남기면 입금 안내와 라이선스 키를 이메일로 받습니다. 키는 등록한 브라우저에만 저장되고 기간이 끝나면 무료 체험으로 돌아갑니다.</p>
+        <p>한 번 변환에 5건까지는 무료이고, 8대 현장 유형·3색 검증 게이트·표준 9열·5대 택배사·스마트스토어 양식 CSV와 엑셀 복사를 그대로 씁니다. 6건 이상을 한 번에 바꾸려면 Pro가 필요합니다(1개월 29,000원 / 3개월 79,000원 / 6개월 149,000원). 카드 결제는 크몽에서, 계좌이체는 신청서를 남기면 입금 안내와 라이선스 키를 이메일로 받습니다. 키는 등록한 브라우저에만 저장되고 기간이 끝나면 무료 체험으로 돌아갑니다.</p>
       </details>
       <details>
         <summary>우편번호는 왜 비어 있나요?</summary>
@@ -520,7 +523,7 @@
       <strong>안내</strong>
       <p>택배사 열 이름은 공개된 접수 항목 기준의 표준형이며, 실제 업로드 양식과 다를 수 있습니다.</p>
       <p>계좌번호·휴대폰 번호는 이 페이지에 적지 않습니다. 신청서를 남기면 입금 안내를 메일로 보내 드립니다.</p>
-      <p>Pro 이용권은 1개월 29,000원·3개월 79,000원이며, 키는 등록한 브라우저에서만 열립니다.</p>
+      <p>Pro 이용권은 1개월 29,000원·3개월 79,000원·6개월 149,000원이며, 키는 등록한 브라우저에서만 열립니다.</p>
       <p class="updated">최종 수정 2026년 11월 22일</p>
     </div>
   </div>
