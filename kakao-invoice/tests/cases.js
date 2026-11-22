@@ -626,7 +626,138 @@
       eq(L.splitOrders(hell, v).locked, 0, '지옥샘플: Pro는 잠금 없음');
       eq(T.roiSummary(hellSplit.total).monthlyHours, 4.8, '지옥샘플: 10건 ROI는 월 4.8시간');
 
-      return { total: results.length, passed: results.filter(function (r) { return r.pass; }).length };
+    /* ── 12. GA4 퍼널 계측 (개인정보 전송 금지) ─────────── */
+    (function () {
+      var A = (typeof globalThis !== 'undefined' ? globalThis : this).TonAnalytics;
+      ok(!!A, 'GA4: 계측 모듈 로드');
+      if (!A) { return; }
+
+      ok(/^G-[A-Z0-9]{6,}$/.test(A.MEASUREMENT_ID), 'GA4: 측정 ID 형식', A.MEASUREMENT_ID);
+      eq(A.EVENTS.join(','), 'page_view,convert_run,paywall_hit,cta_click', 'GA4: 이벤트는 4종만 허용');
+
+      var p1 = A.buildPayload('convert_run', { orders: 7 });
+      eq(p1 && p1.params.orders, 7, 'GA4: convert_run 은 건수만');
+      eq(Object.keys(p1.params).join(','), 'orders', 'GA4: convert_run 파라미터는 orders 하나');
+
+      var p2 = A.buildPayload('paywall_hit', { locked: 4 });
+      eq(p2 && p2.params.locked, 4, 'GA4: paywall_hit 은 잠금 건수만');
+
+      var p3 = A.buildPayload('cta_click', { cta_type: 'kmong' });
+      eq(p3 && p3.params.cta_type, 'kmong', 'GA4: cta_click 크몽');
+      var p4 = A.buildPayload('cta_click', { cta_type: 'bank_transfer' });
+      eq(p4 && p4.params.cta_type, 'bank_transfer', 'GA4: cta_click 계좌이체');
+
+      eq(A.buildPayload('purchase', { value: 1 }), null, 'GA4: 허용 목록 밖 이벤트는 버림');
+      eq(JSON.stringify(A.buildPayload('convert_run', { orders: '7' }).params), '{}', 'GA4: 건수 문자열은 버림');
+      eq(A.buildPayload('convert_run', { orders: '7' }).params.orders, undefined, 'GA4: 문자열 건수 미전송');
+      eq(A.buildPayload('cta_click', { cta_type: 'card' }).params.cta_type, undefined, 'GA4: 정해진 결제 유형만 통과');
+
+      /* 개인정보를 그대로 넘겨도 화이트리스트 밖은 전부 사라져야 합니다. */
+      var dirty = A.buildPayload('convert_run', {
+        orders: 3,
+        name: '김철수',
+        수취인: '김철수',
+        phone: '010-1234-5678',
+        연락처: '010-1234-5678',
+        address: '서울시 강남구 테헤란로 123 4층',
+        주소: '서울시 강남구 테헤란로 123 4층',
+        memo: '현관비번 #1234',
+        text: '김철수 010-1234-5678 서울시 강남구 테헤란로 123 / 사과 5kg 2박스',
+        email: 'seller@example.com'
+      });
+      eq(JSON.stringify(dirty.params), '{"orders":3}', 'GA4: 개인정보 파라미터 전부 제거');
+      eq(A.buildPayload('paywall_hit', { locked: 2, name: '박정희' }).params.name, undefined, 'GA4: paywall_hit 도 개인정보 차단');
+      eq(JSON.stringify(A.buildPayload('page_view', { text: '주문 원문' }).params), '{}', 'GA4: page_view 는 파라미터 없음');
+
+      /* 가짜 gtag 로 실제 호출열을 검사합니다. */
+      var calls = [];
+      function fakeGtag() { calls.push(Array.prototype.slice.call(arguments)); }
+      A.resetConvertThrottle();
+      eq(A.convertRun(6, fakeGtag, 1000), true, 'GA4: convert_run 전송');
+      eq(calls.length, 1, 'GA4: convert_run 1회 호출');
+      eq(calls[0][0] + '/' + calls[0][1], 'event/convert_run', 'GA4: gtag("event", 이름, 파라미터)');
+      eq(JSON.stringify(calls[0][2]), '{"orders":6}', 'GA4: convert_run 파라미터 내용');
+      eq(A.convertRun(8, fakeGtag, 5000), false, 'GA4: 15초 안 재전송은 막힘');
+      eq(A.convertRun(8, fakeGtag, 17001), true, 'GA4: 15초 뒤에는 다시 전송');
+
+      eq(A.paywallHit(3, fakeGtag), true, 'GA4: paywall_hit 전송');
+      eq(A.ctaClick('kmong', fakeGtag), true, 'GA4: cta_click 전송');
+      eq(A.ctaClick('cash', fakeGtag), true, 'GA4: cta_click 호출 자체는 통과');
+      eq(JSON.stringify(calls[calls.length - 1][2]), '{}', 'GA4: 알 수 없는 결제 유형은 파라미터 없이');
+      eq(A.send('purchase', { value: 1 }, fakeGtag), false, 'GA4: 허용 밖 이벤트는 전송 안 함');
+      eq(A.convertRun(2, null, 40000), false, 'GA4: gtag 없으면 전송하지 않고 false');
+
+      /* 한 세션 전체를 흉내 내 실제 전송값에 개인정보가 섞이지 않는지 확인합니다. */
+      var session = [];
+      var send = function () { session.push(Array.prototype.slice.call(arguments)); };
+      A.resetConvertThrottle();
+      var real = T.parseOrders(T.SAMPLE_HELL10);
+      A.convertRun(real.length, send, 0);
+      A.paywallHit(5, send);
+      A.ctaClick('kmong', send);
+      A.ctaClick('bank_transfer', send);
+      var flat = JSON.stringify(session);
+      var names = session.map(function (c) { return c[1]; });
+      ok(names.every(function (n) { return A.EVENTS.indexOf(n) !== -1; }), 'GA4: 세션 전송 이벤트가 허용 4종 안에 있음', names.join(','));
+      eq(names.length, 4, 'GA4: 세션에서 4건 전송(변환·페이월·CTA 2회)');
+      ok(flat.indexOf('010-') === -1, 'GA4: 전송값에 전화번호 없음');
+      ok(flat.indexOf('김철수') === -1 && flat.indexOf('박정희') === -1, 'GA4: 전송값에 수취인 이름 없음');
+      ok(flat.indexOf('서울') === -1 && flat.indexOf('완도') === -1, 'GA4: 전송값에 주소 없음');
+      ok(flat.indexOf('사과') === -1 && flat.indexOf('전복') === -1, 'GA4: 전송값에 상품명 없음');
+    })();
+
+    /* ── 13. 1클릭 공유(링크 복사) 버튼 ─────────────────── */
+    (function () {
+      var S = (typeof globalThis !== 'undefined' ? globalThis : this).TonShare;
+      ok(!!S, '공유: 모듈 로드');
+      if (!S) { return; }
+
+      eq(S.URL, 'https://doggonug-cpu.github.io/kakao-invoice/', '공유: 복사할 주소');
+      ok(S.text().indexOf(S.URL) !== -1, '공유: 복사 문구에 주소 포함');
+      ok(S.text().indexOf('톡송장 3초') !== -1, '공유: 복사 문구에 서비스 이름');
+      ok(S.text().length < 140, '공유: 메시지는 카톡 한 줄 분량', String(S.text().length));
+
+      function fakeNode() {
+        var node = { textContent: '', listeners: {}, classes: {} };
+        node.classList = {
+          toggle: function (name, on) { node.classes[name] = !!on; },
+          remove: function (name) { delete node.classes[name]; }
+        };
+        node.addEventListener = function (name, fn) { node.listeners[name] = fn; };
+        return node;
+      }
+
+      var btn = fakeNode();
+      var status = fakeNode();
+      var copied = null;
+      var handler = S.attach(btn, status, function (value) { copied = value; return undefined; });
+      ok(typeof handler === 'function', '공유: 버튼에 클릭 핸들러 연결');
+      ok(typeof btn.listeners.click === 'function', '공유: click 리스너 등록');
+
+      btn.listeners.click();
+      eq(copied, S.text(), '공유: 클릭 시 추천 문구+주소를 복사');
+      eq(btn.textContent, S.DONE_LABEL, '공유: 버튼 문구가 복사 완료로 바뀜');
+      eq(status.textContent, S.DONE_STATUS, '공유: 안내 문구로 복사 완료 피드백');
+      ok(btn.classes['is-done'] === true, '공유: 완료 상태 표시');
+
+      S.reset(btn, status);
+      eq(btn.textContent, S.IDLE_LABEL, '공유: 초기화 시 원래 문구');
+      eq(btn.textContent, '같은 공구·산지직송 사장님께 공유하기(링크 복사)', '공유: 버튼 문구 원문');
+      eq(status.textContent, '', '공유: 초기화 시 안내 문구 비움');
+
+      var btn2 = fakeNode();
+      var status2 = fakeNode();
+      S.attach(btn2, status2, function () { return false; });
+      btn2.listeners.click();
+      eq(btn2.textContent, S.IDLE_LABEL, '공유: 복사 실패 시 버튼 문구 유지');
+      eq(status2.textContent, S.FAIL_STATUS, '공유: 복사 실패 안내');
+      ok(status2.classes['is-err'] === true, '공유: 실패는 오류 색');
+      ok(S.FAIL_STATUS.indexOf(S.URL) !== -1, '공유: 실패 안내에 직접 복사할 주소');
+
+      eq(S.attach(null, status, function () {}), null, '공유: 버튼이 없으면 조용히 넘어감');
+    })();
+
+    return { total: results.length, passed: results.filter(function (r) { return r.pass; }).length };
   }
 
   return runCases;

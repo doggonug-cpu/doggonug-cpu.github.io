@@ -5,6 +5,8 @@
   var T = window.TalkInvoice;
   if (!T) { return; }
   var L = window.TalkLicense || null;
+  var A = window.TonAnalytics || null;   /* GA4 퍼널 계측 — 익명 건수·유형만 전송 */
+  var S = window.TonShare || null;       /* 공유하기(링크 복사) */
 
   /* 결제 동선 설정 — 크몽 상품이 승인되면 아래 kmongUrl 에 상품 주소만 넣으면 됩니다. */
   var PAY = {
@@ -97,7 +99,7 @@
 
   var GATE_LABEL = { red: '보류', yellow: '확인', green: '정상' };
 
-  var state = { orders: [], parseTimer: null, license: null, split: null };
+  var state = { orders: [], parseTimer: null, license: null, split: null, paywallSent: 0 };
 
   var input = document.getElementById('orderInput');
   var tbody = document.getElementById('orderRows');
@@ -116,6 +118,9 @@
   var btnCopy = document.getElementById('btnCopy');
   var btnClear = document.getElementById('btnClear');
   var exportStatus = document.getElementById('exportStatus');
+  var shareRow = document.getElementById('shareRow');
+  var btnShare = document.getElementById('btnShare');
+  var shareStatus = document.getElementById('shareStatus');
   var orderForm = document.getElementById('orderForm');
   var orderStatus = document.getElementById('orderStatus');
   var countPlan = document.getElementById('countPlan');
@@ -252,6 +257,7 @@
     counts.hidden = total === 0;
     btnCsv.disabled = total === 0;
     btnCopy.disabled = total === 0;
+    if (shareRow) { shareRow.hidden = total === 0; }
   }
 
   /* ── 표 그리기 ────────────────────────────────────────── */
@@ -486,6 +492,9 @@
     actions.appendChild(transfer);
     actions.appendChild(register);
     box.appendChild(actions);
+    transfer.addEventListener('click', function () {
+      if (A) { A.ctaClick('bank_transfer'); }
+    });
 
     var note = el('p', 'paywall-note', PAY.pending);
     note.id = 'payNotice';
@@ -499,6 +508,7 @@
     tr.appendChild(td);
 
     kmong.addEventListener('click', function () {
+      if (A) { A.ctaClick('kmong'); }
       if (PAY.kmongUrl) {
         window.open(PAY.kmongUrl, '_blank', 'noopener');
         return;
@@ -564,13 +574,27 @@
 
     if (split.locked > 0) { tbody.appendChild(makePaywallRow(split)); }
 
+    /* 페이월 도달 — 건수가 바뀔 때 한 번만 보냅니다(렌더마다 보내지 않음). */
+    if (A) {
+      if (split.locked > 0 && state.paywallSent !== split.locked) {
+        A.paywallHit(split.locked);
+        state.paywallSent = split.locked;
+      } else if (split.locked === 0) {
+        state.paywallSent = 0;
+      }
+    }
+
     updateCounts(split);
   }
 
   /* ── 파싱 ─────────────────────────────────────────────── */
   function parseNow() {
+    var before = state.orders.length;
     state.orders = T.parseOrders(input.value);
     render();
+    /* 변환 실행 — 빈 화면에서 표가 처음 생길 때 한 번(건수 숫자만) 보냅니다.
+       타이핑 중 글자마다 보내면 전환율이 부풀고, 주문 내용은 보내지 않습니다. */
+    if (A && state.orders.length && before === 0) { A.convertRun(state.orders.length); }
   }
 
   function scheduleParse() {
@@ -810,8 +834,10 @@
   btnClear.addEventListener('click', function () {
     input.value = '';
     state.orders = [];
+    state.paywallSent = 0;
     render();
     say(exportStatus, '');
+    if (S) { S.reset(btnShare, shareStatus); }
     document.querySelectorAll('.chip[data-sample]').forEach(function (chip) {
       chip.setAttribute('aria-pressed', 'false');
     });
@@ -856,6 +882,15 @@
 
   btnCsv.addEventListener('click', downloadCsv);
   btnCopy.addEventListener('click', copyTsv);
+
+  /* 요금제 카드의 '계좌이체로 키 받기' 링크도 같은 결제 동선입니다. */
+  Array.prototype.forEach.call(document.querySelectorAll('a[href="#order"]'), function (link) {
+    link.addEventListener('click', function () {
+      if (A) { A.ctaClick('bank_transfer'); }
+    });
+  });
+
+  if (S && btnShare) { S.attach(btnShare, shareStatus, copyText); }
 
   if (orderForm) { orderForm.addEventListener('submit', submitOrderForm); }
   if (licenseForm) { licenseForm.addEventListener('submit', submitLicense); }
