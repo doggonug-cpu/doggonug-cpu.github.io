@@ -93,9 +93,9 @@ wiring = [
         "페이월 이벤트가 연결되지 않았습니다",
     ),
     (
-        "배선: cta_click(kmong)",
-        "A.ctaClick('kmong')" in APP,
-        "크몽 결제 클릭 이벤트가 없습니다",
+        "배선: cta_click(latpeed)",
+        "A.ctaClick('latpeed')" in APP,
+        "래피드 카드결제 클릭 이벤트가 없습니다",
     ),
     (
         "배선: cta_click(bank_transfer)",

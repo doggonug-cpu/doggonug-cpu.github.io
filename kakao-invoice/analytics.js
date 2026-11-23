@@ -4,7 +4,7 @@
  *   page_view    — gtag config 로 자동 전송 (이 파일에서 직접 보내지 않음)
  *   convert_run  — 변환 실행. 파라미터 { orders: 건수(숫자) } 만
  *   paywall_hit  — 6번째 행부터 Pro 잠금에 닿음. 파라미터 { locked: 건수(숫자) } 만
- *   cta_click    — 결제 동선 클릭. 파라미터 { cta_type: 'kmong' | 'bank_transfer' } 만
+ *   cta_click    — 결제 동선 클릭. 파라미터 { cta_type: 'latpeed' | 'bank_transfer' } 만
  *
  * 호출하는 쪽이 실수로 이름·전화번호·주소·주문 원문을 파라미터에 넣어도
  * buildPayload 가 화이트리스트에 없는 키를 전부 버립니다. 값도 숫자 또는 정해진
@@ -26,7 +26,7 @@
     paywall_hit: ['locked']
   };
   var ENUM_PARAMS = {
-    cta_click: { cta_type: ['kmong', 'bank_transfer'] }
+    cta_click: { cta_type: ['latpeed', 'bank_transfer'] }
   };
   var CONVERT_GAP_MS = 15000; /* 같은 방문에서 변환 실행 이벤트는 15초에 한 번 */
 

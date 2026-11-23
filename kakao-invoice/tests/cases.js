@@ -642,8 +642,8 @@
       var p2 = A.buildPayload('paywall_hit', { locked: 4 });
       eq(p2 && p2.params.locked, 4, 'GA4: paywall_hit 은 잠금 건수만');
 
-      var p3 = A.buildPayload('cta_click', { cta_type: 'kmong' });
-      eq(p3 && p3.params.cta_type, 'kmong', 'GA4: cta_click 크몽');
+      var p3 = A.buildPayload('cta_click', { cta_type: 'latpeed' });
+      eq(p3 && p3.params.cta_type, 'latpeed', 'GA4: cta_click 래피드 카드결제');
       var p4 = A.buildPayload('cta_click', { cta_type: 'bank_transfer' });
       eq(p4 && p4.params.cta_type, 'bank_transfer', 'GA4: cta_click 계좌이체');
 

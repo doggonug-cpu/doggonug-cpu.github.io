@@ -8,10 +8,11 @@
   var A = window.TonAnalytics || null;   /* GA4 퍼널 계측 — 익명 건수·유형만 전송 */
   var S = window.TonShare || null;       /* 공유하기(링크 복사) */
 
-  /* 결제 동선 설정 — 크몽 상품이 승인되면 아래 kmongUrl 에 상품 주소만 넣으면 됩니다. */
+  /* 결제 동선 설정 — 카드결제는 래피드(Latpeed) 상품 페이지로 연결합니다.
+   * 상품 주소가 바뀌면 cardUrl 만 고치면 됩니다. */
   var PAY = {
-    kmongUrl: '',
-    pending: '크몽 상품 승인 직후 카드결제 링크가 연결됩니다. 지금 바로 사용하려면 계좌이체 신청(이메일·입금자명)을 남겨 주세요 — 입금 안내를 메일로 보내 드립니다.'
+    cardUrl: 'https://www.latpeed.com/products/cRz3X',
+    pending: '카드결제 링크가 아직 연결되지 않았습니다. 지금 바로 사용하려면 계좌이체 신청(이메일·입금자명)을 남겨 주세요 — 입금 안내를 메일로 보내 드립니다.'
   };
 
   var SAMPLES = {
@@ -481,14 +482,18 @@
       '무료 체험은 1회 변환 5건까지입니다.'));
 
     var actions = el('div', 'paywall-actions');
-    var kmong = el('button', 'btn btn-primary', 'Pro 1개월 이용권 카드결제 (크몽)');
-    kmong.type = 'button';
-    kmong.id = 'payKmong';
+    var card = el('a', 'btn btn-primary', 'Pro 이용권 카드결제 (래피드)');
+    card.id = 'payCard';
+    if (PAY.cardUrl) {
+      card.setAttribute('href', PAY.cardUrl);
+      card.setAttribute('target', '_blank');
+      card.setAttribute('rel', 'noopener');
+    }
     var transfer = el('a', 'btn btn-ghost', '계좌이체로 5분 만에 키 받기');
     transfer.setAttribute('href', '#order');
     var register = el('a', 'btn btn-quiet', '이미 키가 있어요 — 등록');
     register.setAttribute('href', '#license');
-    actions.appendChild(kmong);
+    actions.appendChild(card);
     actions.appendChild(transfer);
     actions.appendChild(register);
     box.appendChild(actions);
@@ -507,12 +512,10 @@
     td.appendChild(box);
     tr.appendChild(td);
 
-    kmong.addEventListener('click', function () {
-      if (A) { A.ctaClick('kmong'); }
-      if (PAY.kmongUrl) {
-        window.open(PAY.kmongUrl, '_blank', 'noopener');
-        return;
-      }
+    card.addEventListener('click', function (event) {
+      if (A) { A.ctaClick('latpeed'); }
+      if (PAY.cardUrl) { return; }
+      event.preventDefault();
       note.hidden = false;
       transfer.focus();
     });
@@ -887,6 +890,13 @@
   Array.prototype.forEach.call(document.querySelectorAll('a[href="#order"]'), function (link) {
     link.addEventListener('click', function () {
       if (A) { A.ctaClick('bank_transfer'); }
+    });
+  });
+
+  /* 요금제 카드의 카드결제 버튼은 래피드 상품 페이지로 나갑니다. */
+  Array.prototype.forEach.call(document.querySelectorAll('a[data-cta="latpeed"]'), function (link) {
+    link.addEventListener('click', function () {
+      if (A) { A.ctaClick('latpeed'); }
     });
   });
 
