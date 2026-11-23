@@ -77,9 +77,10 @@ no attention.
 - Pro opens with a licence key issued by email and pasted into the page (no account, no
   PG). The key is an ECDSA P-256 signature over its own payload; the page carries only
   the public key and checks it locally, so there is no server and no master secret in
-  the source. Paying by card (Kmong) is switched on by filling `PAY.kmongUrl` in
-  `app.js`; until then the button shows the "coming right after Kmong approval" note
-  and points at the account-transfer form.
+  the source. Paying by card goes to the Latpeed product page
+  (`https://www.latpeed.com/products/cRz3X`, 1 month ₩29,000 / 3 months ₩79,000); the
+  URL lives in `PAY.cardUrl` in `app.js`. Until a URL is filled the button shows the
+  "card link not connected yet" note and points at the account-transfer form.
 
 ## Issuing a Pro key (operator, ~10 seconds)
 
