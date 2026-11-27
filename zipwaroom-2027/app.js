@@ -3,7 +3,7 @@
 
   // 결제 링크 설정 변수 (런칭 시 래피드/리틀리 실제 URL만 교체)
   const CONFIG = {
-    LATPEED_URL: 'https://www.latpeed.com/products/zipwaroom-2027-earlybird',
+    LATPEED_URL: 'https://www.latpeed.com/products/0Quu3',
     STORAGE_KEY: 'zipwaroom_2027_unlocked',
     LEGAL_NOTICE: '본 도구는 2026년 11월 기준 공개 세법 및 개편 논의를 바탕으로 한 개인 의사결정·시뮬레이션 참고용 도구이며 세무 대리·법률 자문이 아닙니다. 실제 매매·증여·신고 전 반드시 세무 전문가와 최종 확인하시기 바랍니다.'
   };

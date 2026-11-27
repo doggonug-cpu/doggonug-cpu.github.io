@@ -116,7 +116,7 @@ strong { font-weight: 700; }
 /* Presets */
 .preset-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 .preset-btn {
@@ -309,7 +309,7 @@ strong { font-weight: 700; }
 .chart-wrap { width: 100%; overflow-x: auto; margin: 14px 0 4px; }
 .scenario-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-top: 14px;
 }
@@ -466,6 +466,10 @@ table.data-table tbody tr:last-child td { border-bottom: none; }
 
 /* Print-only 10-page A4 PDF studio */
 .print-only-report { display: none; }
+
+@media (max-width: 640px) {
+  .preset-grid, .scenario-cards { grid-template-columns: 1fr; }
+}
 
 @media (max-width: 560px) {
   .hero-inner { padding: 30px 22px 26px; border-radius: 20px; }
