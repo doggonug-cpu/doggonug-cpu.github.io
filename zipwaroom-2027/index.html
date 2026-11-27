@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2027~2029 집·세금·건보료 "팔까? 살까? 버틸까?" 통합 워룸 (ZIPWAROOM 2027)</title>
+  <meta name="description" content="양도세·종부세·재산세·증여세와 건강보험 피부양자 탈락까지, 향후 5년(2026~2031) 순자산 격차를 내 조건으로 비교하는 웹 시뮬레이터. 모든 계산은 브라우저 안에서만 이뤄집니다." />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- GA4 Tracking -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-37PP2BP7Z6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-37PP2BP7Z6');
+  </script>
+</head>
+<body>
+  <div class="no-print">
+    <header class="hero">
+      <div class="container">
+        <div class="hero-inner">
+          <span class="hero-badge">2026년 11월 최신 세법 + 2027~2029 개편 시나리오 반영</span>
+          <h1>2027~2029 집·세금·건보료<br>"팔까? 살까? 버틸까?" 통합 워룸</h1>
+          <p class="sub">
+            양도세와 보유세, 증여세, 건강보험료를 따로 계산하면 판단이 흐려집니다.
+            2026년부터 2031년까지 5년치를 같은 표에 놓고, 내 조건에서 어느 선택이 가장 유리한지 비교합니다.
+          </p>
+          <div class="privacy-pill">100% 브라우저 로컬 계산 · 주택 가격·소득·대출 정보는 외부 서버로 전송되지 않습니다</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container" style="padding-bottom: 56px;">
+      <!-- 첫 화면 법적 면책 고지 -->
+      <div class="legal-banner" role="note">
+        <strong>안내 및 면책 고지:</strong> 본 도구는 2026년 11월 기준 공개 세법 및 개편 논의를 바탕으로 한 개인 의사결정·시뮬레이션 참고용 도구이며 세무 대리·법률 자문이 아닙니다. 실제 매매·증여·신고 전 반드시 세무 전문가와 최종 확인하시기 바랍니다.
+      </div>
+
+      <!-- 4대 현실 프리셋 원클릭 체험 -->
+      <section class="section-card">
+        <h2 class="section-title">내 상황과 비슷한 사례로 먼저 확인해 보세요</h2>
+        <p class="section-desc">숫자를 하나씩 넣기 전에, 비슷한 사례를 눌러 5년 뒤 세금과 건보료가 어떻게 벌어지는지 볼 수 있습니다.</p>
+        <div class="preset-grid" id="presetGrid">
+          <button type="button" class="preset-btn active" data-preset="0">
+            <div class="preset-num">사례 1 · 1주택 비거주</div>
+            <div class="preset-name">마용성·분당 50대 은퇴 예정자</div>
+            <div class="preset-meta">시세 18억 (취득 9억) · 비거주 갭투자 · 대출 2억</div>
+          </button>
+          <button type="button" class="preset-btn" data-preset="1">
+            <div class="preset-num">사례 2 · 다주택 갈림길</div>
+            <div class="preset-name">수도권 2주택자 지금 팔까 버틸까</div>
+            <div class="preset-meta">합산 시세 22억 (14억+8억) · 조정지역 · 대출 4억</div>
+          </button>
+          <button type="button" class="preset-btn" data-preset="2">
+            <div class="preset-num">사례 3 · 고가 1주택 명의</div>
+            <div class="preset-name">부부 단독명의 24억 공동명의 고민</div>
+            <div class="preset-meta">시세 24억 (취득 11억) · 62세 · 10년 보유·5년 거주</div>
+          </button>
+          <button type="button" class="preset-btn" data-preset="3">
+            <div class="preset-num">사례 4 · 은퇴·피부양자</div>
+            <div class="preset-name">60대 은퇴자 건보료 피부양자 방어</div>
+            <div class="preset-meta">시세 13억 · 연금 1,900만 + 임대 600만</div>
+          </button>
+        </div>
+      </section>
+
+      <!-- 3단계 아코디언 입력 폼 -->
+      <section class="section-card">
+        <h2 class="section-title">내 자산·소득·정책 조건 넣기</h2>
+        <p class="section-desc">시세를 입력하면 공시가격(69%)이 자동으로 채워지고, 모든 값은 직접 고칠 수 있습니다.</p>
+
+        <div class="accordion-step open" data-step="1">
+          <button type="button" class="accordion-header">1단계. 보유 주택 현황 (주택 수 · 시세 · 보유/거주 기간) <span>▾</span></button>
+          <div class="accordion-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="houseCount">보유 주택 수</label>
+                <select id="houseCount">
+                  <option value="1">1주택</option>
+                  <option value="2">2주택</option>
+                  <option value="3">3주택 이상</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="currentPrice">현재 시세 합계 (억 원)</label>
+                <input type="number" id="currentPrice" step="0.5" min="1" value="18" />
+              </div>
+              <div class="field">
+                <label for="buyPrice">당초 취득가 합계 (억 원)</label>
+                <input type="number" id="buyPrice" step="0.5" min="0.5" value="9" />
+              </div>
+              <div class="field">
+                <label for="publicPrice">공시가격 합계 (억 원)</label>
+                <input type="number" id="publicPrice" step="0.1" min="0.5" value="12.4" />
+                <span class="hint">시세 변경 시 69% 자동 추정</span>
+              </div>
+              <div class="field">
+                <label for="holdingYears">현재 보유기간 (년)</label>
+                <input type="number" id="holdingYears" min="0" max="40" value="7" />
+              </div>
+              <div class="field">
+                <label for="residenceYears">현재 실거주기간 (년)</label>
+                <input type="number" id="residenceYears" min="0" max="40" value="0" />
+              </div>
+              <div class="field">
+                <label for="isRegulated">조정대상지역 여부</label>
+                <select id="isRegulated">
+                  <option value="true">조정대상지역 (서울·경기 주요)</option>
+                  <option value="false">비규제지역</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-step" data-step="2">
+          <button type="button" class="accordion-header">2단계. 명의 · 연령 · 소득 · 대출 조건 <span>▾</span></button>
+          <div class="accordion-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="isJointOwned">현재 명의 형태</label>
+                <select id="isJointOwned">
+                  <option value="false">단독명의 (100%)</option>
+                  <option value="true">부부 공동명의 (50:50)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="age">소유자 만 나이 (세)</label>
+                <input type="number" id="age" min="20" max="100" value="54" />
+              </div>
+              <div class="field">
+                <label for="publicPensionIncome">연간 공적연금 소득 (만 원)</label>
+                <input type="number" id="publicPensionIncome" step="100" min="0" value="1200" />
+              </div>
+              <div class="field">
+                <label for="earnedIncome">연간 근로소득 (만 원)</label>
+                <input type="number" id="earnedIncome" step="100" min="0" value="0" />
+              </div>
+              <div class="field">
+                <label for="rentalIncome">연간 주택임대·사업소득 (만 원)</label>
+                <input type="number" id="rentalIncome" step="50" min="0" value="0" />
+              </div>
+              <div class="field">
+                <label for="financialIncome">연간 이자·배당 소득 (만 원)</label>
+                <input type="number" id="financialIncome" step="50" min="0" value="300" />
+              </div>
+              <div class="field">
+                <label for="loanBalance">주택담보대출 잔액 (억 원)</label>
+                <input type="number" id="loanBalance" step="0.5" min="0" value="2" />
+              </div>
+              <div class="field">
+                <label for="giftTarget">시나리오 D 증여 대상</label>
+                <select id="giftTarget">
+                  <option value="spouse">배우자 공동명의(50%)</option>
+                  <option value="child">성인 자녀 사전증여(50%)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-step" data-step="3">
+          <button type="button" class="accordion-header">3단계. 정책 변수 (현행법 · 2027~2029 개편안) <span>▾</span></button>
+          <div class="accordion-body">
+            <div class="policy-toggle-row">
+              <button type="button" class="pill-btn active" data-policy="current">현행법 유지 (2026.11 확정 기준)</button>
+              <button type="button" class="pill-btn" data-policy="reform">2027~2029 세제 개편 시나리오 (정부안)</button>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="compFairRatio">종부세 공정시장가액비율 (<span id="compFairRatioVal">60</span>%)</label>
+                <input type="range" id="compFairRatio" min="60" max="80" step="5" value="60" />
+              </div>
+              <div class="field">
+                <label for="priceGrowthRate">예상 연 집값 상승률 (<span id="priceGrowthVal">2.0</span>%)</label>
+                <input type="range" id="priceGrowthRate" min="-2" max="6" step="0.5" value="2" />
+              </div>
+              <div class="field">
+                <label for="loanRate">대출 금리 (<span id="loanRateVal">4.2</span>%)</label>
+                <input type="range" id="loanRate" min="2.5" max="7.0" step="0.1" value="4.2" />
+              </div>
+              <div class="field">
+                <label for="surchargeEnabled">다주택 양도세 중과</label>
+                <select id="surchargeEnabled">
+                  <option value="true">적용 (2026.05.10~ 유예 종료)</option>
+                  <option value="false">배제/면제 가정</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="run-btn" id="runSimBtn">5년 시뮬레이션 실행</button>
+      </section>
+
+      <!-- 결과 화면 -->
+      <section class="section-card" id="resultSection">
+        <div class="shock-box">
+          <div class="shock-label">선택에 따라 향후 5년(2026~2031) 최종 순자산·세금·건보료가 이만큼 벌어집니다</div>
+          <div class="shock-amount" id="shockGapText">최대 0만 원</div>
+          <div class="shock-compare">
+            <div class="shock-tag" id="bestTag">가장 유리한 선택: -</div>
+            <div class="shock-tag" id="worstTag">가장 불리한 선택: -</div>
+          </div>
+        </div>
+
+        <!-- 자동 진단 경보 배지 3종 -->
+        <div class="badges-row" id="badgesRow"></div>
+
+        <h3 class="section-title">네 가지 선택의 5년 뒤 순자산 비교</h3>
+        <div class="chart-wrap" id="svgChartWrap"></div>
+
+        <div class="scenario-cards" id="scenarioCards"></div>
+
+        <!-- 결과 화면 법적 고지 -->
+        <div class="legal-banner" role="note" style="margin-top: 18px;">
+          <strong>안내 및 면책 고지:</strong> 본 도구는 2026년 11월 기준 공개 세법 및 개편 논의를 바탕으로 한 개인 의사결정·시뮬레이션 참고용 도구이며 세무 대리·법률 자문이 아닙니다. 실제 매매·증여·신고 전 반드시 세무 전문가와 최종 확인하시기 바랍니다.
+        </div>
+
+        <!-- 잠금 해제 후 인쇄 바 -->
+        <div class="unlocked-bar" id="unlockedBar">
+          <div>
+            <strong>전체 리포트 잠금이 해제되었습니다</strong>
+            <div style="font-size: 13px; color: #4e5968;">연도별 세목 상세표, 건보료 월별 추이, 세무사 상담 질문 10선, A4 10페이지 PDF 인쇄가 열렸습니다.</div>
+          </div>
+          <button type="button" class="cta-btn" id="printPdfBtn">맞춤 전략 리포트 PDF 저장·인쇄</button>
+        </div>
+
+        <!-- Paywall + Blur 영역 -->
+        <div class="paywall-container">
+          <div class="paywall-overlay" id="paywallOverlay">
+            <h3>세무사 상담을 잡기 전에,<br>내 조건으로 계산한 10페이지 리포트를 먼저 보세요.</h3>
+            <p>연도별(2027~2031) 세목 분해표, 건보료 피부양자 월별 추이, 부부 공동명의 손익분기점, 세무사에게 물어볼 질문 10선이 들어 있습니다.</p>
+            <button type="button" class="cta-btn" id="openPaywallBtn">전체 리포트와 PDF 잠금 해제 · 얼리버드 19,900원 (정가 29,000원)</button>
+          </div>
+
+          <div id="detailedReportBody" class="blur-locked">
+            <h3 class="section-title">1. 연도별(2027~2031) 세목·건보료·대출이자 상세 현금흐름 (시나리오 B vs C)</h3>
+            <div id="yearlyTableWrap"></div>
+
+            <h3 class="section-title">2. 건강보험 피부양자 판정과 월 건보료 상세</h3>
+            <div id="healthDetailWrap"></div>
+
+            <h3 class="section-title">3. 부부 공동명의·사전증여 손익분기점과 10년 이월과세 점검</h3>
+            <div id="giftDetailWrap"></div>
+
+            <h3 class="section-title">4. 세무사 대면 상담에 그대로 들고 갈 질문 10선</h3>
+            <ol id="taxQuestionsList" style="padding-left: 20px; font-size: 14px; line-height: 1.7;"></ol>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 잠금 해제 모달 -->
+  <div class="modal-backdrop" id="unlockModal" aria-hidden="true">
+    <div class="modal-box">
+      <button type="button" class="modal-close" id="closeModalBtn" aria-label="닫기">&times;</button>
+      <h3 style="margin: 0 0 8px; font-size: 19px;">전체 리포트와 10페이지 PDF 잠금 해제</h3>
+      <p style="font-size: 13.5px; color: #4e5968; margin: 0 0 16px; line-height: 1.6;">
+        결제 후 받은 <strong>ZW27-XXXX-XXXX-XXXX</strong> 인증키를 넣으면 바로 열립니다. 입력한 자산 정보는 브라우저 안에만 남습니다.
+      </p>
+
+      <div style="background: #f2f4f6; padding: 16px; border-radius: 14px; margin-bottom: 16px;">
+        <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">인증키가 아직 없다면 (얼리버드 19,900원)</div>
+        <div class="btn-row">
+          <a id="latpeedPayLink" href="#" target="_blank" rel="noopener" class="btn-secondary">래피드에서 결제하기</a>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 18px;">
+        <label for="licenseKeyInput" style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px;">인증키 입력</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="licenseKeyInput" placeholder="ZW27-XXXX-XXXX-XXXX" style="flex: 1; padding: 13px; border: none; border-radius: 10px; background: #f2f4f6; font-size: 14px; text-transform: uppercase;" />
+          <button type="button" class="cta-btn" id="verifyKeyBtn" style="padding: 12px 20px; font-size: 14px; border-radius: 10px;">인증</button>
+        </div>
+        <div id="keyErrorMsg" style="font-size: 12.5px; color: #f04452; margin-top: 8px;"></div>
+      </div>
+
+      <details>
+        <summary style="font-size: 13px; font-weight: 600; color: #4e5968; cursor: pointer;">인증키 오류·결제 문의 남기기</summary>
+        <form action="https://formsubmit.co/doggonug@gmail.com" method="POST" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+          <input type="hidden" name="_subject" value="[ZIPWAROOM 2027] 인증키/이용 문의" />
+          <input type="email" name="email" required placeholder="답변 받으실 이메일" style="padding: 11px; border: none; border-radius: 10px; background: #f2f4f6;" />
+          <textarea name="message" rows="3" required placeholder="결제자 성함과 문의 내용을 적어 주세요." style="padding: 11px; border: none; border-radius: 10px; background: #f2f4f6; font-family: inherit;"></textarea>
+          <button type="submit" class="btn-secondary" style="padding: 11px;">문의 보내기</button>
+        </form>
+      </details>
+    </div>
+  </div>
+
+  <!-- A4 10페이지 인쇄 전용 리포트 루트 -->
+  <div id="printReportRoot" class="print-only-report"></div>
+
+  <script src="taxEngine.js"></script>
+  <script src="hashes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
