@@ -122,7 +122,7 @@
   function buildSvgBarChart(scenarios, bestId, worstId) {
     const maxVal = Math.max(...scenarios.map(s => Math.max(0, s.netWorth)), 1);
     const width = 680;
-    const height = 240;
+    const height = 262;
     const padL = 20, padR = 20, padT = 32, padB = 44;
     const chartW = width - padL - padR;
     const chartH = height - padT - padB;
@@ -141,8 +141,8 @@
       bars += `
         <rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="8" fill="${fill}" />
         <text x="${x + barW / 2}" y="${y - 10}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#191F28">${fmtMan(s.netWorth)}</text>
-        <text x="${x + barW / 2}" y="${height - 20}" text-anchor="middle" font-size="12" font-weight="600" fill="#4E5968">${s.id}. ${s.shortName}</text>
-        <text x="${x + barW / 2}" y="${height - 5}" text-anchor="middle" font-size="10.5" fill="#8B95A1">세금 ${fmtMan(s.totalTax)}</text>
+        <text x="${x + barW / 2}" y="${height - 30}" text-anchor="middle" font-size="12" font-weight="600" fill="#4E5968">${s.id}. ${s.shortName}</text>
+        <text x="${x + barW / 2}" y="${height - 10}" text-anchor="middle" font-size="10.5" fill="#8B95A1">세금 ${fmtMan(s.totalTax)}</text>
       `;
     });
 
